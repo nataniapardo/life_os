@@ -1,66 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LifePlan AI | Professional Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Custom Life OS</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="app-container">
-        <nav class="sidebar">
-            <div class="logo">LifePlan AI</div>
-            <ul class="nav-links">
-                <li class="active">Dashboard</li>
-                <li>Calendar</li>
-                <li>Networking (LinkedIn)</li>
-                <li>Documents</li>
-                <li>Settings</li>
-            </ul>
-            <div class="user-controls">
-                <input type="color" id="colorPicker" title="Choose Theme Color">
-                <input type="text" id="hexInput" placeholder="#ffffff" maxlength="7">
-            </div>
-        </nav>
 
-        <main class="content">
-            <header class="top-bar">
-                <div class="search-container">
-                    <input type="text" id="globalSearch" placeholder="Search sectors, synonyms, or keywords...">
-                </div>
-                <button class="upload-btn" onclick="triggerUpload()">Upload Plan Document</button>
-                <input type="file" id="docUpload" hidden>
-            </header>
+  <!-- HEADER -->
+  <header>
+    <h1>Life OS</h1>
+    <input type="text" id="globalSearch" placeholder="Search everything...">
+  </header>
 
-            <section class="dashboard-grid">
-                <div class="card todo-card">
-                    <h3>Daily Life Plan <span id="currentDate"></span></h3>
-                    <div class="error-alert" id="aiAlert">Note: 2 entries require manual verification.</div>
-                    <ul id="todoList">
-                        </ul>
-                </div>
+  <!-- SIDEBAR -->
+  <aside>
+    <nav>
+      <ul>
+        <li onclick="switchPage('homepage')">Homepage</li>
+        <li onclick="switchPage('dashboard')">Dashboard</li>
+        <li onclick="switchPage('personal')">Personal</li>
+        <li onclick="switchPage('work')">Work</li>
+        <li onclick="switchPage('networking')">Networking</li>
+        <li onclick="switchPage('journal')">Journal</li>
+        <li onclick="switchPage('calendar')">Calendar</li>
+        <li onclick="switchPage('pomodoro')">Pomodoro Timer</li>
+        <li onclick="switchPage('uploads')">Upload Files</li>
+      </ul>
+    </nav>
 
-                <div class="card networking-card">
-                    <h3>Industry Mentors & Leads</h3>
-                    <div class="contact-list" id="contactList">
-                        <p class="placeholder">Upload LinkedIn data to populate...</p>
-                    </div>
-                </div>
+    <!-- Customization -->
+    <h3>Customize</h3>
+    <label>Background Color:</label>
+    <input type="color" id="colorPicker">
+    <label>Upload Background:</label>
+    <input type="file" id="bgUpload">
+  </aside>
 
-                <div class="card progress-card">
-                    <h3>Plan Progress</h3>
-                    <div class="progress-container">
-                        <div class="progress-bar" id="progressBar"></div>
-                    </div>
-                    <p id="progressText">0% of milestones reached</p>
-                </div>
-            </section>
-        </main>
+  <!-- MAIN CONTENT -->
+  <main>
+    <div id="content">
+
+      <!-- Pages -->
+      <section id="homepage" class="page active">
+        <h2>Homepage</h2>
+        <p>Welcome to your Life OS. Customize your experience.</p>
+      </section>
+
+      <section id="dashboard" class="page">
+        <h2>Dashboard</h2>
+        <ul id="taskList"></ul>
+        <input type="text" id="taskInput" placeholder="Add task...">
+        <button onclick="addTask()">Add Task</button>
+      </section>
+
+      <section id="personal" class="page">
+        <h2>Personal Page</h2>
+        <textarea placeholder="Write personal notes..."></textarea>
+      </section>
+
+      <section id="work" class="page">
+        <h2>Work Page</h2>
+        <textarea placeholder="Write work notes..."></textarea>
+      </section>
+
+      <section id="networking" class="page">
+        <h2>Networking Page</h2>
+        <input type="text" placeholder="Add Contact Name - Role - Company" id="contactInput">
+        <button onclick="addContact()">Add Contact</button>
+        <ul id="contactList"></ul>
+      </section>
+
+      <section id="journal" class="page">
+        <h2>Journal</h2>
+        <textarea placeholder="Journal your day..."></textarea>
+      </section>
+
+      <section id="calendar" class="page">
+        <h2>Calendar</h2>
+        <input type="date" id="dueDate">
+        <button onclick="addDueDate()">Add Date</button>
+        <ul id="dateList"></ul>
+      </section>
+
+      <section id="pomodoro" class="page">
+        <h2>Pomodoro Timer</h2>
+        <p id="timerDisplay">25:00</p>
+        <button onclick="startPomodoro()">Start</button>
+        <button onclick="resetPomodoro()">Reset</button>
+      </section>
+
+      <section id="uploads" class="page">
+        <h2>Upload Files</h2>
+        <input type="file" id="fileUpload" multiple>
+        <ul id="fileList"></ul>
+      </section>
+
     </div>
-    <script src="script.js"></script>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
-
        
       
 
