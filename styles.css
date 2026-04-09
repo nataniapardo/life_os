@@ -1,69 +1,126 @@
+:root {
+    --primary-color: #2563eb;
+    --bg-overlay: rgba(255, 255, 255, 0.9);
+    --text-main: #1f2937;
+}
+
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  grid-template-rows: 60px 1fr;
-  height: 100vh;
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--text-main);
+    background-size: cover;
+    background-position: center;
+    transition: background 0.3s ease;
 }
 
-/* HEADER */
-header {
-  grid-column: 1 / span 2;
-  background: #111;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
+.app-container {
+    display: flex;
+    height: 100vh;
+    background: var(--bg-overlay);
 }
 
-header input {
-  padding: 8px;
-  width: 300px;
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background: #111827;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
-/* SIDEBAR */
-aside {
-  background: #f4f4f4;
-  padding: 15px;
-  border-right: 1px solid #ddd;
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: var(--primary-color);
 }
 
-aside input, aside button {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 8px;
+.nav-links {
+    list-style: none;
+    padding: 0;
+    flex-grow: 1;
 }
 
-/* MAIN */
-main {
-  padding: 20px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+.nav-links li {
+    padding: 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: 0.2s;
 }
 
-/* CARDS */
+.nav-links li:hover, .nav-links li.active {
+    background: var(--primary-color);
+}
+
+/* Main Content */
+.content {
+    flex-grow: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+#globalSearch {
+    width: 400px;
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid #d1d5db;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
 .card {
-  background: white;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
 }
 
-textarea {
-  width: 100%;
-  height: 100px;
+.error-alert {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
 }
 
-/* LISTS */
-ul {
-  list-style: none;
-  padding: 0;
+/* Customization Tools */
+.user-controls {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #374151;
 }
 
-li {
-  padding: 5px 0;
-  border-bottom: 1px solid #eee;
+#hexInput {
+    width: 80px;
+    background: #374151;
+    border: none;
+    color: white;
+    padding: 5px;
+    margin-left: 10px;
+}
+
+.progress-container {
+    background: #e5e7eb;
+    height: 10px;
+    border-radius: 5px;
+    margin: 15px 0;
+}
+
+.progress-bar {
+    width: 45%;
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 5px;
 }
