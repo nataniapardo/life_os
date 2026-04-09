@@ -3,143 +3,87 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Life OS Dashboard</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>MyApp Site Customizer</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="app-container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="logo">Life OS</div>
-      <nav class="nav-menu">
-        <a href="#" class="nav-item active">Dashboard</a>
-        <a href="#" class="nav-item">Life Blueprint</a>
-        <a href="#" class="nav-item">Tasks</a>
-        <a href="#" class="nav-item">Habits</a>
-        <a href="#" class="nav-item">Opportunities</a>
-        <a href="#" class="nav-item">Progress</a>
-        <a href="#" class="nav-item">Settings</a>
-      </nav>
+    
+    <!-- LEFT PANEL: CONTROLS -->
+    <aside class="customizer-panel">
+      <h1>MyApp Site Customizer</h1>
+      <p class="subtitle">Customize your website like a Notion-style site builder.</p>
+
+      <div class="control-group">
+        <label for="siteTitle">Site Title</label>
+        <input type="text" id="siteTitle" value="My Personal Website" />
+      </div>
+
+      <div class="control-group">
+        <label for="siteDescription">Site Description</label>
+        <textarea id="siteDescription" rows="3">A clean, simple, customizable website built with MyApp.</textarea>
+      </div>
+
+      <div class="control-group">
+        <label for="faviconInput">Favicon (Emoji)</label>
+        <input type="text" id="faviconInput" value="🌐" maxlength="2" />
+      </div>
+
+      <div class="control-group">
+        <label for="themeSelect">Theme</label>
+        <select id="themeSelect">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+
+      <div class="control-group checkbox-group">
+        <label><input type="checkbox" id="toggleBreadcrumbs" checked /> Show Breadcrumbs</label>
+      </div>
+
+      <div class="control-group checkbox-group">
+        <label><input type="checkbox" id="toggleSearch" checked /> Show Search Bar</label>
+      </div>
+
+      <div class="control-group">
+        <label for="shareImageUrl">Share Preview Image URL</label>
+        <input type="text" id="shareImageUrl" value="https://via.placeholder.com/600x300?text=Preview+Image" />
+      </div>
+
+      <button id="applyButton">Apply Customization</button>
     </aside>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <header class="topbar">
-        <div>
-          <h1>Welcome back 👋</h1>
-          <p>Your AI-powered life planning dashboard for clarity, focus, and momentum.</p>
-        </div>
-        <button class="primary-btn" id="openQuickAction">+ Quick Add</button>
-      </header>
+    <!-- RIGHT PANEL: LIVE PREVIEW -->
+    <main class="preview-panel">
+      <div id="websitePreview" class="website-preview light-theme">
+        
+        <header class="site-header">
+          <div id="faviconDisplay" class="favicon-display">🌐</div>
 
-      <!-- Stats -->
-      <section class="stats-grid">
-        <div class="card stat-card">
-          <h3>Goals in Progress</h3>
-          <p class="stat-number">5</p>
-        </div>
-        <div class="card stat-card">
-          <h3>Tasks Due Today</h3>
-          <p class="stat-number" id="taskCount">3</p>
-        </div>
-        <div class="card stat-card">
-          <h3>Habits Completed</h3>
-          <p class="stat-number" id="habitCount">2/4</p>
-        </div>
-        <div class="card stat-card">
-          <h3>Opportunities Tracked</h3>
-          <p class="stat-number">4</p>
-        </div>
-      </section>
-
-      <!-- Main Dashboard Grid -->
-      <section class="dashboard-grid">
-        <!-- AI Coach Summary -->
-        <div class="card large-card">
-          <h2>AI Life Coach Summary</h2>
-          <p class="coach-text">
-            Your focus this week is <strong>career momentum + consistency</strong>.
-            Prioritize your top 3 actions, follow up on networking opportunities,
-            and complete your morning routine 4 days this week.
-          </p>
-          <div class="pill-row">
-            <span class="pill">Top Priority: Career Growth</span>
-            <span class="pill">Theme: Consistency</span>
-            <span class="pill">Energy: Focused</span>
+          <div class="header-text">
+            <h2 id="previewTitle">My Personal Website</h2>
+            <p id="previewDescription">A clean, simple, customizable website built with MyApp.</p>
           </div>
+        </header>
+
+        <nav id="breadcrumbs" class="breadcrumbs">
+          Home > Portfolio > About
+        </nav>
+
+        <div id="searchContainer" class="search-container">
+          <input type="text" placeholder="Search this site..." />
         </div>
 
-        <!-- Life Blueprint -->
-        <div class="card">
-          <h2>Life Blueprint</h2>
-          <ul class="simple-list">
-            <li>🎯 Land a media/entertainment opportunity</li>
-            <li>📚 Build skill growth plan</li>
-            <li>🤝 Expand networking pipeline</li>
-            <li>🧠 Strengthen routines + accountability</li>
-          </ul>
-        </div>
+        <section class="hero-section">
+          <h3>Live Website Preview</h3>
+          <p>This is how your website can look after customization.</p>
+          <img id="previewImage" src="https://via.placeholder.com/600x300?text=Preview+Image" alt="Share Preview" />
+        </section>
 
-        <!-- Daily Priorities -->
-        <div class="card">
-          <div class="card-header">
-            <h2>Daily Priorities</h2>
-            <button class="secondary-btn" id="addTaskBtn">+ Add Task</button>
-          </div>
-          <ul class="check-list" id="taskList">
-            <li><label><input type="checkbox" /> Follow up with mentor contact</label></li>
-            <li><label><input type="checkbox" /> Update application tracker</label></li>
-            <li><label><input type="checkbox" /> Complete 30-minute learning block</label></li>
-          </ul>
-        </div>
-
-        <!-- Habit Tracker -->
-        <div class="card">
-          <h2>Habit Tracker</h2>
-          <ul class="check-list" id="habitList">
-            <li><label><input type="checkbox" checked /> Morning planning</label></li>
-            <li><label><input type="checkbox" checked /> LinkedIn outreach</label></li>
-            <li><label><input type="checkbox" /> Workout / movement</label></li>
-            <li><label><input type="checkbox" /> Evening reflection</label></li>
-          </ul>
-        </div>
-
-        <!-- Opportunity Tracker -->
-        <div class="card">
-          <h2>Opportunity Tracker</h2>
-          <ul class="simple-list">
-            <li>🎬 Paramount networking event — Follow up</li>
-            <li>📌 Fellowship application — Due Friday</li>
-            <li>💼 Media role application — Draft in progress</li>
-            <li>🤝 New LinkedIn contact — Send message</li>
-          </ul>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="card">
-          <h2>Quick Actions</h2>
-          <div class="action-grid">
-            <button class="action-btn">Add Goal</button>
-            <button class="action-btn">Add Habit</button>
-            <button class="action-btn">Track Opportunity</button>
-            <button class="action-btn">Weekly Review</button>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- Quick Add Modal -->
-  <div class="modal hidden" id="quickModal">
-    <div class="modal-content">
-      <h2>Quick Add</h2>
-      <p>Add a quick task to your dashboard.</p>
-      <input type="text" id="quickTaskInput" placeholder="Enter a new task..." />
-      <div class="modal-actions">
-        <button class="secondary-btn" id="closeModal">Cancel</button>
-        <button class="primary-btn" id="saveTaskBtn">Save Task</button>
+        <footer class="site-footer"></footer>
       </div>
-    </div>
+    </main>
+
   </div>
 
   <script src="script.js"></script>
