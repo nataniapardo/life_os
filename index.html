@@ -1,81 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Life OS Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifePlan AI | Professional Dashboard</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="logo">LifePlan AI</div>
+            <ul class="nav-links">
+                <li class="active">Dashboard</li>
+                <li>Calendar</li>
+                <li>Networking (LinkedIn)</li>
+                <li>Documents</li>
+                <li>Settings</li>
+            </ul>
+            <div class="user-controls">
+                <input type="color" id="colorPicker" title="Choose Theme Color">
+                <input type="text" id="hexInput" placeholder="#ffffff" maxlength="7">
+            </div>
+        </nav>
 
-  <!-- HEADER -->
-  <header>
-    <h1>Life OS Dashboard</h1>
-    <input type="text" id="searchBox" placeholder="Search (keywords, tasks, notes...)">
-  </header>
+        <main class="content">
+            <header class="top-bar">
+                <div class="search-container">
+                    <input type="text" id="globalSearch" placeholder="Search sectors, synonyms, or keywords...">
+                </div>
+                <button class="upload-btn" onclick="triggerUpload()">Upload Plan Document</button>
+                <input type="file" id="docUpload" hidden>
+            </header>
 
-  <!-- SIDEBAR -->
-  <aside>
-    <h3>Customize</h3>
-    
-    <label>Background Color:</label>
-    <input type="color" id="colorPicker">
+            <section class="dashboard-grid">
+                <div class="card todo-card">
+                    <h3>Daily Life Plan <span id="currentDate"></span></h3>
+                    <div class="error-alert" id="aiAlert">Note: 2 entries require manual verification.</div>
+                    <ul id="todoList">
+                        </ul>
+                </div>
 
-    <label>HEX Code:</label>
-    <input type="text" id="hexInput" placeholder="#ffffff">
-    
-    <label>Upload Background:</label>
-    <input type="file" id="bgUpload">
+                <div class="card networking-card">
+                    <h3>Industry Mentors & Leads</h3>
+                    <div class="contact-list" id="contactList">
+                        <p class="placeholder">Upload LinkedIn data to populate...</p>
+                    </div>
+                </div>
 
-    <button onclick="applyHex()">Apply HEX</button>
-  </aside>
-
-  <!-- MAIN DASHBOARD -->
-  <main>
-
-    <!-- CALENDAR / DUE DATE -->
-    <section class="card">
-      <h2>📅 Due Dates</h2>
-      <input type="date" id="dueDate">
-      <button onclick="addDueDate()">Add Date</button>
-      <ul id="dateList"></ul>
-    </section>
-
-    <!-- TASKS -->
-    <section class="card">
-      <h2>✅ Daily Tasks</h2>
-      <input type="text" id="taskInput" placeholder="Enter task...">
-      <button onclick="addTask()">Add Task</button>
-      <ul id="taskList"></ul>
-    </section>
-
-    <!-- NOTES -->
-    <section class="card">
-      <h2>🧠 Notes / Ideas</h2>
-      <textarea id="notes" placeholder="Write notes..."></textarea>
-    </section>
-
-    <!-- CONTACTS -->
-    <section class="card">
-      <h2>👥 Contacts</h2>
-      <input type="text" id="contactInput" placeholder="Name - Role - Company">
-      <button onclick="addContact()">Add Contact</button>
-      <ul id="contactList"></ul>
-    </section>
-
-    <!-- ALERTS -->
-    <section class="card">
-      <h2>⚠️ Alerts</h2>
-      <p id="alertBox">No issues detected</p>
-    </section>
-
-  </main>
-
-  <script src="script.js"></script>
+                <div class="card progress-card">
+                    <h3>Plan Progress</h3>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <p id="progressText">0% of milestones reached</p>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
-    
-
-        
 
        
       
