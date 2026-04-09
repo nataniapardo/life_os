@@ -1,410 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>Life OS Dashboard</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="app-container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="logo">Life OS</div>
-      <nav class="nav-menu">
-        <a href="#" class="nav-item active">Dashboard</a>
-        <a href="#" class="nav-item">Life Blueprint</a>
-        <a href="#" class="nav-item">Tasks</a>
-        <a href="#" class="nav-item">Habits</a>
-        <a href="#" class="nav-item">Opportunities</a>
-        <a href="#" class="nav-item">Documents</a>
-        <a href="#" class="nav-item">Contacts</a>
-        <a href="#" class="nav-item">Themes</a>
-        <a href="#" class="nav-item">Progress</a>
-        <a href="#" class="nav-item">Settings</a>
-      </nav>
-    </aside>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <!-- Topbar -->
-      <header class="topbar">
-        <div>
-          <h1>Welcome back 👋</h1>
-          <p>Your AI-powered life planning dashboard for clarity, focus, and momentum.</p>
-        </div>
+  <!-- HEADER -->
+  <header>
+    <h1>Life OS Dashboard</h1>
+    <input type="text" id="searchBox" placeholder="Search (keywords, tasks, notes...)">
+  </header>
 
-        <div class="topbar-actions">
-          <!-- Global Search -->
-          <div class="search-wrapper">
-            <input
-              type="text"
-              id="globalSearch"
-              class="search-input"
-              placeholder="Search across goals, tasks, habits, documents, contacts, opportunities..."
-            />
-            <button class="secondary-btn" id="searchBtn">Search</button>
-          </div>
+  <!-- SIDEBAR -->
+  <aside>
+    <h3>Customize</h3>
+    
+    <label>Background Color:</label>
+    <input type="color" id="colorPicker">
 
-          <button class="primary-btn" id="openQuickAction">+ Quick Add</button>
-        </div>
-      </header>
+    <label>HEX Code:</label>
+    <input type="text" id="hexInput" placeholder="#ffffff">
+    
+    <label>Upload Background:</label>
+    <input type="file" id="bgUpload">
 
-      <!-- Stats -->
-      <section class="stats-grid">
-        <div class="card stat-card">
-          <h3>Goals in Progress</h3>
-          <p class="stat-number">5</p>
-        </div>
-        <div class="card stat-card">
-          <h3>Tasks Due Today</h3>
-          <p class="stat-number" id="taskCount">3</p>
-        </div>
-        <div class="card stat-card">
-          <h3>Habits Completed</h3>
-          <p class="stat-number" id="habitCount">2/4</p>
-        </div>
-        <div class="card stat-card">
-          <h3>Opportunities Tracked</h3>
-          <p class="stat-number">4</p>
-        </div>
-      </section>
+    <button onclick="applyHex()">Apply HEX</button>
+  </aside>
 
-      <!-- Main Dashboard Grid -->
-      <section class="dashboard-grid">
-        <!-- AI Coach Summary -->
-        <div class="card large-card">
-          <h2>AI Life Coach Summary</h2>
-          <p class="coach-text">
-            Your focus this week is <strong>career momentum + consistency</strong>.
-            Prioritize your top 3 actions, follow up on networking opportunities,
-            and complete your morning routine 4 days this week.
-          </p>
-          <div class="pill-row">
-            <span class="pill">Top Priority: Career Growth</span>
-            <span class="pill">Theme: Consistency</span>
-            <span class="pill">Energy: Focused</span>
-          </div>
-        </div>
+  <!-- MAIN DASHBOARD -->
+  <main>
 
-        <!-- Life Blueprint -->
-        <div class="card">
-          <h2>Life Blueprint</h2>
-          <ul class="simple-list">
-            <li>🎯 Land a media/entertainment opportunity</li>
-            <li>📚 Build skill growth plan</li>
-            <li>🤝 Expand networking pipeline</li>
-            <li>🧠 Strengthen routines + accountability</li>
-          </ul>
-        </div>
+    <!-- CALENDAR / DUE DATE -->
+    <section class="card">
+      <h2>📅 Due Dates</h2>
+      <input type="date" id="dueDate">
+      <button onclick="addDueDate()">Add Date</button>
+      <ul id="dateList"></ul>
+    </section>
 
-        <!-- Daily Priorities + Due Date Automation -->
-        <div class="card">
-          <div class="card-header">
-            <h2>Daily Priorities</h2>
-            <button class="secondary-btn" id="addTaskBtn">+ Add Task</button>
-          </div>
+    <!-- TASKS -->
+    <section class="card">
+      <h2>✅ Daily Tasks</h2>
+      <input type="text" id="taskInput" placeholder="Enter task...">
+      <button onclick="addTask()">Add Task</button>
+      <ul id="taskList"></ul>
+    </section>
 
-          <div class="task-controls">
-            <label for="lifePlanYear">Life Plan Year</label>
-            <select id="lifePlanYear">
-              <option value="">Select Year</option>
-              <option value="2026">2026</option>
-              <option value="2027">2027</option>
-              <option value="2028">2028</option>
-            </select>
-            <button class="secondary-btn" id="generateYearTasksBtn">
-              Generate Daily To-Do Lists for Selected Year
-            </button>
-          </div>
+    <!-- NOTES -->
+    <section class="card">
+      <h2>🧠 Notes / Ideas</h2>
+      <textarea id="notes" placeholder="Write notes..."></textarea>
+    </section>
 
-          <ul class="check-list" id="taskList">
-            <li>
-              <label>
-                <input type="checkbox" />
-                Follow up with mentor contact
-              </label>
-              <span class="task-due-date">Due: Today</span>
-            </li>
-            <li>
-              <label>
-                <input type="checkbox" />
-                Update application tracker
-              </label>
-              <span class="task-due-date">Due: Today</span>
-            </li>
-            <li>
-              <label>
-                <input type="checkbox" />
-                Complete 30-minute learning block
-              </label>
-              <span class="task-due-date">Due: Today</span>
-            </li>
-          </ul>
-        </div>
+    <!-- CONTACTS -->
+    <section class="card">
+      <h2>👥 Contacts</h2>
+      <input type="text" id="contactInput" placeholder="Name - Role - Company">
+      <button onclick="addContact()">Add Contact</button>
+      <ul id="contactList"></ul>
+    </section>
 
-        <!-- Habit Tracker -->
-        <div class="card">
-          <h2>Habit Tracker</h2>
-          <ul class="check-list" id="habitList">
-            <li><label><input type="checkbox" checked /> Morning planning</label></li>
-            <li><label><input type="checkbox" checked /> LinkedIn outreach</label></li>
-            <li><label><input type="checkbox" /> Workout / movement</label></li>
-            <li><label><input type="checkbox" /> Evening reflection</label></li>
-          </ul>
-        </div>
+    <!-- ALERTS -->
+    <section class="card">
+      <h2>⚠️ Alerts</h2>
+      <p id="alertBox">No issues detected</p>
+    </section>
 
-        <!-- Opportunity Tracker -->
-        <div class="card">
-          <h2>Opportunity Tracker</h2>
-          <ul class="simple-list">
-            <li>🎬 Paramount networking event — Follow up</li>
-            <li>📌 Fellowship application — Due Friday</li>
-            <li>💼 Media role application — Draft in progress</li>
-            <li>🤝 New LinkedIn contact — Send message</li>
-          </ul>
-        </div>
-
-        <!-- Smart Search + Keywords + Synonyms -->
-        <div class="card">
-          <h2>Smart Search & Keywords</h2>
-          <p class="small-text">
-            Search using keywords, alternate terms, and synonyms to find related information faster.
-          </p>
-          <div class="form-group">
-            <label for="keywordInput">Keywords</label>
-            <input type="text" id="keywordInput" placeholder="e.g. media, fellowship, producer assistant" />
-          </div>
-          <div class="form-group">
-            <label for="synonymInput">Synonyms / Related Terms</label>
-            <input type="text" id="synonymInput" placeholder="e.g. coordinator, production assistant, admin support" />
-          </div>
-          <button class="primary-btn" id="runKeywordSearchBtn">Run Smart Search</button>
-        </div>
-
-        <!-- AI Writing Assistant / Autocorrect -->
-        <div class="card">
-          <h2>AI Writing Assistant</h2>
-          <p class="small-text">
-            Improve spelling, grammar, and wording for user-entered text.
-          </p>
-          <textarea
-            id="writingAssistantInput"
-            rows="5"
-            placeholder="Type or paste your text here for spelling and grammar suggestions..."
-          ></textarea>
-          <div class="modal-actions">
-            <button class="secondary-btn" id="checkGrammarBtn">Check Spelling & Grammar</button>
-            <button class="primary-btn" id="applyCorrectionsBtn">Apply Corrections</button>
-          </div>
-          <div id="writingSuggestions" class="helper-box">
-            Suggestions will appear here...
-          </div>
-        </div>
-
-        <!-- Error Validation / User Alerts -->
-        <div class="card">
-          <h2>Validation & Error Alerts</h2>
-          <p class="small-text">
-            AI can notify users what information needs to be fixed if an error occurs.
-          </p>
-          <ul class="simple-list" id="errorList">
-            <li>⚠ Missing due date for “Fellowship application”</li>
-            <li>⚠ Incomplete contact field in networking tracker</li>
-            <li>⚠ Duplicate keyword detected in search input</li>
-          </ul>
-          <button class="secondary-btn" id="validateDataBtn">Run Validation Check</button>
-        </div>
-
-        <!-- Document Organizer + AI File Extraction -->
-        <div class="card large-card">
-          <h2>Document Organizer & AI Extraction</h2>
-          <p class="small-text">
-            Upload documents and files so AI can extract information and automatically place it in the correct section
-            (tasks, contacts, goals, opportunities, planners, notes, and timelines).
-          </p>
-
-          <div class="form-group">
-            <label for="documentUpload">Upload Documents / Files</label>
-            <input type="file" id="documentUpload" multiple />
-          </div>
-
-          <div class="form-group">
-            <label for="plannerDocType">Document Type</label>
-            <select id="plannerDocType">
-              <option value="">Select Type</option>
-              <option value="planner">Planner</option>
-              <option value="resume">Resume</option>
-              <option value="calendar">Calendar</option>
-              <option value="networking">Networking List</option>
-              <option value="job">Job Application Tracker</option>
-              <option value="notes">Notes</option>
-            </select>
-          </div>
-
-          <div class="action-grid">
-            <button class="action-btn" id="extractDocumentBtn">Extract with AI</button>
-            <button class="action-btn" id="organizeDocumentsBtn">Organize Documents</button>
-            <button class="action-btn" id="buildPlannerBtn">Build Planner Layout</button>
-          </div>
-
-          <div class="helper-box" id="documentExtractionResults">
-            Extracted content preview will appear here...
-          </div>
-        </div>
-
-        <!-- Company / Networking Contact Extraction -->
-        <div class="card large-card">
-          <h2>Company & Networking Contact Intelligence</h2>
-          <p class="small-text">
-            Read public employer and employee information from LinkedIn or job networking platforms and save public shared contacts
-            such as employers, recruiters, board directors, mentors, and hiring team members.
-          </p>
-
-          <div class="form-group">
-            <label for="companyInput">Company Name</label>
-            <input type="text" id="companyInput" placeholder="e.g. Paramount, Netflix, NBCUniversal" />
-          </div>
-
-          <div class="form-group">
-            <label for="networkPlatform">Networking Platform</label>
-            <select id="networkPlatform">
-              <option value="linkedin">LinkedIn</option>
-              <option value="indeed">Indeed</option>
-              <option value="glassdoor">Glassdoor</option>
-              <option value="handshake">Handshake</option>
-              <option value="other">Other Job Networking Platform</option>
-            </select>
-          </div>
-
-          <div class="action-grid">
-            <button class="action-btn" id="scanCompanyBtn">Scan Public Company Profiles</button>
-            <button class="action-btn" id="savePublicContactsBtn">Save Public Contacts</button>
-            <button class="action-btn" id="viewContactsBtn">Open Contact List</button>
-          </div>
-
-          <div class="helper-box" id="contactResults">
-            Public shared contact results will appear here...
-          </div>
-        </div>
-
-        <!-- Saved Contacts -->
-        <div class="card">
-          <h2>Saved Public Contacts</h2>
-          <ul class="simple-list" id="publicContactsList">
-            <li>👤 Recruiter — Paramount Media Labs</li>
-            <li>👤 Board Director — Media & Entertainment Company</li>
-            <li>👤 Hiring Manager — Production Team</li>
-            <li>👤 Mentor — Entertainment Industry Contact</li>
-          </ul>
-        </div>
-
-        <!-- Theme / Background Customization -->
-        <div class="card large-card">
-          <h2>Theme & Dashboard Customization</h2>
-          <p class="small-text">
-            Customize your dashboard with background images, theme styles, color palettes, hex codes, and individually adjustable design features.
-          </p>
-
-          <div class="form-group">
-            <label for="backgroundImageUpload">Upload Background Image</label>
-            <input type="file" id="backgroundImageUpload" accept="image/*" />
-          </div>
-
-          <div class="form-group">
-            <label for="backgroundColorPicker">Choose Background Color</label>
-            <input type="color" id="backgroundColorPicker" value="#1f2937" />
-          </div>
-
-          <div class="form-group">
-            <label for="hexCodeInput">Paste Hex Code</label>
-            <div class="inline-input-group">
-              <input type="text" id="hexCodeInput" placeholder="#4F46E5" />
-              <button class="secondary-btn" id="applyHexBtn">Apply Hex</button>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="themeSelector">Choose Theme Style</label>
-            <select id="themeSelector">
-              <option value="sleek-professional">Sleek Professional</option>
-              <option value="minimal-modern">Minimal Modern</option>
-              <option value="creative-clean">Creative Clean</option>
-              <option value="executive-dark">Executive Dark</option>
-              <option value="soft-focus">Soft Focus</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="paletteSelector">Choose Color Palette</label>
-            <select id="paletteSelector">
-              <option value="cool-blue">Cool Blue</option>
-              <option value="midnight-navy">Midnight Navy</option>
-              <option value="sage-neutral">Sage Neutral</option>
-              <option value="lavender-tech">Lavender Tech</option>
-              <option value="sunset-contrast">Sunset Contrast</option>
-            </select>
-          </div>
-
-          <div class="action-grid">
-            <button class="action-btn" id="previewThemeBtn">Preview Theme</button>
-            <button class="action-btn" id="saveThemeBtn">Save Custom Theme</button>
-            <button class="action-btn" id="resetThemeBtn">Reset Theme</button>
-          </div>
-        </div>
-
-        <!-- Planner / Calendar Automation -->
-        <div class="card">
-          <h2>Planner & Calendar Automation</h2>
-          <p class="small-text">
-            Automatically create planners, organize documents, and populate calendars with due dates and tasks.
-          </p>
-
-          <div class="action-grid">
-            <button class="action-btn" id="autoPopulateCalendarBtn">Auto-Populate Calendar</button>
-            <button class="action-btn" id="generatePlannerPagesBtn">Generate Planner Pages</button>
-            <button class="action-btn" id="syncDueDatesBtn">Sync Due Dates</button>
-            <button class="action-btn" id="organizeToDoBtn">Organize To-Do Lists</button>
-          </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="card">
-          <h2>Quick Actions</h2>
-          <div class="action-grid">
-            <button class="action-btn">Add Goal</button>
-            <button class="action-btn">Add Habit</button>
-            <button class="action-btn">Track Opportunity</button>
-            <button class="action-btn">Weekly Review</button>
-            <button class="action-btn">Upload Document</button>
-            <button class="action-btn">Add Contact</button>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- Quick Add Modal -->
-  <div class="modal hidden" id="quickModal">
-    <div class="modal-content">
-      <h2>Quick Add</h2>
-      <p>Add a quick task with optional due date.</p>
-
-      <input type="text" id="quickTaskInput" placeholder="Enter a new task..." />
-      <input type="date" id="quickTaskDueDate" />
-
-      <div class="modal-actions">
-        <button class="secondary-btn" id="closeModal">Cancel</button>
-        <button class="primary-btn" id="saveTaskBtn">Save Task</button>
-      </div>
-    </div>
-  </div>
+  </main>
 
   <script src="script.js"></script>
 </body>
 </html>
+    
 
+        
 
        
+      
+
+  
          
 
