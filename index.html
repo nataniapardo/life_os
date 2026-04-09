@@ -3,85 +3,138 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MyApp Site Customizer</title>
+  <title>AI Life Planner Dashboard</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="app-container">
-    
-    <!-- LEFT PANEL: CONTROLS -->
-    <aside class="customizer-panel">
-      <h1>MyApp Site Customizer</h1>
-      <p class="subtitle">Customize your website like a Notion-style site builder.</p>
 
-      <div class="control-group">
-        <label for="siteTitle">Site Title</label>
-        <input type="text" id="siteTitle" value="My Personal Website" />
-      </div>
+    <!-- LEFT SIDEBAR / CONTROL PANEL -->
+    <aside class="sidebar">
+      <h1>AI Life Planner</h1>
+      <p class="subtitle">Smart planning, automation, and customization</p>
 
-      <div class="control-group">
-        <label for="siteDescription">Site Description</label>
-        <textarea id="siteDescription" rows="3">A clean, simple, customizable website built with MyApp.</textarea>
-      </div>
+      <section class="panel-section">
+        <h2>Visual Customization</h2>
 
-      <div class="control-group">
-        <label for="faviconInput">Favicon (Emoji)</label>
-        <input type="text" id="faviconInput" value="🌐" maxlength="2" />
-      </div>
+        <label for="backgroundImage">Upload Background Image</label>
+        <input type="file" id="backgroundImage" accept="image/*" />
 
-      <div class="control-group">
-        <label for="themeSelect">Theme</label>
-        <select id="themeSelect">
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-        </select>
-      </div>
+        <label for="backgroundColor">Choose Background Color</label>
+        <input type="color" id="backgroundColor" value="#f4f5f7" />
+      </section>
 
-      <div class="control-group checkbox-group">
-        <label><input type="checkbox" id="toggleBreadcrumbs" checked /> Show Breadcrumbs</label>
-      </div>
+      <section class="panel-section">
+        <h2>Document Upload + AI Extraction</h2>
 
-      <div class="control-group checkbox-group">
-        <label><input type="checkbox" id="toggleSearch" checked /> Show Search Bar</label>
-      </div>
+        <label for="documentUpload">Upload Document / File</label>
+        <input type="file" id="documentUpload" accept=".txt,.pdf,.doc,.docx,.json" />
 
-      <div class="control-group">
-        <label for="shareImageUrl">Share Preview Image URL</label>
-        <input type="text" id="shareImageUrl" value="https://via.placeholder.com/600x300?text=Preview+Image" />
-      </div>
+        <button id="simulateAIButton">Simulate AI Extraction & Auto-Placement</button>
+        <p class="small-note">
+          Demo version: simulates AI placement into due dates, meetings, tasks, and contacts.
+        </p>
+      </section>
 
-      <button id="applyButton">Apply Customization</button>
+      <section class="panel-section">
+        <h2>Search</h2>
+
+        <label for="searchInput">Search by Keywords / Synonyms</label>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Try: deadline, due date, recruiter, meeting"
+        />
+        <button id="searchButton">Search</button>
+      </section>
+
+      <section class="panel-section">
+        <h2>Text Input + Smart Suggestions</h2>
+
+        <label for="textInput">Enter Notes / Task</label>
+        <textarea
+          id="textInput"
+          rows="4"
+          placeholder="Type something like: meting tomorow with recruter..."
+        ></textarea>
+        <button id="checkTextButton">Check Spelling & Grammar</button>
+        <div id="suggestionBox" class="suggestion-box"></div>
+      </section>
+
+      <section class="panel-section">
+        <h2>Pomodoro Timer</h2>
+        <div class="timer-display" id="timerDisplay">25:00</div>
+        <div class="timer-buttons">
+          <button id="startTimer">Start</button>
+          <button id="pauseTimer">Pause</button>
+          <button id="resetTimer">Reset</button>
+        </div>
+      </section>
     </aside>
 
-    <!-- RIGHT PANEL: LIVE PREVIEW -->
-    <main class="preview-panel">
-      <div id="websitePreview" class="website-preview light-theme">
-        
-        <header class="site-header">
-          <div id="faviconDisplay" class="favicon-display">🌐</div>
+    <!-- MAIN DASHBOARD -->
+    <main class="dashboard" id="dashboard">
+      <header class="dashboard-header">
+        <div>
+          <h2>My AI Life Plan Dashboard</h2>
+          <p>Automatically organized tasks, meetings, deadlines, and professional contacts</p>
+        </div>
+        <div class="status-badge">Frontend Prototype</div>
+      </header>
 
-          <div class="header-text">
-            <h2 id="previewTitle">My Personal Website</h2>
-            <p id="previewDescription">A clean, simple, customizable website built with MyApp.</p>
-          </div>
-        </header>
+      <div id="alertBox" class="alert-box hidden"></div>
 
-        <nav id="breadcrumbs" class="breadcrumbs">
-          Home > Portfolio > About
-        </nav>
+      <section class="dashboard-grid">
 
-        <div id="searchContainer" class="search-container">
-          <input type="text" placeholder="Search this site..." />
+        <!-- CALENDAR / DUE DATES -->
+        <div class="card">
+          <h3>Calendar Due Dates</h3>
+          <ul id="dueDatesList" class="data-list">
+            <li>No due dates yet</li>
+          </ul>
         </div>
 
-        <section class="hero-section">
-          <h3>Live Website Preview</h3>
-          <p>This is how your website can look after customization.</p>
-          <img id="previewImage" src="https://via.placeholder.com/600x300?text=Preview+Image" alt="Share Preview" />
-        </section>
+        <!-- MEETINGS -->
+        <div class="card">
+          <h3>Meetings (Online / In-Person)</h3>
+          <ul id="meetingsList" class="data-list">
+            <li>No meetings yet</li>
+          </ul>
+        </div>
 
-        <footer class="site-footer"></footer>
-      </div>
+        <!-- TO-DO LIST -->
+        <div class="card">
+          <h3>Daily To-Do List</h3>
+          <ul id="todoList" class="data-list">
+            <li>No tasks yet</li>
+          </ul>
+        </div>
+
+        <!-- PROFESSIONAL CONTACTS -->
+        <div class="card">
+          <h3>Professional Contacts</h3>
+          <ul id="contactsList" class="data-list">
+            <li>No contacts yet</li>
+          </ul>
+        </div>
+
+        <!-- ABOUT / EXTRACTED SUMMARY -->
+        <div class="card full-width">
+          <h3>AI Extracted Summary</h3>
+          <p id="summaryText">
+            Upload a file and click “Simulate AI Extraction & Auto-Placement” to see how information can be organized automatically.
+          </p>
+        </div>
+
+        <!-- SEARCH RESULTS -->
+        <div class="card full-width">
+          <h3>Search Results</h3>
+          <div id="searchResults">
+            <p>No search results yet</p>
+          </div>
+        </div>
+
+      </section>
     </main>
 
   </div>
