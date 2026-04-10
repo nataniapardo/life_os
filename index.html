@@ -1,108 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Custom Life OS</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Life OS Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header>
-    <h1>Life OS</h1>
-    <input type="text" id="globalSearch" placeholder="Search everything...">
-  </header>
+<div class="app">
 
-  <!-- SIDEBAR -->
-  <aside>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>Life OS</h2>
     <nav>
       <ul>
-        <li onclick="switchPage('homepage')">Homepage</li>
-        <li onclick="switchPage('dashboard')">Dashboard</li>
-        <li onclick="switchPage('personal')">Personal</li>
-        <li onclick="switchPage('work')">Work</li>
-        <li onclick="switchPage('networking')">Networking</li>
-        <li onclick="switchPage('journal')">Journal</li>
-        <li onclick="switchPage('calendar')">Calendar</li>
-        <li onclick="switchPage('pomodoro')">Pomodoro Timer</li>
-        <li onclick="switchPage('uploads')">Upload Files</li>
+        <li onclick="navigate('dashboard')">Dashboard</li>
+        <li onclick="navigate('tasks')">Tasks</li>
+        <li onclick="navigate('documents')">Documents</li>
+        <li onclick="navigate('contacts')">Contacts</li>
+        <li onclick="navigate('themes')">Themes</li>
       </ul>
     </nav>
-
-    <!-- Customization -->
-    <h3>Customize</h3>
-    <label>Background Color:</label>
-    <input type="color" id="colorPicker">
-    <label>Upload Background:</label>
-    <input type="file" id="bgUpload">
   </aside>
 
-  <!-- MAIN CONTENT -->
-  <main>
-    <div id="content">
+  <!-- Main -->
+  <main class="main">
 
-      <!-- Pages -->
-      <section id="homepage" class="page active">
-        <h2>Homepage</h2>
-        <p>Welcome to your Life OS. Customize your experience.</p>
-      </section>
-
-      <section id="dashboard" class="page">
-        <h2>Dashboard</h2>
-        <ul id="taskList"></ul>
-        <input type="text" id="taskInput" placeholder="Add task...">
-        <button onclick="addTask()">Add Task</button>
-      </section>
-
-      <section id="personal" class="page">
-        <h2>Personal Page</h2>
-        <textarea placeholder="Write personal notes..."></textarea>
-      </section>
-
-      <section id="work" class="page">
-        <h2>Work Page</h2>
-        <textarea placeholder="Write work notes..."></textarea>
-      </section>
-
-      <section id="networking" class="page">
-        <h2>Networking Page</h2>
-        <input type="text" placeholder="Add Contact Name - Role - Company" id="contactInput">
-        <button onclick="addContact()">Add Contact</button>
-        <ul id="contactList"></ul>
-      </section>
-
-      <section id="journal" class="page">
-        <h2>Journal</h2>
-        <textarea placeholder="Journal your day..."></textarea>
-      </section>
-
-      <section id="calendar" class="page">
-        <h2>Calendar</h2>
-        <input type="date" id="dueDate">
-        <button onclick="addDueDate()">Add Date</button>
-        <ul id="dateList"></ul>
-      </section>
-
-      <section id="pomodoro" class="page">
-        <h2>Pomodoro Timer</h2>
-        <p id="timerDisplay">25:00</p>
-        <button onclick="startPomodoro()">Start</button>
-        <button onclick="resetPomodoro()">Reset</button>
-      </section>
-
-      <section id="uploads" class="page">
-        <h2>Upload Files</h2>
-        <input type="file" id="fileUpload" multiple>
-        <ul id="fileList"></ul>
-      </section>
-
+    <!-- Top Bar -->
+    <div class="topbar">
+      <input type="text" id="globalSearch" placeholder="Search anything..." />
+      <button onclick="handleSearch()">Search</button>
     </div>
-  </main>
 
-  <script src="script.js"></script>
+    <!-- Dashboard -->
+    <section id="dashboard" class="page active">
+      <h1>Dashboard</h1>
+      <div class="cards">
+        <div class="card">Tasks Today: <span id="taskCount">0</span></div>
+        <div class="card">Upcoming Deadlines</div>
+        <div class="card">Productivity Insights</div>
+      </div>
+    </section>
+
+    <!-- Tasks -->
+    <section id="tasks" class="page">
+      <h1>Tasks</h1>
+
+      <div class="task-input">
+        <input type="text" id="taskText" placeholder="Enter task..." />
+        <input type="date" id="taskDate" />
+        <button onclick="addTask()">Add Task</button>
+      </div>
+
+      <ul id="taskList"></ul>
+    </section>
+
+    <!-- Documents -->
+    <section id="documents" class="page">
+      <h1>Documents</h1>
+      <input type="file" id="fileUpload" />
+      <p>AI extraction will appear here (future integration)</p>
+    </section>
+
+    <!-- Contacts -->
+    <section id="contacts" class="page">
+      <h1>Contacts</h1>
+      <p>Networking & contact intelligence will populate here</p>
+    </section>
+
+    <!-- Themes -->
+    <section id="themes" class="page">
+      <h1>Customize Theme</h1>
+
+      <label>Pick Color:</label>
+      <input type="color" id="colorPicker" onchange="changeThemeColor(this.value)" />
+
+      <label>Enter HEX:</label>
+      <input type="text" id="hexInput" placeholder="#000000" />
+      <button onclick="applyHex()">Apply</button>
+    </section>
+
+  </main>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
-       
       
 
   
