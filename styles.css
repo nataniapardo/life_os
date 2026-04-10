@@ -1,56 +1,61 @@
-/* General Layout */
-body {
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   font-family: Arial, sans-serif;
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  grid-template-rows: 60px 1fr;
+}
+
+body {
+  background: #f5f6fa;
+}
+
+.app {
+  display: flex;
   height: 100vh;
 }
 
-/* Header */
-header {
-  grid-column: 1 / span 2;
-  background: #111;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-}
-
-header input {
-  padding: 8px;
-  width: 300px;
-}
-
 /* Sidebar */
-aside {
-  background: #f4f4f4;
-  padding: 15px;
-  border-right: 1px solid #ddd;
-}
-
-aside input {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 8px;
-}
-
-aside nav ul {
-  list-style: none;
-  padding: 0;
-}
-
-aside nav ul li {
-  margin: 10px 0;
-  cursor: pointer;
-}
-
-/* Main content */
-main {
+.sidebar {
+  width: 220px;
+  background: #111;
+  color: #fff;
   padding: 20px;
-  overflow-y: auto;
+}
+
+.sidebar h2 {
+  margin-bottom: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar li {
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.sidebar li:hover {
+  background: #333;
+}
+
+/* Main */
+.main {
+  flex: 1;
+  padding: 20px;
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.topbar input {
+  flex: 1;
+  padding: 10px;
 }
 
 /* Pages */
@@ -62,20 +67,50 @@ main {
   display: block;
 }
 
-textarea {
-  width: 100%;
-  height: 100px;
-  margin-top: 10px;
-  padding: 8px;
+/* Cards */
+.cards {
+  display: flex;
+  gap: 20px;
 }
 
-/* Lists */
-ul {
-  list-style: none;
-  padding: 0;
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  flex: 1;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-li {
-  padding: 5px 0;
-  border-bottom: 1px solid #eee;
+/* Tasks */
+.task-input {
+  margin-bottom: 20px;
+}
+
+.task-input input {
+  padding: 10px;
+  margin-right: 10px;
+}
+
+#taskList li {
+  background: white;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+/* Theme */
+:root {
+  --primary-color: #4CAF50;
+}
+
+button {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
 }
