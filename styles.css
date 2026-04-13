@@ -9,18 +9,17 @@ body {
   background: #0f172a;
   color: white;
   display: grid;
-  grid-template-columns: 260px 1fr;
-  grid-template-rows: 70px 1fr;
+  grid-template-columns: 220px 1fr;
   height: 100vh;
 }
 
 /* HEADER */
 header {
   grid-column: 1 / span 2;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+  padding: 15px;
   background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: space-between;
 }
 
 /* SIDEBAR */
@@ -30,8 +29,9 @@ aside {
 }
 
 aside li {
+  list-style: none;
+  padding: 10px;
   cursor: pointer;
-  padding: 8px;
 }
 
 /* MAIN */
@@ -39,18 +39,26 @@ main {
   padding: 20px;
 }
 
-/* CARDS */
+/* CARD */
 .card {
   background: rgba(255,255,255,0.05);
   padding: 20px;
-  border-radius: 12px;
+  border-radius: 10px;
 }
 
-/* PAGES */
+/* PAGE SYSTEM */
 .page {
   display: none;
 }
 
 .page.active {
   display: block;
+}
+
+/* INPUTS */
+input, button {
+  display: block;
+  margin-top: 10px;
+  padding: 10px;
+  width: 100%;
 }
