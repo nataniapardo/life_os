@@ -176,4 +176,8 @@ function renderTasks() {
     li.textContent = task;
     list.appendChild(li);
   });
+  
+}
+function signup() {
+  return CreateAccount();
 }
