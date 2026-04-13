@@ -5,83 +5,91 @@ const SUPABASE_KEY = "sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl";
 const supabaseClient = supabase.createClient("https://bzwnjtofcduxllafdybw.supabase.co", "sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl");
 
 
-// PAGE SWITCH
-function switchPage(id) {
+// =========================
+// PAGE SYSTEM (ISOLATION)
+// =========================
+function switchPage(pageId) {
+  const isLoggedIn = localStorage.getItem("loggedIn");
+
+  // protect dashboard
+  if (pageId === "dashboard" && !isLoggedIn) {
+    alert("Please login first");
+    return;
+  }
+
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+  document.getElementById(pageId).classList.add("active");
 }
 
+// HOME BUTTON
+function goHome() {
+  switchPage("home");
+}
+
+// =========================
 // CLOCK
+// =========================
 setInterval(() => {
-  document.getElementById("clock").textContent = new Date().toLocaleTimeString();
+  document.getElementById("clock").textContent =
+    new Date().toLocaleTimeString();
 }, 1000);
 
 // =========================
-// BOOKMARK SYSTEM
+// AUTH SYSTEM (LOCAL STORAGE)
 // =========================
-function bookmark(page) {
-  let bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
+function signup() {
+  let user = signUser.value;
+  let pass = signPass.value;
 
-  if (!bookmarks.includes(page)) {
-    bookmarks.push(page);
-    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
-    renderBookmarks();
+  localStorage.setItem("user", JSON.stringify({ user, pass }));
+
+  alert("Account created!");
+  switchPage("login");
+}
+
+function login() {
+  let user = loginUser.value;
+  let pass = loginPass.value;
+
+  let stored = JSON.parse(localStorage.getItem("user"));
+
+  if (stored && stored.user === user && stored.pass === pass) {
+    localStorage.setItem("loggedIn", "true");
+    alert("Login successful!");
+    switchPage("dashboard");
+  } else {
+    alert("Invalid credentials");
   }
 }
 
-function renderBookmarks() {
-  let list = document.getElementById("bookmarkList");
-  list.innerHTML = "";
+// =========================
+// DASHBOARD TASKS
+// =========================
+function addTask() {
+  let val = taskInput.value;
+  if (!val) return;
 
-  let bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
+  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  tasks.push(val);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
 
-  bookmarks.forEach(p => {
+  renderTasks();
+  taskInput.value = "";
+}
+
+function renderTasks() {
+  taskList.innerHTML = "";
+  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+  tasks.forEach(t => {
     let li = document.createElement("li");
-    li.textContent = p;
-    li.onclick = () => switchPage(p);
-    list.appendChild(li);
+    li.textContent = t;
+    taskList.appendChild(li);
   });
 }
 
-// =========================
-// CUSTOMIZATION SYSTEM
-// =========================
-
-function applySettings() {
-  // FONT
-  document.body.style.fontFamily = document.getElementById("fontSelect").value;
-
-  // HEX COLOR
-  let color = document.getElementById("hexInput").value || document.getElementById("colorPicker").value;
-  document.body.style.backgroundColor = color;
-
-  // SAVE SETTINGS
-  let settings = {
-    font: fontSelect.value,
-    color: color,
-    timeFormat: timeFormat.value,
-    country: countrySelect.value,
-    state: stateSelect.value,
-    currency: currencySelect.value
-  };
-
-  localStorage.setItem("settings", JSON.stringify(settings));
-}
-
-// LOAD SETTINGS (MULTI-UPDATE SUPPORT)
-function loadSettings() {
-  let settings = JSON.parse(localStorage.getItem("settings"));
-  if (!settings) return;
-
-  document.body.style.fontFamily = settings.font;
-  document.body.style.backgroundColor = settings.color;
-}
-
-// =========================
 // INIT
-// =========================
-renderBookmarks();
-loadSettings();
+renderTasks();
   
   
 
