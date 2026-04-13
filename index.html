@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Life OS</title>
+
   <link rel="stylesheet" href="styles.css">
+
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 
@@ -42,6 +45,7 @@
 
     <input id="taskInput" placeholder="Add task">
     <button onclick="addTask()">Add Task</button>
+
     <ul id="taskList"></ul>
   </div>
 </section>
@@ -52,7 +56,7 @@
     <h2>Login</h2>
 
     <input id="loginUser" placeholder="Username">
-    <input id="loginPass" placeholder="Password" type="password">
+    <input id="loginPass" type="password" placeholder="Password">
 
     <button onclick="login()">Login</button>
   </div>
@@ -64,14 +68,29 @@
     <h2>Sign Up</h2>
 
     <input id="signUser" placeholder="Username">
-    <input id="signPass" placeholder="Password" type="password">
+    <input id="signPass" type="password" placeholder="Password">
 
-    <button onclick="signup()">Create Account</button>
+    <!-- IMPORTANT: added ID for JS event listener -->
+    <button id="signupBtn">Create Account</button>
   </div>
 </section>
 
 </main>
 
+<!-- ========================= -->
+<!-- SCRIPT LOADING ORDER FIX -->
+<!-- ========================= -->
 <script src="script.js"></script>
+
+<script>
+  // SAFE EVENT BINDING (no inline onclick)
+  document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("signupBtn");
+    if (btn) {
+      btn.addEventListener("click", signup);
+    }
+  });
+</script>
+
 </body>
 </html>
