@@ -4,33 +4,23 @@
   <meta charset="UTF-8">
   <title>Life OS</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 
 <body>
 
 <header>
-  <h1 onclick="switchPage('home')" class="logo">Life OS</h1>
+  <h1 onclick="goHome()" class="logo">Life OS</h1>
   <div id="clock"></div>
-
-  <input type="text" id="search" placeholder="Search...">
 </header>
 
 <aside>
-  <h3>Pages</h3>
+  <h3>Navigation</h3>
   <ul>
     <li onclick="switchPage('home')">Home</li>
     <li onclick="switchPage('dashboard')">Dashboard</li>
-    <li onclick="switchPage('personal')">Personal</li>
-    <li onclick="switchPage('work')">Work</li>
-    <li onclick="switchPage('calendar')">Calendar</li>
-    <li onclick="switchPage('uploads')">Uploads</li>
-    <li onclick="switchPage('weather')">Weather</li>
-    <li onclick="switchPage('customization')">Customization</li>
+    <li onclick="switchPage('login')">Login</li>
+    <li onclick="switchPage('signup')">Sign Up</li>
   </ul>
-
-  <h3>Bookmarks</h3>
-  <ul id="bookmarkList"></ul>
 </aside>
 
 <main>
@@ -39,7 +29,7 @@
 <section id="home" class="page active">
   <div class="card">
     <h2>Welcome to Life OS</h2>
-    <p>Navigate using sidebar or bookmarks.</p>
+    <p>Your all-in-one life productivity system.</p>
   </div>
 </section>
 
@@ -47,108 +37,35 @@
 <section id="dashboard" class="page">
   <div class="card">
     <h2>Dashboard</h2>
-    <button onclick="bookmark('dashboard')">Bookmark Page</button>
+    <p>This page is only visible after login.</p>
+
     <input id="taskInput" placeholder="Add task">
-    <button onclick="addTask()">Add</button>
+    <button onclick="addTask()">Add Task</button>
     <ul id="taskList"></ul>
   </div>
 </section>
 
-<!-- PERSONAL -->
-<section id="personal" class="page">
+<!-- LOGIN -->
+<section id="login" class="page">
   <div class="card">
-    <h2>Personal</h2>
-    <button onclick="bookmark('personal')">Bookmark Page</button>
-    <textarea></textarea>
+    <h2>Login</h2>
+
+    <input id="loginUser" placeholder="Username">
+    <input id="loginPass" placeholder="Password" type="password">
+
+    <button onclick="login()">Login</button>
   </div>
 </section>
 
-<!-- WORK -->
-<section id="work" class="page">
+<!-- SIGN UP -->
+<section id="signup" class="page">
   <div class="card">
-    <h2>Work</h2>
-    <button onclick="bookmark('work')">Bookmark Page</button>
-    <textarea></textarea>
-  </div>
-</section>
+    <h2>Sign Up</h2>
 
-<!-- CALENDAR -->
-<section id="calendar" class="page">
-  <div class="card">
-    <h2>Calendar</h2>
-    <button onclick="bookmark('calendar')">Bookmark Page</button>
-    <input type="date" id="dateInput">
-    <button onclick="addDate()">Add</button>
-    <ul id="dateList"></ul>
-  </div>
-</section>
+    <input id="signUser" placeholder="Username">
+    <input id="signPass" placeholder="Password" type="password">
 
-<!-- UPLOADS -->
-<section id="uploads" class="page">
-  <div class="card">
-    <h2>Uploads</h2>
-    <input type="file" id="fileUpload" multiple>
-    <table>
-      <tbody id="aiTable"></tbody>
-    </table>
-  </div>
-</section>
-
-<!-- WEATHER -->
-<section id="weather" class="page">
-  <div class="card">
-    <h2>Weather</h2>
-    <p id="weatherOutput"></p>
-  </div>
-</section>
-
-<!-- CUSTOMIZATION PAGE (NEW CORE SYSTEM) -->
-<section id="customization" class="page">
-  <div class="card">
-    <h2>Customization Panel</h2>
-
-    <!-- FONT -->
-    <label>Font</label>
-    <select id="fontSelect">
-      <option>Arial</option>
-      <option>Inter</option>
-      <option>Georgia</option>
-    </select>
-
-    <!-- TIME FORMAT -->
-    <label>Time Format</label>
-    <select id="timeFormat">
-      <option value="12">12 Hour</option>
-      <option value="24">24 Hour</option>
-    </select>
-
-    <!-- COUNTRY -->
-    <label>Country</label>
-    <select id="countrySelect"></select>
-
-    <!-- STATE -->
-    <label>State</label>
-    <select id="stateSelect"></select>
-
-    <!-- CURRENCY -->
-    <label>Currency</label>
-    <select id="currencySelect">
-      <option>USD</option>
-      <option>EUR</option>
-      <option>GBP</option>
-    </select>
-
-    <!-- HEX COLOR -->
-    <label>Theme Color</label>
-    <input type="color" id="colorPicker">
-    <input type="text" id="hexInput" placeholder="#000000">
-
-    <!-- BACKGROUND -->
-    <label>Background Upload</label>
-    <input type="file" id="bgUpload">
-
-    <!-- UPDATE BUTTON -->
-    <button onclick="applySettings()">Update Settings</button>
+    <button onclick="signup()">Create Account</button>
   </div>
 </section>
 
