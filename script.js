@@ -1,94 +1,179 @@
-const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
 
 // =========================
-// PAGE SYSTEM (ISOLATION)
+// SUPABASE SETUP
+// =========================
+const SUPABASE_URL = "https://bzwnjtofcduxllafdybw.supabase.co";
+const SUPABASE_KEY = "sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl";
+
+// CHANGED NAME: supabaseClient → db
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// =========================
+// PAGE SYSTEM (ROUTER)
 // =========================
 function switchPage(pageId) {
   const isLoggedIn = localStorage.getItem("loggedIn");
 
-  // protect dashboard
   if (pageId === "dashboard" && !isLoggedIn) {
     alert("Please login first");
     return;
   }
 
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(pageId).classList.add("active");
+
+  const page = document.getElementById(pageId);
+  if (page) page.classList.add("active");
+
+  localStorage.setItem("lastPage", pageId);
 }
 
-// HOME BUTTON
+// HOME (LOGO CLICK)
 function goHome() {
   switchPage("home");
 }
+
+// RESTORE LAST PAGE
+window.onload = () => {
+  const last = localStorage.getItem("lastPage") || "home";
+  switchPage(last);
+
+  renderTasks();
+};
 
 // =========================
 // CLOCK
 // =========================
 setInterval(() => {
-  document.getElementById("clock").textContent =
-    new Date().toLocaleTimeString();
+  const clock = document.getElementById("clock");
+  if (clock) {
+    clock.textContent = new Date().toLocaleTimeString();
+  }
 }, 1000);
 
 // =========================
-// AUTH SYSTEM (LOCAL STORAGE)
+// CREATE ACCOUNT (SIGNUP + AUTO LOGIN)
 // =========================
-function signup() {
-  let user = signUser.value;
-  let pass = signPass.value;
+async function CreateAccount() {
+  const username = document.getElementById("signUser").value.trim();
+  const password = document.getElementById("signPass").value.trim();
 
-  localStorage.setItem("user", JSON.stringify({ user, pass }));
-
-  alert("Account created!");
-  switchPage("login");
-}
-
-function login() {
-  let user = loginUser.value;
-  let pass = loginPass.value;
-
-  let stored = JSON.parse(localStorage.getItem("user"));
-
-  if (stored && stored.user === user && stored.pass === pass) {
-    localStorage.setItem("loggedIn", "true");
-    alert("Login successful!");
-    switchPage("dashboard");
-  } else {
-    alert("Invalid credentials");
+  if (!username || !password) {
+    alert("Please enter username and password");
+    return;
   }
+
+  // CHECK IF USER EXISTS
+  const { data: existing, error: fetchError } = await db
+    .from("users")
+    .select("*")
+    .eq("username", username);
+
+  if (fetchError) {
+    console.error(fetchError);
+    alert("Error checking user");
+    return;
+  }
+
+  if (existing && existing.length > 0) {
+    alert("Username already exists");
+    return;
+  }
+
+  // CREATE USER
+  const { error: insertError } = await db
+    .from("users")
+    .insert([
+      {
+        username,
+        password
+      }
+    ]);
+
+  if (insertError) {
+    console.error(insertError);
+    alert("Error creating account");
+    return;
+  }
+
+  // AUTO LOGIN
+  localStorage.setItem("loggedIn", "true");
+  localStorage.setItem("currentUser", username);
+
+  alert("Account created and logged in!");
+
+  switchPage("dashboard");
 }
 
 // =========================
-// DASHBOARD TASKS
+// LOGIN (OPTIONAL MANUAL LOGIN)
+// =========================
+async function login() {
+  const username = document.getElementById("loginUser").value.trim();
+  const password = document.getElementById("loginPass").value.trim();
+
+  if (!username || !password) {
+    alert("Enter username and password");
+    return;
+  }
+
+  const { data, error } = await db
+    .from("users")
+    .select("*")
+    .eq("username", username)
+    .eq("password", password)
+    .single();
+
+  if (error || !data) {
+    alert("Invalid credentials");
+    return;
+  }
+
+  localStorage.setItem("loggedIn", "true");
+  localStorage.setItem("currentUser", username);
+
+  alert("Login successful");
+
+  switchPage("dashboard");
+}
+
+// =========================
+// LOGOUT
+// =========================
+function logout() {
+  localStorage.removeItem("loggedIn");
+  localStorage.removeItem("currentUser");
+
+  alert("Logged out");
+  switchPage("home");
+}
+
+// =========================
+// TASK SYSTEM
 // =========================
 function addTask() {
-  let val = taskInput.value;
-  if (!val) return;
+  const input = document.getElementById("taskInput");
+  if (!input.value) return;
 
   let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  tasks.push(val);
+  tasks.push(input.value);
+
   localStorage.setItem("tasks", JSON.stringify(tasks));
 
+  input.value = "";
   renderTasks();
-  taskInput.value = "";
 }
 
 function renderTasks() {
-  taskList.innerHTML = "";
+  const list = document.getElementById("taskList");
+  if (!list) return;
+
+  list.innerHTML = "";
+
   let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-  tasks.forEach(t => {
-    let li = document.createElement("li");
-    li.textContent = t;
-    taskList.appendChild(li);
+  tasks.forEach(task => {
+    const li = document.createElement("li");
+    li.textContent = task;
+    list.appendChild(li);
   });
 }
-
-// INIT
-renderTasks();
-  
-  
-
- 
