@@ -4,49 +4,83 @@
   <meta charset="UTF-8">
   <title>Life OS</title>
   <link rel="stylesheet" href="styles.css">
+
+  <!-- Supabase (ready for backend connection) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
+
 <body>
 
 <header>
-  <h1>Life OS</h1>
+  <h1 onclick="switchPage('home')" class="logo">Life OS</h1>
+
   <div id="clock"></div>
 
-  <select id="timezoneSelect">
-    <option value="America/New_York">USA (EST)</option>
-    <option value="Europe/London">UK</option>
-    <option value="Asia/Tokyo">Japan</option>
+  <!-- LANGUAGE + REGION SETTINGS -->
+  <select id="languageSelect">
+    <option>English</option>
+    <option>Spanish</option>
+    <option>French</option>
   </select>
 
-  <input type="text" id="search" placeholder="Search...">
+  <select id="countrySelect">
+    <option>United States</option>
+    <option>Canada</option>
+    <option>United Kingdom</option>
+  </select>
+
+  <select id="timezoneSelect">
+    <option value="America/New_York">EST</option>
+    <option value="Europe/London">GMT</option>
+    <option value="Asia/Tokyo">JST</option>
+  </select>
+
+  <input type="text" id="search" placeholder="Search Life OS...">
 </header>
 
 <aside>
   <ul>
+    <li onclick="switchPage('home')">Home</li>
     <li onclick="switchPage('dashboard')">Dashboard</li>
     <li onclick="switchPage('personal')">Personal</li>
     <li onclick="switchPage('work')">Work</li>
     <li onclick="switchPage('calendar')">Calendar</li>
     <li onclick="switchPage('uploads')">Uploads</li>
+    <li onclick="switchPage('weather')">Weather</li>
   </ul>
 
   <h3>Customize</h3>
   <input type="color" id="colorPicker">
-  <input type="text" id="hexInput" placeholder="#ffffff">
-  <button onclick="applyHex()">Apply HEX</button>
+  <input type="text" id="hexInput" placeholder="#000000">
+  <button onclick="applyHex()">Apply Theme</button>
   <input type="file" id="bgUpload">
 </aside>
 
 <main>
 
-  <section id="dashboard" class="page active">
+  <!-- HOME -->
+  <section id="home" class="page active">
     <div class="card">
-      <h2>Tasks</h2>
+      <h2>Welcome to Life OS</h2>
+      <p>Step 1: Navigate using the sidebar.</p>
+      <p>Step 2: Add tasks, notes, and events.</p>
+      <p>Step 3: Upload files for AI organization.</p>
+      <p>Step 4: Customize your interface.</p>
+      <p>Step 5: Use search for everything instantly.</p>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="page">
+    <div class="card">
+      <h2>Dashboard Tasks</h2>
       <input id="taskInput" placeholder="Add task">
       <button onclick="addTask()">Add</button>
       <ul id="taskList"></ul>
     </div>
   </section>
 
+  <!-- PERSONAL -->
   <section id="personal" class="page">
     <div class="card">
       <h2>Personal Notes</h2>
@@ -54,6 +88,7 @@
     </div>
   </section>
 
+  <!-- WORK -->
   <section id="work" class="page">
     <div class="card">
       <h2>Work Notes</h2>
@@ -61,15 +96,17 @@
     </div>
   </section>
 
+  <!-- CALENDAR -->
   <section id="calendar" class="page">
     <div class="card">
       <h2>Calendar</h2>
       <input type="date" id="dateInput">
-      <button onclick="addDate()">Add</button>
+      <button onclick="addDate()">Add Event</button>
       <ul id="dateList"></ul>
     </div>
   </section>
 
+  <!-- UPLOADS -->
   <section id="uploads" class="page">
     <div class="card">
       <h2>Upload Files</h2>
@@ -81,11 +118,19 @@
           <tr>
             <th>Type</th>
             <th>Content</th>
-            <th>Edit</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody></tbody>
       </table>
+    </div>
+  </section>
+
+  <!-- WEATHER -->
+  <section id="weather" class="page">
+    <div class="card">
+      <h2>Weather</h2>
+      <p id="weatherOutput">Loading weather...</p>
     </div>
   </section>
 
