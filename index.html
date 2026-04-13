@@ -9,11 +9,8 @@
 
 <header>
   <h1>Life OS</h1>
-  
-  <!-- CLOCK -->
   <div id="clock"></div>
 
-  <!-- LANGUAGE + COUNTRY -->
   <select id="timezoneSelect">
     <option value="America/New_York">USA (EST)</option>
     <option value="Europe/London">UK</option>
@@ -41,50 +38,55 @@
 
 <main>
 
-  <!-- DASHBOARD -->
   <section id="dashboard" class="page active">
-    <h2>Tasks</h2>
-    <input id="taskInput" placeholder="Add task">
-    <button onclick="addTask()">Add</button>
-    <ul id="taskList"></ul>
+    <div class="card">
+      <h2>Tasks</h2>
+      <input id="taskInput" placeholder="Add task">
+      <button onclick="addTask()">Add</button>
+      <ul id="taskList"></ul>
+    </div>
   </section>
 
-  <!-- PERSONAL -->
   <section id="personal" class="page">
-    <h2>Personal Notes</h2>
-    <textarea id="personalNotes"></textarea>
+    <div class="card">
+      <h2>Personal Notes</h2>
+      <textarea id="personalNotes"></textarea>
+    </div>
   </section>
 
-  <!-- WORK -->
   <section id="work" class="page">
-    <h2>Work Notes</h2>
-    <textarea id="workNotes"></textarea>
+    <div class="card">
+      <h2>Work Notes</h2>
+      <textarea id="workNotes"></textarea>
+    </div>
   </section>
 
-  <!-- CALENDAR -->
   <section id="calendar" class="page">
-    <h2>Calendar</h2>
-    <input type="date" id="dateInput">
-    <button onclick="addDate()">Add</button>
-    <ul id="dateList"></ul>
+    <div class="card">
+      <h2>Calendar</h2>
+      <input type="date" id="dateInput">
+      <button onclick="addDate()">Add</button>
+      <ul id="dateList"></ul>
+    </div>
   </section>
 
-  <!-- UPLOADS + AI TABLE -->
   <section id="uploads" class="page">
-    <h2>Upload Files</h2>
-    <input type="file" id="fileUpload" multiple>
+    <div class="card">
+      <h2>Upload Files</h2>
+      <input type="file" id="fileUpload" multiple>
 
-    <h3>AI Generated Table</h3>
-    <table id="aiTable">
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Content</th>
-          <th>Edit</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+      <h3>AI Generated Table</h3>
+      <table id="aiTable">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Content</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </section>
 
 </main>
@@ -92,7 +94,5 @@
 <script src="script.js"></script>
 </body>
 </html>
-
-  
          
 
