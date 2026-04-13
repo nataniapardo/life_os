@@ -4,135 +4,113 @@ const SUPABASE_KEY = "sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl";
 
 const supabaseClient = supabase.createClient("https://bzwnjtofcduxllafdybw.supabase.co", "sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl");
 
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+// PAGE SWITCHING
+function switchPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-/* GLOBAL */
-body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #0f172a, #020617);
-  color: #e2e8f0;
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  grid-template-rows: 70px 1fr;
-  height: 100vh;
+// CLOCK
+function updateClock() {
+  const tz = timezoneSelect.value;
+  const now = new Date().toLocaleString("en-US", { timeZone: tz });
+  document.getElementById("clock").textContent = now;
+}
+setInterval(updateClock, 1000);
+
+// TASKS
+function addTask() {
+  let val = taskInput.value;
+  if (!val) return;
+
+  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  tasks.push(val);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+
+  renderTasks();
+  taskInput.value = "";
 }
 
-/* HEADER */
-header {
-  grid-column: 1 / span 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+function renderTasks() {
+  taskList.innerHTML = "";
+  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+  tasks.forEach(t => {
+    let li = document.createElement("li");
+    li.textContent = t;
+    taskList.appendChild(li);
+  });
 }
 
-/* LOGO */
-.logo {
-  cursor: pointer;
+// DATES
+function addDate() {
+  let val = dateInput.value;
+  let dates = JSON.parse(localStorage.getItem("dates")) || [];
+
+  dates.push(val);
+  localStorage.setItem("dates", JSON.stringify(dates));
+
+  renderDates();
 }
 
-/* SIDEBAR */
-aside {
-  background: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(20px);
-  padding: 15px;
+function renderDates() {
+  dateList.innerHTML = "";
+  let dates = JSON.parse(localStorage.getItem("dates")) || [];
+
+  dates.forEach(d => {
+    let li = document.createElement("li");
+    li.textContent = d;
+    dateList.appendChild(li);
+  });
 }
 
-aside ul {
-  list-style: none;
+// FILE UPLOAD (AI READY)
+fileUpload.addEventListener("change", e => {
+  const table = document.querySelector("#aiTable tbody");
+
+  Array.from(e.target.files).forEach(file => {
+    let row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${file.type.includes("pdf") ? "Document" : "File"}</td>
+      <td contenteditable="true">${file.name}</td>
+      <td><button onclick="this.closest('tr').remove()">Delete</button></td>
+    `;
+
+    table.appendChild(row);
+  });
+});
+
+// CUSTOMIZATION
+colorPicker.oninput = e => document.body.style.backgroundColor = e.target.value;
+
+function applyHex() {
+  document.body.style.backgroundColor = hexInput.value;
 }
 
-aside li {
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 10px;
-  transition: 0.3s;
-}
+bgUpload.onchange = e => {
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.querySelector("main").style.backgroundImage =
+      `url(${ev.target.result})`;
+  };
+  reader.readAsDataURL(e.target.files[0]);
+};
 
-aside li:hover {
-  background: rgba(255,255,255,0.1);
-  transform: translateX(5px);
-}
+// SEARCH
+search.oninput = function () {
+  let val = this.value.toLowerCase();
+  document.querySelectorAll("li").forEach(li => {
+    li.style.display = li.textContent.toLowerCase().includes(val) ? "" : "none";
+  });
+};
 
-/* MAIN */
-main {
-  padding: 25px;
-  background-size: cover;
-}
+// INIT
+renderTasks();
+renderDates();
+updateClock();
+ 
 
-/* CARD UI */
-.card {
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(15px);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.08);
-}
-
-/* INPUTS */
-input, textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 10px;
-  border: none;
-  background: rgba(255,255,255,0.05);
-  color: white;
-}
-
-/* BUTTONS */
-button {
-  margin-top: 10px;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #6366f1, #22d3ee);
-  color: white;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-button:hover {
-  transform: scale(1.05);
-}
-
-/* TABLE */
-table {
-  width: 100%;
-  margin-top: 15px;
-}
-
-td, th {
-  padding: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-/* PAGE SWITCH */
-.page {
-  display: none;
-}
-
-.page.active {
-  display: block;
-}
-
-/* SCROLLBAR */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(#6366f1, #22d3ee);
-  border-radius: 10px;
-}
   
   
 
