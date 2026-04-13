@@ -2,72 +2,66 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>LifeOS</title>
+  <title>Life OS</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <header>
-  <h1>LifeOS</h1>
+  <h1>Life OS</h1>
+  
+  <!-- CLOCK -->
+  <div id="clock"></div>
+
+  <!-- LANGUAGE + COUNTRY -->
+  <select id="timezoneSelect">
+    <option value="America/New_York">USA (EST)</option>
+    <option value="Europe/London">UK</option>
+    <option value="Asia/Tokyo">Japan</option>
+  </select>
+
   <input type="text" id="search" placeholder="Search...">
 </header>
 
 <aside>
-  <nav>
-    <ul>
-      <li onclick="switchPage('home')">Home</li>
-      <li onclick="switchPage('dashboard')">Dashboard</li>
-      <li onclick="switchPage('personal')">Personal</li>
-      <li onclick="switchPage('work')">Work</li>
-      <li onclick="switchPage('networking')">Networking</li>
-      <li onclick="switchPage('journal')">Journal</li>
-      <li onclick="switchPage('calendar')">Calendar</li>
-      <li onclick="switchPage('pomodoro')">Pomodoro</li>
-      <li onclick="switchPage('uploads')">Uploads</li>
-    </ul>
-  </nav>
+  <ul>
+    <li onclick="switchPage('dashboard')">Dashboard</li>
+    <li onclick="switchPage('personal')">Personal</li>
+    <li onclick="switchPage('work')">Work</li>
+    <li onclick="switchPage('calendar')">Calendar</li>
+    <li onclick="switchPage('uploads')">Uploads</li>
+  </ul>
 
   <h3>Customize</h3>
   <input type="color" id="colorPicker">
+  <input type="text" id="hexInput" placeholder="#ffffff">
+  <button onclick="applyHex()">Apply HEX</button>
   <input type="file" id="bgUpload">
 </aside>
 
 <main>
 
-  <section id="home" class="page active">
-    <h2>Welcome</h2>
-    <p>Your customizable LifeOS dashboard.</p>
-  </section>
-
-  <section id="dashboard" class="page">
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="page active">
     <h2>Tasks</h2>
     <input id="taskInput" placeholder="Add task">
     <button onclick="addTask()">Add</button>
     <ul id="taskList"></ul>
   </section>
 
+  <!-- PERSONAL -->
   <section id="personal" class="page">
     <h2>Personal Notes</h2>
     <textarea id="personalNotes"></textarea>
   </section>
 
+  <!-- WORK -->
   <section id="work" class="page">
     <h2>Work Notes</h2>
     <textarea id="workNotes"></textarea>
   </section>
 
-  <section id="networking" class="page">
-    <h2>Contacts</h2>
-    <input id="contactInput" placeholder="Name - Role">
-    <button onclick="addContact()">Add</button>
-    <ul id="contactList"></ul>
-  </section>
-
-  <section id="journal" class="page">
-    <h2>Journal</h2>
-    <textarea id="journalText"></textarea>
-  </section>
-
+  <!-- CALENDAR -->
   <section id="calendar" class="page">
     <h2>Calendar</h2>
     <input type="date" id="dateInput">
@@ -75,17 +69,22 @@
     <ul id="dateList"></ul>
   </section>
 
-  <section id="pomodoro" class="page">
-    <h2>Pomodoro</h2>
-    <p id="timer">25:00</p>
-    <button onclick="startTimer()">Start</button>
-    <button onclick="resetTimer()">Reset</button>
-  </section>
-
+  <!-- UPLOADS + AI TABLE -->
   <section id="uploads" class="page">
-    <h2>Uploads</h2>
+    <h2>Upload Files</h2>
     <input type="file" id="fileUpload" multiple>
-    <ul id="fileList"></ul>
+
+    <h3>AI Generated Table</h3>
+    <table id="aiTable">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Content</th>
+          <th>Edit</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </section>
 
 </main>
