@@ -1,93 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Life OS Dashboard</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <title>LifeOS</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<div class="app">
+<header>
+  <h1>LifeOS</h1>
+  <input type="text" id="search" placeholder="Search...">
+</header>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <h2>Life OS</h2>
-    <nav>
-      <ul>
-        <li onclick="navigate('dashboard')">Dashboard</li>
-        <li onclick="navigate('tasks')">Tasks</li>
-        <li onclick="navigate('documents')">Documents</li>
-        <li onclick="navigate('contacts')">Contacts</li>
-        <li onclick="navigate('themes')">Themes</li>
-      </ul>
-    </nav>
-  </aside>
+<aside>
+  <nav>
+    <ul>
+      <li onclick="switchPage('home')">Home</li>
+      <li onclick="switchPage('dashboard')">Dashboard</li>
+      <li onclick="switchPage('personal')">Personal</li>
+      <li onclick="switchPage('work')">Work</li>
+      <li onclick="switchPage('networking')">Networking</li>
+      <li onclick="switchPage('journal')">Journal</li>
+      <li onclick="switchPage('calendar')">Calendar</li>
+      <li onclick="switchPage('pomodoro')">Pomodoro</li>
+      <li onclick="switchPage('uploads')">Uploads</li>
+    </ul>
+  </nav>
 
-  <!-- Main -->
-  <main class="main">
+  <h3>Customize</h3>
+  <input type="color" id="colorPicker">
+  <input type="file" id="bgUpload">
+</aside>
 
-    <!-- Top Bar -->
-    <div class="topbar">
-      <input type="text" id="globalSearch" placeholder="Search anything..." />
-      <button onclick="handleSearch()">Search</button>
-    </div>
+<main>
 
-    <!-- Dashboard -->
-    <section id="dashboard" class="page active">
-      <h1>Dashboard</h1>
-      <div class="cards">
-        <div class="card">Tasks Today: <span id="taskCount">0</span></div>
-        <div class="card">Upcoming Deadlines</div>
-        <div class="card">Productivity Insights</div>
-      </div>
-    </section>
+  <section id="home" class="page active">
+    <h2>Welcome</h2>
+    <p>Your customizable LifeOS dashboard.</p>
+  </section>
 
-    <!-- Tasks -->
-    <section id="tasks" class="page">
-      <h1>Tasks</h1>
+  <section id="dashboard" class="page">
+    <h2>Tasks</h2>
+    <input id="taskInput" placeholder="Add task">
+    <button onclick="addTask()">Add</button>
+    <ul id="taskList"></ul>
+  </section>
 
-      <div class="task-input">
-        <input type="text" id="taskText" placeholder="Enter task..." />
-        <input type="date" id="taskDate" />
-        <button onclick="addTask()">Add Task</button>
-      </div>
+  <section id="personal" class="page">
+    <h2>Personal Notes</h2>
+    <textarea id="personalNotes"></textarea>
+  </section>
 
-      <ul id="taskList"></ul>
-    </section>
+  <section id="work" class="page">
+    <h2>Work Notes</h2>
+    <textarea id="workNotes"></textarea>
+  </section>
 
-    <!-- Documents -->
-    <section id="documents" class="page">
-      <h1>Documents</h1>
-      <input type="file" id="fileUpload" />
-      <p>AI extraction will appear here (future integration)</p>
-    </section>
+  <section id="networking" class="page">
+    <h2>Contacts</h2>
+    <input id="contactInput" placeholder="Name - Role">
+    <button onclick="addContact()">Add</button>
+    <ul id="contactList"></ul>
+  </section>
 
-    <!-- Contacts -->
-    <section id="contacts" class="page">
-      <h1>Contacts</h1>
-      <p>Networking & contact intelligence will populate here</p>
-    </section>
+  <section id="journal" class="page">
+    <h2>Journal</h2>
+    <textarea id="journalText"></textarea>
+  </section>
 
-    <!-- Themes -->
-    <section id="themes" class="page">
-      <h1>Customize Theme</h1>
+  <section id="calendar" class="page">
+    <h2>Calendar</h2>
+    <input type="date" id="dateInput">
+    <button onclick="addDate()">Add</button>
+    <ul id="dateList"></ul>
+  </section>
 
-      <label>Pick Color:</label>
-      <input type="color" id="colorPicker" onchange="changeThemeColor(this.value)" />
+  <section id="pomodoro" class="page">
+    <h2>Pomodoro</h2>
+    <p id="timer">25:00</p>
+    <button onclick="startTimer()">Start</button>
+    <button onclick="resetTimer()">Reset</button>
+  </section>
 
-      <label>Enter HEX:</label>
-      <input type="text" id="hexInput" placeholder="#000000" />
-      <button onclick="applyHex()">Apply</button>
-    </section>
+  <section id="uploads" class="page">
+    <h2>Uploads</h2>
+    <input type="file" id="fileUpload" multiple>
+    <ul id="fileList"></ul>
+  </section>
 
-  </main>
-</div>
+</main>
 
 <script src="script.js"></script>
 </body>
 </html>
-      
 
   
          
