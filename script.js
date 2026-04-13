@@ -4,113 +4,84 @@ const SUPABASE_KEY = "sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl";
 
 const supabaseClient = supabase.createClient("https://bzwnjtofcduxllafdybw.supabase.co", "sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl");
 
-// PAGE SWITCHING
+
+// PAGE SWITCH
 function switchPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
 // CLOCK
-function updateClock() {
-  const tz = timezoneSelect.value;
-  const now = new Date().toLocaleString("en-US", { timeZone: tz });
-  document.getElementById("clock").textContent = now;
-}
-setInterval(updateClock, 1000);
+setInterval(() => {
+  document.getElementById("clock").textContent = new Date().toLocaleTimeString();
+}, 1000);
 
-// TASKS
-function addTask() {
-  let val = taskInput.value;
-  if (!val) return;
+// =========================
+// BOOKMARK SYSTEM
+// =========================
+function bookmark(page) {
+  let bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
 
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  tasks.push(val);
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-
-  renderTasks();
-  taskInput.value = "";
+  if (!bookmarks.includes(page)) {
+    bookmarks.push(page);
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+    renderBookmarks();
+  }
 }
 
-function renderTasks() {
-  taskList.innerHTML = "";
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+function renderBookmarks() {
+  let list = document.getElementById("bookmarkList");
+  list.innerHTML = "";
 
-  tasks.forEach(t => {
+  let bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
+
+  bookmarks.forEach(p => {
     let li = document.createElement("li");
-    li.textContent = t;
-    taskList.appendChild(li);
+    li.textContent = p;
+    li.onclick = () => switchPage(p);
+    list.appendChild(li);
   });
 }
 
-// DATES
-function addDate() {
-  let val = dateInput.value;
-  let dates = JSON.parse(localStorage.getItem("dates")) || [];
+// =========================
+// CUSTOMIZATION SYSTEM
+// =========================
 
-  dates.push(val);
-  localStorage.setItem("dates", JSON.stringify(dates));
+function applySettings() {
+  // FONT
+  document.body.style.fontFamily = document.getElementById("fontSelect").value;
 
-  renderDates();
-}
+  // HEX COLOR
+  let color = document.getElementById("hexInput").value || document.getElementById("colorPicker").value;
+  document.body.style.backgroundColor = color;
 
-function renderDates() {
-  dateList.innerHTML = "";
-  let dates = JSON.parse(localStorage.getItem("dates")) || [];
-
-  dates.forEach(d => {
-    let li = document.createElement("li");
-    li.textContent = d;
-    dateList.appendChild(li);
-  });
-}
-
-// FILE UPLOAD (AI READY)
-fileUpload.addEventListener("change", e => {
-  const table = document.querySelector("#aiTable tbody");
-
-  Array.from(e.target.files).forEach(file => {
-    let row = document.createElement("tr");
-
-    row.innerHTML = `
-      <td>${file.type.includes("pdf") ? "Document" : "File"}</td>
-      <td contenteditable="true">${file.name}</td>
-      <td><button onclick="this.closest('tr').remove()">Delete</button></td>
-    `;
-
-    table.appendChild(row);
-  });
-});
-
-// CUSTOMIZATION
-colorPicker.oninput = e => document.body.style.backgroundColor = e.target.value;
-
-function applyHex() {
-  document.body.style.backgroundColor = hexInput.value;
-}
-
-bgUpload.onchange = e => {
-  const reader = new FileReader();
-  reader.onload = ev => {
-    document.querySelector("main").style.backgroundImage =
-      `url(${ev.target.result})`;
+  // SAVE SETTINGS
+  let settings = {
+    font: fontSelect.value,
+    color: color,
+    timeFormat: timeFormat.value,
+    country: countrySelect.value,
+    state: stateSelect.value,
+    currency: currencySelect.value
   };
-  reader.readAsDataURL(e.target.files[0]);
-};
 
-// SEARCH
-search.oninput = function () {
-  let val = this.value.toLowerCase();
-  document.querySelectorAll("li").forEach(li => {
-    li.style.display = li.textContent.toLowerCase().includes(val) ? "" : "none";
-  });
-};
+  localStorage.setItem("settings", JSON.stringify(settings));
+}
 
+// LOAD SETTINGS (MULTI-UPDATE SUPPORT)
+function loadSettings() {
+  let settings = JSON.parse(localStorage.getItem("settings"));
+  if (!settings) return;
+
+  document.body.style.fontFamily = settings.font;
+  document.body.style.backgroundColor = settings.color;
+}
+
+// =========================
 // INIT
-renderTasks();
-renderDates();
-updateClock();
- 
-
+// =========================
+renderBookmarks();
+loadSettings();
   
   
 
