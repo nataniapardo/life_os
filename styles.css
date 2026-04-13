@@ -1,64 +1,40 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
 body {
-  background: #f5f6fa;
-}
-
-.app {
-  display: flex;
+  margin: 0;
+  font-family: Arial;
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: 60px 1fr;
   height: 100vh;
 }
 
-/* Sidebar */
-.sidebar {
-  width: 220px;
+header {
+  grid-column: 1 / span 2;
   background: #111;
-  color: #fff;
-  padding: 20px;
-}
-
-.sidebar h2 {
-  margin-bottom: 20px;
-}
-
-.sidebar ul {
-  list-style: none;
-}
-
-.sidebar li {
-  padding: 10px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.sidebar li:hover {
-  background: #333;
-}
-
-/* Main */
-.main {
-  flex: 1;
-  padding: 20px;
-}
-
-/* Topbar */
-.topbar {
+  color: white;
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.topbar input {
-  flex: 1;
+  justify-content: space-between;
   padding: 10px;
 }
 
-/* Pages */
+aside {
+  background: #f4f4f4;
+  padding: 15px;
+}
+
+aside ul {
+  list-style: none;
+  padding: 0;
+}
+
+aside li {
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+main {
+  padding: 20px;
+}
+
 .page {
   display: none;
 }
@@ -67,50 +43,17 @@ body {
   display: block;
 }
 
-/* Cards */
-.cards {
-  display: flex;
-  gap: 20px;
+textarea {
+  width: 100%;
+  height: 120px;
 }
 
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  flex: 1;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+ul {
+  list-style: none;
+  padding: 0;
 }
 
-/* Tasks */
-.task-input {
-  margin-bottom: 20px;
-}
-
-.task-input input {
-  padding: 10px;
-  margin-right: 10px;
-}
-
-#taskList li {
-  background: white;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-}
-
-/* Theme */
-:root {
-  --primary-color: #4CAF50;
-}
-
-button {
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-}
-
-button:hover {
-  opacity: 0.8;
+li {
+  border-bottom: 1px solid #ddd;
+  padding: 5px;
 }
