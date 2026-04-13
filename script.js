@@ -1,79 +1,146 @@
-// Navigation
-function navigate(pageId) {
-  document.querySelectorAll('.page').forEach(page => {
-    page.classList.remove('active');
-  });
-  document.getElementById(pageId).classList.add('active');
+// PAGE SWITCHING
+function switchPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-// Tasks
-let tasks = [];
+// LOCAL STORAGE HELPERS
+function save(key, data) {
+  localStorage.setItem(key, JSON.stringify(data));
+}
 
+function load(key) {
+  return JSON.parse(localStorage.getItem(key)) || [];
+}
+
+// TASKS
 function addTask() {
-  const text = document.getElementById('taskText').value;
-  const date = document.getElementById('taskDate').value;
+  const input = document.getElementById('taskInput');
+  if (!input.value) return alert('Enter task');
 
-  if (!text) {
-    alert("Task cannot be empty!");
-    return;
-  }
-
-  if (!date) {
-    alert("Please add a due date!");
-    return;
-  }
-
-  const task = { text, date };
-  tasks.push(task);
+  const tasks = load('tasks');
+  tasks.push(input.value);
+  save('tasks', tasks);
 
   renderTasks();
+  input.value = '';
 }
 
 function renderTasks() {
   const list = document.getElementById('taskList');
-  list.innerHTML = "";
-
-  tasks.forEach((task, index) => {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      ${task.text} - ${task.date}
-      <button onclick="deleteTask(${index})">X</button>
-    `;
+  list.innerHTML = '';
+  load('tasks').forEach(task => {
+    let li = document.createElement('li');
+    li.textContent = task;
     list.appendChild(li);
   });
-
-  document.getElementById('taskCount').innerText = tasks.length;
 }
 
-function deleteTask(index) {
-  tasks.splice(index, 1);
-  renderTasks();
+// CONTACTS
+function addContact() {
+  const input = document.getElementById('contactInput');
+  if (!input.value) return alert('Enter contact');
+
+  const contacts = load('contacts');
+  contacts.push(input.value);
+  save('contacts', contacts);
+
+  renderContacts();
+  input.value = '';
 }
 
-// Search (basic prototype)
-function handleSearch() {
-  const query = document.getElementById('globalSearch').value.toLowerCase();
-
-  if (!query) {
-    alert("Enter a search term");
-    return;
-  }
-
-  alert("Search feature will connect to AI + synonym engine: " + query);
+function renderContacts() {
+  const list = document.getElementById('contactList');
+  list.innerHTML = '';
+  load('contacts').forEach(c => {
+    let li = document.createElement('li');
+    li.textContent = c;
+    list.appendChild(li);
+  });
 }
 
-// Theme customization
-function changeThemeColor(color) {
-  document.documentElement.style.setProperty('--primary-color', color);
+// CALENDAR
+function addDate() {
+  const input = document.getElementById('dateInput');
+  const dates = load('dates');
+  dates.push(input.value);
+  save('dates', dates);
+  renderDates();
 }
 
-function applyHex() {
-  const hex = document.getElementById('hexInput').value;
-
-  if (!/^#[0-9A-F]{6}$/i.test(hex)) {
-    alert("Invalid HEX code!");
-    return;
-  }
-
-  changeThemeColor(hex);
+function renderDates() {
+  const list = document.getElementById('dateList');
+  list.innerHTML = '';
+  load('dates').forEach(d => {
+    let li = document.createElement('li');
+    li.textContent = d;
+    list.appendChild(li);
+  });
 }
+
+// FILE UPLOAD (AI HOOK)
+document.getElementById('fileUpload').addEventListener('change', e => {
+  const files = Array.from(e.target.files);
+  const list = document.getElementById('fileList');
+
+  files.forEach(file => {
+    let li = document.createElement('li');
+    li.textContent = file.name;
+    list.appendChild(li);
+
+    // 🔥 AI INTEGRATION HOOK
+    console.log("Send to AI parser:", file);
+  });
+});
+
+// CUSTOMIZATION
+document.getElementById('colorPicker').addEventListener('input', e => {
+  document.body.style.background = e.target.value;
+});
+
+document.getElementById('bgUpload').addEventListener('change', e => {
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    document.body.style.backgroundImage = `url(${ev.target.result})`;
+  };
+  reader.readAsDataURL(e.target.files[0]);
+});
+
+// POMODORO
+let time = 1500;
+let interval;
+
+function updateTimer() {
+  let m = Math.floor(time / 60);
+  let s = time % 60;
+  document.getElementById('timer').textContent =
+    `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function startTimer() {
+  if (interval) return;
+  interval = setInterval(() => {
+    if (time <= 0) {
+      clearInterval(interval);
+      alert("Done!");
+      time = 1500;
+      interval = null;
+    } else {
+      time--;
+      updateTimer();
+    }
+  }, 1000);
+}
+
+function resetTimer() {
+  clearInterval(interval);
+  interval = null;
+  time = 1500;
+  updateTimer();
+}
+
+// INIT
+renderTasks();
+renderContacts();
+renderDates();
+updateTimer();
