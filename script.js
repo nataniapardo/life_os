@@ -148,7 +148,7 @@ function logout() {
 }
 
 // =========================
-// TASK SYSTEM
+// ADD TASK 
 // =========================
 function addTask() {
   const input = document.getElementById("taskInput");
@@ -178,6 +178,4 @@ function renderTasks() {
   });
   
 }
-function signup() {
-  return CreateAccount();
-}
+
