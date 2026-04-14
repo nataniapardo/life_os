@@ -30,7 +30,7 @@ function goHome() {
 }
 
 // =========================
-// INIT
+// INIT SYSTEM
 // =========================
 window.onload = () => {
   const last = localStorage.getItem("lastPage") || "home";
@@ -42,14 +42,26 @@ window.onload = () => {
 
   loadTheme();
   loadBackground();
+  loadFont();
+  loadProfileIcon();
 };
 
 // =========================
-// CLOCK
+// CLOCK (12H / 24H SUPPORT)
 // =========================
+let timeFormat = localStorage.getItem("timeFormat") || "12";
+
 setInterval(() => {
   const clock = document.getElementById("clock");
-  if (clock) clock.textContent = new Date().toLocaleTimeString();
+  if (!clock) return;
+
+  const now = new Date();
+
+  if (timeFormat === "24") {
+    clock.textContent = now.toLocaleTimeString("en-GB");
+  } else {
+    clock.textContent = now.toLocaleTimeString("en-US");
+  }
 }, 1000);
 
 // =========================
@@ -110,6 +122,19 @@ function logOut() {
 }
 
 // =========================
+// PROFILE SYSTEM
+// =========================
+function toggleProfileMenu() {
+  document.getElementById("profileMenu").classList.toggle("hidden");
+}
+
+function loadProfileIcon() {
+  const user = localStorage.getItem("currentUser") || "U";
+  const icon = document.getElementById("profileIcon");
+  if (icon) icon.textContent = user.charAt(0).toUpperCase();
+}
+
+// =========================
 // TASK SYSTEM
 // =========================
 function addTask() {
@@ -134,7 +159,7 @@ function renderTasks() {
   let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
   tasks.forEach(t => {
-    let li = document.createElement("li");
+    const li = document.createElement("li");
     li.textContent = t;
     list.appendChild(li);
   });
@@ -152,7 +177,7 @@ function renderMeetings() {
   let meetings = JSON.parse(localStorage.getItem("meetings")) || [];
 
   meetings.forEach(m => {
-    let li = document.createElement("li");
+    const li = document.createElement("li");
     li.textContent = m;
     list.appendChild(li);
   });
@@ -170,29 +195,26 @@ function renderContacts() {
   let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
 
   contacts.forEach(c => {
-    let li = document.createElement("li");
+    const li = document.createElement("li");
     li.textContent = c;
     list.appendChild(li);
   });
 }
 
 // =========================
-// FILE UPLOAD + AI SIM
+// FILE UPLOAD + AI SIMULATION
 // =========================
 function uploadFile(e) {
   const file = e.target.files[0];
   if (!file) return;
 
-  simulateAIExtraction(file.name);
-}
-
-function simulateAIExtraction(name) {
   setTimeout(() => {
     const mock = {
-      tasks: ["Finish report"],
-      meetings: ["Meeting at 2PM"],
-      contacts: ["Recruiter - LinkedIn"]
+      tasks: ["Auto task from AI"],
+      meetings: ["Auto meeting"],
+      contacts: ["Auto contact"]
     };
+
     autoPlaceData(mock);
   }, 1500);
 }
@@ -224,9 +246,12 @@ function uploadBackground(e) {
 
   const reader = new FileReader();
   reader.onload = function(evt) {
-    document.querySelector("main").style.backgroundImage = `url(${evt.target.result})`;
+    document.querySelector("main").style.backgroundImage =
+      `url(${evt.target.result})`;
+
     localStorage.setItem("bg", evt.target.result);
   };
+
   reader.readAsDataURL(file);
 }
 
@@ -236,7 +261,7 @@ function loadBackground() {
 }
 
 // =========================
-// COLOR THEME
+// THEME SYSTEM
 // =========================
 function setThemeColor(color) {
   document.documentElement.style.setProperty("--accent", color);
@@ -249,24 +274,43 @@ function loadTheme() {
 }
 
 // =========================
-// SEARCH
+// FONT SYSTEM
+// =========================
+function setFont(font) {
+  document.body.style.fontFamily = font;
+  localStorage.setItem("font", font);
+}
+
+function loadFont() {
+  const font = localStorage.getItem("font");
+  if (font) setFont(font);
+}
+
+// =========================
+// SETTINGS (TIME / COUNTRY)
+// =========================
+function setTimeFormat(format) {
+  timeFormat = format;
+  localStorage.setItem("timeFormat", format);
+}
+
+function setCountry(country) {
+  localStorage.setItem("country", country);
+}
+
+// =========================
+// SEARCH SYSTEM
 // =========================
 function searchData(query) {
   query = query.toLowerCase();
 
   let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-  let results = tasks.filter(t => t.toLowerCase().includes(query));
+  const results = tasks.filter(t =>
+    t.toLowerCase().includes(query)
+  );
 
-  console.log("Results:", results);
-}
-
-// =========================
-// SPELL CHECK
-// =========================
-function checkSpelling(text) {
-  const fixes = { "teh": "the" };
-  return text.split(" ").map(w => fixes[w] || w).join(" ");
+  console.log("Search results:", results);
 }
 
 // =========================
@@ -288,8 +332,8 @@ function startPomodoro() {
   timer = setInterval(() => {
     timeLeft--;
 
-    let m = Math.floor(timeLeft / 60);
-    let s = timeLeft % 60;
+    const m = Math.floor(timeLeft / 60);
+    const s = timeLeft % 60;
 
     const display = document.getElementById("timer");
     if (display) display.textContent = `${m}:${s < 10 ? "0" : ""}${s}`;
@@ -302,11 +346,8 @@ function startPomodoro() {
 }
 
 // =========================
-// RESPONSIVE
+// RESPONSIVE TOGGLE
 // =========================
 function toggleSidebar() {
   document.querySelector("aside").classList.toggle("hidden");
 }
-
-
-  
