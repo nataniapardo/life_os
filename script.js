@@ -1,11 +1,9 @@
-
 // =========================
 // SUPABASE SETUP
 // =========================
 const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
 
-// CHANGED NAME: supabaseClient → db
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // =========================
@@ -62,7 +60,6 @@ async function CreateAccount() {
     return;
   }
 
-  // CHECK IF USER EXISTS
   const { data: existing, error: fetchError } = await db
     .from("users")
     .select("*")
@@ -79,7 +76,6 @@ async function CreateAccount() {
     return;
   }
 
-  // CREATE USER
   const { error: insertError } = await db
     .from("users")
     .insert([
@@ -95,17 +91,15 @@ async function CreateAccount() {
     return;
   }
 
-  // AUTO LOGIN
   localStorage.setItem("loggedIn", "true");
   localStorage.setItem("currentUser", username);
 
   alert("Account created and logged in!");
-
   switchPage("dashboard");
 }
 
 // =========================
-// LOGIN (OPTIONAL MANUAL LOGIN)
+// LOGIN
 // =========================
 async function login() {
   const username = document.getElementById("loginUser").value.trim();
@@ -132,23 +126,23 @@ async function login() {
   localStorage.setItem("currentUser", username);
 
   alert("Login successful");
-
   switchPage("dashboard");
 }
 
 // =========================
-// LOGOUT
+// LOG OUT (UPDATED NAME)
 // =========================
-function logout() {
+function logOut() {
   localStorage.removeItem("loggedIn");
   localStorage.removeItem("currentUser");
 
-  alert("Logged out");
+  alert("Logged out successfully");
+
   switchPage("home");
 }
 
 // =========================
-// ADD TASK 
+// TASK SYSTEM
 // =========================
 function addTask() {
   const input = document.getElementById("taskInput");
@@ -176,6 +170,8 @@ function renderTasks() {
     li.textContent = task;
     list.appendChild(li);
   });
-  
 }
+
+
+ 
 
