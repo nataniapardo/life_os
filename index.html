@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | AI Blueprint</title>
-    
+    <title>Life OS | AI Workspace</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
@@ -19,10 +17,10 @@
                 <li onclick="switchPage('dashboard')" class="nav-item" data-section="dashboard">Dashboard</li>
                 <li onclick="switchPage('documents')" class="nav-item" data-section="documents">Documents & AI</li>
                 <li onclick="switchPage('networking')" class="nav-item" data-section="networking">Networking</li>
-                <li onclick="switchPage('themes')" class="nav-item" data-section="themes">Themes</li>
+                <li onclick="switchPage('themes')" class="nav-item" data-section="themes">Settings</li>
                 <hr>
-                <li onclick="switchPage('login')" class="nav-item" data-section="login">Login</li>
-                <li onclick="switchPage('signup')" class="nav-item" data-section="signup">Sign Up</li>
+                <li id="navLogin" onclick="switchPage('login')" class="nav-item">Login</li>
+                <li id="navSignup" onclick="switchPage('signup')" class="nav-item">Sign Up</li>
             </ul>
         </nav>
 
@@ -32,81 +30,85 @@
                     <input type="text" id="globalSearch" placeholder="Search keywords or synonyms...">
                     <div id="searchSuggestions" class="suggestions-box"></div>
                 </div>
-                <div id="clock" class="digital-clock"></div>
+                <div class="header-right">
+                    <div id="clock" class="digital-clock"></div>
+                    <div class="profile-container" onclick="toggleProfileMenu()">
+                        <div id="profileIcon">U</div>
+                        <div id="profileMenu" class="hidden">
+                            <p id="userDisplay">Guest</p>
+                            <span class="menu-link" onclick="logout()">Sign Out</span>
+                        </div>
+                    </div>
+                </div>
             </header>
 
             <section id="home" class="view-section active">
-                <div class="welcome-header">
-                    <h1>Welcome to Life OS</h1>
-                    <p>Your all-in-one life productivity and AI planning system.</p>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-card"><h3>Tasks</h3><p id="task-count">--</p></div>
-                    <div class="stat-card"><h3>Plan Status</h3><p>Active</p></div>
+                <h1>Welcome</h1>
+                <p>Your all-in-one life productivity system.</p>
+                <div class="card">
+                    <h3>Getting Started</h3>
+                    <p>Upload your plans in the Documents tab to see AI organization in action.</p>
                 </div>
             </section>
 
             <section id="dashboard" class="view-section">
-                <div class="card panel">
-                    <h2>Main Dashboard</h2>
-                    <p>Manage your AI-generated life plan tasks here.</p>
+                <h1>Dashboard</h1>
+                <div class="card">
                     <div class="input-group">
-                        <input id="taskInput" placeholder="Add a manual task or due date...">
-                        <button class="btn-primary" onclick="addTask()">Add Task</button>
+                        <input id="taskInput" placeholder="Add a new goal or task...">
+                        <button class="btn-primary" onclick="addTask()">Add</button>
                     </div>
                     <ul id="taskList" class="list-container"></ul>
                 </div>
             </section>
 
             <section id="documents" class="view-section">
-                <h2>Document Intelligence</h2>
-                <div class="upload-zone" id="uploadZone">
-                    <p>Upload files to auto-populate your Life Plan</p>
+                <h1>Document Intelligence</h1>
+                <div class="card upload-zone" id="uploadZone">
+                    <p>Drag & Drop files to auto-populate your calendar</p>
                     <input type="file" id="fileInput" hidden>
-                    <button class="btn-secondary" onclick="document.getElementById('fileInput').click()">Upload Plan</button>
+                    <button class="btn-secondary" onclick="document.getElementById('fileInput').click()">Select File</button>
                 </div>
-                <div id="extractionProgress" class="progress-bar-container" style="display:none;">
+                <div id="extractionProgress" class="progress-bar-container hidden">
                     <div class="progress-bar"></div>
-                    <p>AI is analyzing milestones and dates...</p>
+                    <p>AI analyzing data points...</p>
                 </div>
             </section>
 
             <section id="networking" class="view-section">
-                <h2>Contact Intelligence</h2>
-                <div class="network-controls">
-                    <input type="text" id="companySearch" placeholder="Enter Company Name...">
-                    <button class="btn-primary" onclick="simulateNetworking()">Scrape Contacts</button>
+                <h1>Networking</h1>
+                <div class="card">
+                    <input type="text" id="companySearch" placeholder="Enter Company Name">
+                    <button class="btn-primary" onclick="simulateNetworking()">Find Contacts</button>
+                    <div id="contactGrid" class="contact-grid"></div>
                 </div>
-                <div class="contact-grid" id="contactGrid"></div>
             </section>
 
             <section id="themes" class="view-section">
-                <h2>Customization</h2>
-                <div class="theme-settings">
-                    <label>Dashboard Primary Color</label>
+                <h1>Settings & Themes</h1>
+                <div class="card">
+                    <label>Workspace Accent Color</label>
                     <input type="color" id="colorPicker">
-                    <br><br>
-                    <label>Hex Code Search</label>
-                    <input type="text" id="hexInput" placeholder="#3b82f6">
-                    <button class="btn-small" onclick="applyHex()">Apply</button>
+                    <input type="text" id="hexInput" placeholder="#2383e2">
+                    <button class="btn-secondary" onclick="applyHex()">Apply Hex</button>
                 </div>
             </section>
 
             <section id="login" class="view-section">
-                <div class="card auth-card">
+                <div class="auth-card">
                     <h2>Login</h2>
-                    <input id="loginUser" placeholder="Email">
+                    <input id="loginUser" placeholder="Username">
                     <input id="loginPass" type="password" placeholder="Password">
-                    <button class="btn-primary" onclick="login()">Access Life OS</button>
+                    <button class="btn-primary" onclick="login()">Sign In</button>
                 </div>
             </section>
 
             <section id="signup" class="view-section">
-                <div class="card auth-card">
+                <div class="auth-card">
                     <h2>Create Account</h2>
-                    <input id="signUser" placeholder="Email">
+                    <input id="signUser" placeholder="Username">
                     <input id="signPass" type="password" placeholder="Password">
-                    <button id="signupBtn" class="btn-primary">Sign Up</button>
+                    <button id="signupBtn" class="btn-primary">Create Account</button>
                 </div>
             </section>
         </main>
