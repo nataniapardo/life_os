@@ -12,11 +12,32 @@
 
 <body>
 
+<!-- ========================= -->
+<!-- HEADER -->
+<!-- ========================= -->
 <header>
   <h1 onclick="goHome()" class="logo">Life OS</h1>
-  <div id="clock"></div>
+
+  <div class="header-right">
+    <div id="clock"></div>
+
+    <!-- SETTINGS -->
+    <span class="icon" onclick="switchPage('settings')">⚙️ Settings</span>
+
+    <!-- PROFILE ICON -->
+    <div class="profile-container" onclick="toggleProfileMenu()">
+      <div id="profileIcon">U</div>
+
+      <div id="profileMenu" class="hidden">
+        <button onclick="logOut()">Log Out</button>
+      </div>
+    </div>
+  </div>
 </header>
 
+<!-- ========================= -->
+<!-- SIDEBAR -->
+<!-- ========================= -->
 <aside>
   <h3>Navigation</h3>
   <ul>
@@ -24,36 +45,74 @@
     <li onclick="switchPage('dashboard')">Dashboard</li>
     <li onclick="switchPage('login')">Login</li>
     <li onclick="switchPage('signup')">Sign Up</li>
+    <li onclick="switchPage('settings')">Settings</li>
   </ul>
 </aside>
 
+<!-- ========================= -->
+<!-- MAIN -->
+<!-- ========================= -->
 <main>
 
+<!-- ========================= -->
 <!-- HOME -->
+<!-- ========================= -->
 <section id="home" class="page active">
   <div class="card">
     <h2>Welcome to Life OS</h2>
     <p>Your all-in-one life productivity system.</p>
+
+    <!-- GLOBAL SEARCH -->
+    <input placeholder="Search tasks..." oninput="searchData(this.value)">
   </div>
 </section>
 
+<!-- ========================= -->
 <!-- DASHBOARD -->
+<!-- ========================= -->
 <section id="dashboard" class="page">
   <div class="card">
     <h2>Dashboard</h2>
-    <p>This page is only visible after login.</p>
 
-    <!-- LOG OUT BUTTON ADDED HERE -->
+    <!-- LOG OUT -->
     <button onclick="logOut()">Log Out</button>
 
+    <!-- TASKS -->
+    <h3>To-Do List</h3>
     <input id="taskInput" placeholder="Add task">
     <button onclick="addTask()">Add Task</button>
-
     <ul id="taskList"></ul>
+
+    <!-- MEETINGS -->
+    <h3>Meetings</h3>
+    <ul id="meetingList"></ul>
+
+    <!-- CONTACTS -->
+    <h3>Contacts</h3>
+    <ul id="contactList"></ul>
+
+    <!-- FILE UPLOAD -->
+    <h3>Upload Document (AI Simulation)</h3>
+    <input type="file" onchange="uploadFile(event)">
+
+    <!-- BACKGROUND -->
+    <h3>Background Upload</h3>
+    <input type="file" onchange="uploadBackground(event)">
+
+    <!-- COLOR THEME -->
+    <h3>Theme Color</h3>
+    <input type="color" onchange="setThemeColor(this.value)">
+
+    <!-- POMODORO -->
+    <h3>Pomodoro Timer</h3>
+    <div id="timer">25:00</div>
+    <button onclick="startPomodoro()">Start</button>
   </div>
 </section>
 
+<!-- ========================= -->
 <!-- LOGIN -->
+<!-- ========================= -->
 <section id="login" class="page">
   <div class="card">
     <h2>Login</h2>
@@ -65,7 +124,9 @@
   </div>
 </section>
 
+<!-- ========================= -->
 <!-- SIGN UP -->
+<!-- ========================= -->
 <section id="signup" class="page">
   <div class="card">
     <h2>Sign Up</h2>
@@ -77,19 +138,57 @@
   </div>
 </section>
 
+<!-- ========================= -->
+<!-- SETTINGS -->
+<!-- ========================= -->
+<section id="settings" class="page">
+  <div class="card">
+    <h2>⚙️ Settings</h2>
+
+    <!-- COLOR -->
+    <h3>Theme Color</h3>
+    <input type="color" onchange="setThemeColor(this.value)">
+    <input placeholder="Enter HEX (#000000)" oninput="setThemeColor(this.value)">
+
+    <!-- FONT -->
+    <h3>Font Style</h3>
+    <select onchange="setFont(this.value)">
+      <option>Arial</option>
+      <option>Helvetica</option>
+      <option>Georgia</option>
+      <option>Courier New</option>
+    </select>
+
+    <!-- COUNTRY -->
+    <h3>Country</h3>
+    <select onchange="setCountry(this.value)">
+      <option>United States</option>
+      <option>United Kingdom</option>
+      <option>Canada</option>
+      <option>Australia</option>
+    </select>
+
+    <!-- TIME FORMAT -->
+    <h3>Time Format</h3>
+    <select onchange="setTimeFormat(this.value)">
+      <option value="12">12 Hour</option>
+      <option value="24">24 Hour</option>
+    </select>
+
+  </div>
+</section>
+
 </main>
 
 <!-- ========================= -->
-<!-- SCRIPT LOADING -->
+<!-- SCRIPTS -->
 <!-- ========================= -->
 <script src="script.js"></script>
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const btn = document.getElementById("signupBtn");
-    if (btn) {
-      btn.addEventListener("click", signup);
-    }
+    if (btn) btn.addEventListener("click", signup);
   });
 </script>
 
