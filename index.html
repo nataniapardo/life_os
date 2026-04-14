@@ -1,196 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Life OS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life OS | AI Blueprint</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="styles.css">
-
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
-
 <body>
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="logo" onclick="switchPage('home')">LIFE OS</div>
+            <ul class="nav-links">
+                <li onclick="switchPage('home')" class="nav-item active" data-section="home">Home</li>
+                <li onclick="switchPage('dashboard')" class="nav-item" data-section="dashboard">Dashboard</li>
+                <li onclick="switchPage('documents')" class="nav-item" data-section="documents">Documents & AI</li>
+                <li onclick="switchPage('networking')" class="nav-item" data-section="networking">Networking</li>
+                <li onclick="switchPage('themes')" class="nav-item" data-section="themes">Themes</li>
+                <hr>
+                <li onclick="switchPage('login')" class="nav-item" data-section="login">Login</li>
+                <li onclick="switchPage('signup')" class="nav-item" data-section="signup">Sign Up</li>
+            </ul>
+        </nav>
 
-<!-- ========================= -->
-<!-- HEADER -->
-<!-- ========================= -->
-<header>
-  <h1 onclick="goHome()" class="logo">Life OS</h1>
+        <main class="content-area">
+            <header class="top-bar">
+                <div class="search-wrapper">
+                    <input type="text" id="globalSearch" placeholder="Search keywords or synonyms...">
+                    <div id="searchSuggestions" class="suggestions-box"></div>
+                </div>
+                <div id="clock" class="digital-clock"></div>
+            </header>
 
-  <div class="header-right">
-    <div id="clock"></div>
+            <section id="home" class="view-section active">
+                <div class="welcome-header">
+                    <h1>Welcome to Life OS</h1>
+                    <p>Your all-in-one life productivity and AI planning system.</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card"><h3>Tasks</h3><p id="task-count">--</p></div>
+                    <div class="stat-card"><h3>Plan Status</h3><p>Active</p></div>
+                </div>
+            </section>
 
-    <!-- SETTINGS -->
-    <span class="icon" onclick="switchPage('settings')">⚙️ Settings</span>
+            <section id="dashboard" class="view-section">
+                <div class="card panel">
+                    <h2>Main Dashboard</h2>
+                    <p>Manage your AI-generated life plan tasks here.</p>
+                    <div class="input-group">
+                        <input id="taskInput" placeholder="Add a manual task or due date...">
+                        <button class="btn-primary" onclick="addTask()">Add Task</button>
+                    </div>
+                    <ul id="taskList" class="list-container"></ul>
+                </div>
+            </section>
 
-    <!-- PROFILE ICON -->
-    <div class="profile-container" onclick="toggleProfileMenu()">
-      <div id="profileIcon">U</div>
+            <section id="documents" class="view-section">
+                <h2>Document Intelligence</h2>
+                <div class="upload-zone" id="uploadZone">
+                    <p>Upload files to auto-populate your Life Plan</p>
+                    <input type="file" id="fileInput" hidden>
+                    <button class="btn-secondary" onclick="document.getElementById('fileInput').click()">Upload Plan</button>
+                </div>
+                <div id="extractionProgress" class="progress-bar-container" style="display:none;">
+                    <div class="progress-bar"></div>
+                    <p>AI is analyzing milestones and dates...</p>
+                </div>
+            </section>
 
-      <div id="profileMenu" class="hidden">
-        <button onclick="logOut()">Log Out</button>
-      </div>
+            <section id="networking" class="view-section">
+                <h2>Contact Intelligence</h2>
+                <div class="network-controls">
+                    <input type="text" id="companySearch" placeholder="Enter Company Name...">
+                    <button class="btn-primary" onclick="simulateNetworking()">Scrape Contacts</button>
+                </div>
+                <div class="contact-grid" id="contactGrid"></div>
+            </section>
+
+            <section id="themes" class="view-section">
+                <h2>Customization</h2>
+                <div class="theme-settings">
+                    <label>Dashboard Primary Color</label>
+                    <input type="color" id="colorPicker">
+                    <br><br>
+                    <label>Hex Code Search</label>
+                    <input type="text" id="hexInput" placeholder="#3b82f6">
+                    <button class="btn-small" onclick="applyHex()">Apply</button>
+                </div>
+            </section>
+
+            <section id="login" class="view-section">
+                <div class="card auth-card">
+                    <h2>Login</h2>
+                    <input id="loginUser" placeholder="Email">
+                    <input id="loginPass" type="password" placeholder="Password">
+                    <button class="btn-primary" onclick="login()">Access Life OS</button>
+                </div>
+            </section>
+
+            <section id="signup" class="view-section">
+                <div class="card auth-card">
+                    <h2>Create Account</h2>
+                    <input id="signUser" placeholder="Email">
+                    <input id="signPass" type="password" placeholder="Password">
+                    <button id="signupBtn" class="btn-primary">Sign Up</button>
+                </div>
+            </section>
+        </main>
     </div>
-  </div>
-</header>
 
-<!-- ========================= -->
-<!-- SIDEBAR -->
-<!-- ========================= -->
-<aside>
-  <h3>Navigation</h3>
-  <ul>
-    <li onclick="switchPage('home')">Home</li>
-    <li onclick="switchPage('dashboard')">Dashboard</li>
-    <li onclick="switchPage('login')">Login</li>
-    <li onclick="switchPage('signup')">Sign Up</li>
-    <li onclick="switchPage('settings')">Settings</li>
-  </ul>
-</aside>
+    <div id="errorAlert" class="alert-toast hidden">
+        <span id="alertMessage"></span>
+    </div>
 
-<!-- ========================= -->
-<!-- MAIN -->
-<!-- ========================= -->
-<main>
-
-<!-- ========================= -->
-<!-- HOME -->
-<!-- ========================= -->
-<section id="home" class="page active">
-  <div class="card">
-    <h2>Welcome to Life OS</h2>
-    <p>Your all-in-one life productivity system.</p>
-
-    <!-- GLOBAL SEARCH -->
-    <input placeholder="Search tasks..." oninput="searchData(this.value)">
-  </div>
-</section>
-
-<!-- ========================= -->
-<!-- DASHBOARD -->
-<!-- ========================= -->
-<section id="dashboard" class="page">
-  <div class="card">
-    <h2>Dashboard</h2>
-
-    <!-- LOG OUT -->
-    <button onclick="logOut()">Log Out</button>
-
-    <!-- TASKS -->
-    <h3>To-Do List</h3>
-    <input id="taskInput" placeholder="Add task">
-    <button onclick="addTask()">Add Task</button>
-    <ul id="taskList"></ul>
-
-    <!-- MEETINGS -->
-    <h3>Meetings</h3>
-    <ul id="meetingList"></ul>
-
-    <!-- CONTACTS -->
-    <h3>Contacts</h3>
-    <ul id="contactList"></ul>
-
-    <!-- FILE UPLOAD -->
-    <h3>Upload Document (AI Simulation)</h3>
-    <input type="file" onchange="uploadFile(event)">
-
-    <!-- BACKGROUND -->
-    <h3>Background Upload</h3>
-    <input type="file" onchange="uploadBackground(event)">
-
-    <!-- COLOR THEME -->
-    <h3>Theme Color</h3>
-    <input type="color" onchange="setThemeColor(this.value)">
-
-    <!-- POMODORO -->
-    <h3>Pomodoro Timer</h3>
-    <div id="timer">25:00</div>
-    <button onclick="startPomodoro()">Start</button>
-  </div>
-</section>
-
-<!-- ========================= -->
-<!-- LOGIN -->
-<!-- ========================= -->
-<section id="login" class="page">
-  <div class="card">
-    <h2>Login</h2>
-
-    <input id="loginUser" placeholder="Username">
-    <input id="loginPass" type="password" placeholder="Password">
-
-    <button onclick="login()">Login</button>
-  </div>
-</section>
-
-<!-- ========================= -->
-<!-- SIGN UP -->
-<!-- ========================= -->
-<section id="signup" class="page">
-  <div class="card">
-    <h2>Sign Up</h2>
-
-    <input id="signUser" placeholder="Username">
-    <input id="signPass" type="password" placeholder="Password">
-
-    <button id="signupBtn">Create Account</button>
-  </div>
-</section>
-
-<!-- ========================= -->
-<!-- SETTINGS -->
-<!-- ========================= -->
-<section id="settings" class="page">
-  <div class="card">
-    <h2>⚙️ Settings</h2>
-
-    <!-- COLOR -->
-    <h3>Theme Color</h3>
-    <input type="color" onchange="setThemeColor(this.value)">
-    <input placeholder="Enter HEX (#000000)" oninput="setThemeColor(this.value)">
-
-    <!-- FONT -->
-    <h3>Font Style</h3>
-    <select onchange="setFont(this.value)">
-      <option>Arial</option>
-      <option>Helvetica</option>
-      <option>Georgia</option>
-      <option>Courier New</option>
-    </select>
-
-    <!-- COUNTRY -->
-    <h3>Country</h3>
-    <select onchange="setCountry(this.value)">
-      <option>United States</option>
-      <option>United Kingdom</option>
-      <option>Canada</option>
-      <option>Australia</option>
-    </select>
-
-    <!-- TIME FORMAT -->
-    <h3>Time Format</h3>
-    <select onchange="setTimeFormat(this.value)">
-      <option value="12">12 Hour</option>
-      <option value="24">24 Hour</option>
-    </select>
-
-  </div>
-</section>
-
-</main>
-
-<!-- ========================= -->
-<!-- SCRIPTS -->
-<!-- ========================= -->
-<script src="script.js"></script>
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.getElementById("signupBtn");
-    if (btn) btn.addEventListener("click", signup);
-  });
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
