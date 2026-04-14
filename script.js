@@ -1,353 +1,225 @@
 // =========================
-// SUPABASE SETUP
+// CONFIGURATION & SETUP
 // =========================
 const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
-
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// =========================
-// PAGE SYSTEM
-// =========================
-function switchPage(pageId) {
-  const isLoggedIn = localStorage.getItem("loggedIn");
-
-  if (pageId === "dashboard" && !isLoggedIn) {
-    alert("Please login first");
-    return;
-  }
-
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-
-  const page = document.getElementById(pageId);
-  if (page) page.classList.add("active");
-
-  localStorage.setItem("lastPage", pageId);
-}
-
-function goHome() {
-  switchPage("home");
-}
-
-// =========================
-// INIT SYSTEM
-// =========================
-window.onload = () => {
-  const last = localStorage.getItem("lastPage") || "home";
-  switchPage(last);
-
-  renderTasks();
-  renderMeetings();
-  renderContacts();
-
-  loadTheme();
-  loadBackground();
-  loadFont();
-  loadProfileIcon();
+// Synonyms for Smart Search
+const synonyms = {
+    "job": ["career", "employment", "opportunity", "work"],
+    "meeting": ["sync", "call", "appointment", "calendar"],
+    "fix": ["error", "correct", "update"]
 };
 
 // =========================
-// CLOCK (12H / 24H SUPPORT)
+// PAGE SYSTEM (ROUTER)
 // =========================
-let timeFormat = localStorage.getItem("timeFormat") || "12";
+function switchPage(pageId) {
+    const isLoggedIn = localStorage.getItem("loggedIn");
+    const protectedPages = ["dashboard", "documents", "networking"];
 
-setInterval(() => {
-  const clock = document.getElementById("clock");
-  if (!clock) return;
+    // Auth Guard
+    if (protectedPages.includes(pageId) && !isLoggedIn) {
+        showAlert("Please login first to access this sector.", "#ef4444");
+        return;
+    }
 
-  const now = new Date();
+    // Update UI Active States
+    document.querySelectorAll(".view-section").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
 
-  if (timeFormat === "24") {
-    clock.textContent = now.toLocaleTimeString("en-GB");
-  } else {
-    clock.textContent = now.toLocaleTimeString("en-US");
-  }
-}, 1000);
+    const page = document.getElementById(pageId);
+    if (page) page.classList.add("active");
 
-// =========================
-// AUTH SYSTEM
-// =========================
-async function CreateAccount() {
-  const username = signUser.value.trim();
-  const password = signPass.value.trim();
+    const navItem = document.querySelector(`[data-section="${pageId}"]`);
+    if (navItem) navItem.classList.add("active");
 
-  if (!username || !password) return showError("Enter credentials");
-
-  const { data: existing } = await db
-    .from("users")
-    .select("*")
-    .eq("username", username);
-
-  if (existing && existing.length > 0) {
-    return showError("Username exists");
-  }
-
-  const { error } = await db.from("users").insert([{ username, password }]);
-
-  if (error) return showError("Signup failed");
-
-  localStorage.setItem("loggedIn", "true");
-  localStorage.setItem("currentUser", username);
-
-  switchPage("dashboard");
+    localStorage.setItem("lastPage", pageId);
 }
 
-function signup() {
-  return CreateAccount();
+function goHome() { switchPage("home"); }
+
+// =========================
+// INITIALIZATION
+// =========================
+window.onload = () => {
+    const last = localStorage.getItem("lastPage") || "home";
+    switchPage(last);
+    renderTasks();
+    initEventListeners();
+};
+
+function initEventListeners() {
+    // Clock Implementation
+    setInterval(() => {
+        const clock = document.getElementById("clock");
+        if (clock) clock.textContent = new Date().toLocaleTimeString();
+    }, 1000);
+
+    // Global Search Synonym Logic
+    const searchInput = document.getElementById('globalSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', handleSmartSearch);
+    }
+
+    // File Upload / AI Extraction
+    const fileInput = document.getElementById('fileInput');
+    if (fileInput) {
+        fileInput.addEventListener('change', handleAIExtraction);
+    }
+
+    // Signup Binding
+    const signupBtn = document.getElementById("signupBtn");
+    if (signupBtn) signupBtn.addEventListener("click", CreateAccount);
+};
+
+// =========================
+// AUTHENTICATION LOGIC
+// =========================
+async function CreateAccount() {
+    const username = document.getElementById("signUser").value.trim();
+    const password = document.getElementById("signPass").value.trim();
+
+    if (!username || !password) {
+        showAlert("Enter both email and password");
+        return;
+    }
+
+    const { data: existing } = await db.from("users").select("*").eq("username", username);
+    if (existing && existing.length > 0) {
+        showAlert("User already exists");
+        return;
+    }
+
+    const { error } = await db.from("users").insert([{ username, password }]);
+    if (error) {
+        showAlert("Database Error: " + error.message);
+        return;
+    }
+
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("currentUser", username);
+    showAlert("Account Created!", "#10b981");
+    switchPage("dashboard");
 }
 
 async function login() {
-  const username = loginUser.value.trim();
-  const password = loginPass.value.trim();
+    const username = document.getElementById("loginUser").value.trim();
+    const password = document.getElementById("loginPass").value.trim();
 
-  const { data } = await db
-    .from("users")
-    .select("*")
-    .eq("username", username)
-    .eq("password", password)
-    .single();
+    const { data, error } = await db.from("users").select("*").eq("username", username).eq("password", password).single();
 
-  if (!data) return showError("Invalid login");
+    if (error || !data) {
+        showAlert("Invalid credentials");
+        return;
+    }
 
-  localStorage.setItem("loggedIn", "true");
-  localStorage.setItem("currentUser", username);
-
-  switchPage("dashboard");
-}
-
-function logOut() {
-  localStorage.clear();
-  alert("Logged out");
-  switchPage("home");
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("currentUser", username);
+    switchPage("dashboard");
 }
 
 // =========================
-// PROFILE SYSTEM
+// AI & FEATURE LOGIC
 // =========================
-function toggleProfileMenu() {
-  document.getElementById("profileMenu").classList.toggle("hidden");
+function handleAIExtraction() {
+    const progress = document.getElementById('extractionProgress');
+    const bar = progress.querySelector('.progress-bar');
+    progress.style.display = 'block';
+    
+    // Simulate latency for AI processing (3.5 seconds)
+    let width = 0;
+    const interval = setInterval(() => {
+        if (width >= 100) {
+            clearInterval(interval);
+            progress.style.display = 'none';
+            // Auto-populate a task from "AI data"
+            addAIGeneratedTask("Extracted: Networking event with Google Recruiters");
+            showAlert("AI Extraction Complete", "#10b981");
+        } else {
+            width += 5;
+            bar.style.width = width + '%';
+        }
+    }, 150);
 }
 
-function loadProfileIcon() {
-  const user = localStorage.getItem("currentUser") || "U";
-  const icon = document.getElementById("profileIcon");
-  if (icon) icon.textContent = user.charAt(0).toUpperCase();
+function handleSmartSearch(e) {
+    const val = e.target.value.toLowerCase();
+    const suggestions = document.getElementById('searchSuggestions');
+    if (val.length < 2) { suggestions.style.display = 'none'; return; }
+
+    let results = [];
+    for (let key in synonyms) {
+        if (key.includes(val) || synonyms[key].some(s => s.includes(val))) {
+            results.push(`Go to ${key} sector`);
+        }
+    }
+
+    if (results.length > 0) {
+        suggestions.innerHTML = results.map(r => `<div class="suggest-item">${r}</div>`).join('');
+        suggestions.style.display = 'block';
+    } else {
+        suggestions.style.display = 'none';
+    }
 }
 
 // =========================
 // TASK SYSTEM
 // =========================
 function addTask() {
-  const val = taskInput.value;
-  if (!val) return showError("Task required");
+    const input = document.getElementById("taskInput");
+    if (!input.value) return;
 
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  tasks.push(val);
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.push(input.value);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    input.value = "";
+    renderTasks();
+}
 
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-
-  taskInput.value = "";
-  renderTasks();
+function addAIGeneratedTask(text) {
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.push(text);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    renderTasks();
 }
 
 function renderTasks() {
-  const list = document.getElementById("taskList");
-  if (!list) return;
-
-  list.innerHTML = "";
-
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-
-  tasks.forEach(t => {
-    const li = document.createElement("li");
-    li.textContent = t;
-    list.appendChild(li);
-  });
+    const list = document.getElementById("taskList");
+    if (!list) return;
+    list.innerHTML = "";
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.forEach(task => {
+        const li = document.createElement("li");
+        li.className = "task-item";
+        li.textContent = task;
+        list.appendChild(li);
+    });
 }
 
 // =========================
-// MEETINGS
+// THEME LOGIC
 // =========================
-function renderMeetings() {
-  const list = document.getElementById("meetingList");
-  if (!list) return;
-
-  list.innerHTML = "";
-
-  let meetings = JSON.parse(localStorage.getItem("meetings")) || [];
-
-  meetings.forEach(m => {
-    const li = document.createElement("li");
-    li.textContent = m;
-    list.appendChild(li);
-  });
-}
-
-// =========================
-// CONTACTS
-// =========================
-function renderContacts() {
-  const list = document.getElementById("contactList");
-  if (!list) return;
-
-  list.innerHTML = "";
-
-  let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
-
-  contacts.forEach(c => {
-    const li = document.createElement("li");
-    li.textContent = c;
-    list.appendChild(li);
-  });
-}
-
-// =========================
-// FILE UPLOAD + AI SIMULATION
-// =========================
-function uploadFile(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  setTimeout(() => {
-    const mock = {
-      tasks: ["Auto task from AI"],
-      meetings: ["Auto meeting"],
-      contacts: ["Auto contact"]
-    };
-
-    autoPlaceData(mock);
-  }, 1500);
-}
-
-function autoPlaceData(data) {
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  tasks.push(...data.tasks);
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-
-  let meetings = JSON.parse(localStorage.getItem("meetings")) || [];
-  meetings.push(...data.meetings);
-  localStorage.setItem("meetings", JSON.stringify(meetings));
-
-  let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
-  contacts.push(...data.contacts);
-  localStorage.setItem("contacts", JSON.stringify(contacts));
-
-  renderTasks();
-  renderMeetings();
-  renderContacts();
-}
-
-// =========================
-// BACKGROUND UPLOAD
-// =========================
-function uploadBackground(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(evt) {
-    document.querySelector("main").style.backgroundImage =
-      `url(${evt.target.result})`;
-
-    localStorage.setItem("bg", evt.target.result);
-  };
-
-  reader.readAsDataURL(file);
-}
-
-function loadBackground() {
-  const bg = localStorage.getItem("bg");
-  if (bg) document.querySelector("main").style.backgroundImage = `url(${bg})`;
-}
-
-// =========================
-// THEME SYSTEM
-// =========================
-function setThemeColor(color) {
-  document.documentElement.style.setProperty("--accent", color);
-  localStorage.setItem("color", color);
-}
-
-function loadTheme() {
-  const color = localStorage.getItem("color");
-  if (color) setThemeColor(color);
-}
-
-// =========================
-// FONT SYSTEM
-// =========================
-function setFont(font) {
-  document.body.style.fontFamily = font;
-  localStorage.setItem("font", font);
-}
-
-function loadFont() {
-  const font = localStorage.getItem("font");
-  if (font) setFont(font);
-}
-
-// =========================
-// SETTINGS (TIME / COUNTRY)
-// =========================
-function setTimeFormat(format) {
-  timeFormat = format;
-  localStorage.setItem("timeFormat", format);
-}
-
-function setCountry(country) {
-  localStorage.setItem("country", country);
-}
-
-// =========================
-// SEARCH SYSTEM
-// =========================
-function searchData(query) {
-  query = query.toLowerCase();
-
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-
-  const results = tasks.filter(t =>
-    t.toLowerCase().includes(query)
-  );
-
-  console.log("Search results:", results);
-}
-
-// =========================
-// ERROR HANDLING
-// =========================
-function showError(msg) {
-  alert(msg);
-}
-
-// =========================
-// POMODORO TIMER
-// =========================
-let timer;
-let timeLeft = 1500;
-
-function startPomodoro() {
-  clearInterval(timer);
-
-  timer = setInterval(() => {
-    timeLeft--;
-
-    const m = Math.floor(timeLeft / 60);
-    const s = timeLeft % 60;
-
-    const display = document.getElementById("timer");
-    if (display) display.textContent = `${m}:${s < 10 ? "0" : ""}${s}`;
-
-    if (timeLeft <= 0) {
-      clearInterval(timer);
-      alert("Time's up!");
+function applyHex() {
+    const color = document.getElementById('hexInput').value;
+    if(/^#[0-9A-F]{6}$/i.test(color)) {
+        document.documentElement.style.setProperty('--primary-color', color);
+    } else {
+        showAlert("Invalid Hex Format");
     }
-  }, 1000);
 }
 
 // =========================
-// RESPONSIVE TOGGLE
+// UI UTILITIES
 // =========================
-function toggleSidebar() {
-  document.querySelector("aside").classList.toggle("hidden");
+function showAlert(msg, bgColor = "#ef4444") {
+    const alert = document.getElementById('errorAlert');
+    const message = document.getElementById('alertMessage');
+    if (!alert || !message) return;
+    
+    alert.style.backgroundColor = bgColor;
+    message.innerText = msg;
+    alert.classList.remove('hidden');
+    setTimeout(() => alert.classList.add('hidden'), 4000);
 }
