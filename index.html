@@ -8,8 +8,8 @@
     <!-- TITLE -->
     <title>Life OS | Professional Workspace</title>
 
-    <!-- ✅ CSS (CORRECT PLACEMENT) -->
-    <link rel="stylesheet" href="style.css">
+    <!-- ✅ FIXED CSS PATH (GITHUB PAGES SAFE) -->
+    <link rel="stylesheet" href="./style.css">
 
     <!-- GOOGLE FONT -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -19,180 +19,152 @@
 </head>
 
 <body>
-    <div class="app-container">
 
-        <!-- ========================= -->
-        <!-- SIDEBAR -->
-        <!-- ========================= -->
-        <nav class="sidebar">
-            <div class="logo" onclick="switchPage('home')">LIFE OS</div>
+<div class="app-container">
 
-            <ul class="nav-links">
-                <li onclick="switchPage('home')" class="nav-item active">Home</li>
-                <li onclick="switchPage('dashboard')" class="nav-item">Dashboard</li>
-                <li onclick="switchPage('documents')" class="nav-item">Documents & AI</li>
-                <li onclick="switchPage('networking')" class="nav-item">Networking</li>
-                <li onclick="switchPage('themes')" class="nav-item">Settings</li>
+    <!-- ========================= -->
+    <!-- SIDEBAR -->
+    <!-- ========================= -->
+    <nav class="sidebar">
+        <div class="logo" onclick="switchPage('home')">LIFE OS</div>
 
-                <hr>
+        <ul class="nav-links">
+            <li onclick="switchPage('home')" class="nav-item">Home</li>
+            <li onclick="switchPage('dashboard')" class="nav-item">Dashboard</li>
+            <li onclick="switchPage('documents')" class="nav-item">Documents & AI</li>
+            <li onclick="switchPage('networking')" class="nav-item">Networking</li>
+            <li onclick="switchPage('themes')" class="nav-item">Settings</li>
 
-                <li id="navLogin" onclick="switchPage('login')" class="nav-item">Login</li>
-                <li id="navSignup" onclick="switchPage('signup')" class="nav-item">Sign Up</li>
-            </ul>
-        </nav>
+            <hr>
 
-        <!-- ========================= -->
-        <!-- MAIN CONTENT -->
-        <!-- ========================= -->
-        <main class="content-area">
+            <li onclick="switchPage('login')" class="nav-item">Login</li>
+            <li onclick="switchPage('signup')" class="nav-item">Sign Up</li>
+        </ul>
+    </nav>
 
-            <!-- HEADER -->
-            <header class="top-bar">
-                <div class="search-wrapper">
-                    <input type="text" id="globalSearch" placeholder="Quick search...">
-                    <div id="searchSuggestions" class="suggestions-box hidden"></div>
-                </div>
+    <!-- ========================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================= -->
+    <main class="content-area">
 
-                <div class="header-right">
-                    <div id="clock" class="digital-clock">00:00:00</div>
+        <!-- HEADER -->
+        <header class="top-bar">
+            <div class="search-wrapper">
+                <input type="text" id="globalSearch" placeholder="Quick search...">
+                <div id="searchSuggestions" class="suggestions-box hidden"></div>
+            </div>
 
-                    <!-- PROFILE -->
-                    <div class="profile-container" onclick="toggleProfileMenu()">
-                        <div id="profileIcon">U</div>
+            <div class="header-right">
+                <div id="clock" class="digital-clock">00:00:00</div>
 
-                        <div id="profileMenu" class="hidden">
-                            <p id="userDisplay">Guest User</p>
-                            <span class="menu-link" onclick="logOut()">Log Out</span>
-                        </div>
+                <div class="profile-container" onclick="toggleProfileMenu()">
+                    <div id="profileIcon">U</div>
+
+                    <div id="profileMenu" class="hidden">
+                        <p id="userDisplay">Guest User</p>
+                        <span onclick="logOut()">Log Out</span>
                     </div>
                 </div>
-            </header>
+            </div>
+        </header>
 
-            <!-- ========================= -->
-            <!-- HOME -->
-            <!-- ========================= -->
-            <section id="home" class="view-section active">
-                <h1>Welcome to Life OS</h1>
-                <p class="subtitle">
-                    Your unified workspace for goals, networking, and AI planning.
-                </p>
+        <!-- ========================= -->
+        <!-- HOME -->
+        <!-- ========================= -->
+        <section id="home" class="view-section active">
+            <h1>Welcome to Life OS</h1>
+            <p class="subtitle">Your unified workspace for goals, networking, and AI planning.</p>
 
-                <div class="card">
-                    <h3>Quick Start</h3>
-                    <p>
-                        Navigate to the <b>Documents</b> tab to upload your life plan 
-                        and let AI organize your calendar automatically.
-                    </p>
-                </div>
-            </section>
+            <div class="card">
+                <h3>Quick Start</h3>
+                <p>Upload documents in the Documents tab to auto-generate your life system.</p>
+            </div>
+        </section>
 
-            <!-- ========================= -->
-            <!-- DASHBOARD -->
-            <!-- ========================= -->
-            <section id="dashboard" class="view-section">
-                <h1>Dashboard</h1>
+        <!-- ========================= -->
+        <!-- DASHBOARD -->
+        <!-- ========================= -->
+        <section id="dashboard" class="view-section">
+            <h1>Dashboard</h1>
 
-                <div class="card">
-                    <div class="input-group">
-                        <input id="taskInput" type="text" placeholder="Add a new task or deadline...">
-                        <button class="btn-primary" onclick="addTask()">Add Task</button>
-                    </div>
+            <div class="card">
+                <input id="taskInput" type="text" placeholder="Add task...">
+                <button onclick="addTask()">Add Task</button>
 
-                    <ul id="taskList" class="list-container"></ul>
-                </div>
-            </section>
+                <ul id="taskList"></ul>
+            </div>
+        </section>
 
-            <!-- ========================= -->
-            <!-- DOCUMENTS -->
-            <!-- ========================= -->
-            <section id="documents" class="view-section">
-                <h1>Document Intelligence</h1>
+        <!-- ========================= -->
+        <!-- DOCUMENTS -->
+        <!-- ========================= -->
+        <section id="documents" class="view-section">
+            <h1>Document Intelligence</h1>
 
-                <div class="card upload-zone">
-                    <p>Upload PDFs or Images to extract due dates</p>
-                    <input type="file" id="fileInput" hidden>
-                    <button class="btn-secondary" onclick="document.getElementById('fileInput').click()">
-                        Select Document
-                    </button>
-                </div>
+            <div class="card">
+                <input type="file" id="fileInput" hidden>
+                <button onclick="document.getElementById('fileInput').click()">
+                    Upload File
+                </button>
+            </div>
+        </section>
 
-                <div id="extractionProgress" class="progress-bar-container hidden">
-                    <div class="progress-bar"></div>
-                    <p>AI analyzing content...</p>
-                </div>
-            </section>
+        <!-- ========================= -->
+        <!-- NETWORKING -->
+        <!-- ========================= -->
+        <section id="networking" class="view-section">
+            <h1>Networking</h1>
 
-            <!-- ========================= -->
-            <!-- NETWORKING -->
-            <!-- ========================= -->
-            <section id="networking" class="view-section">
-                <h1>Networking</h1>
+            <div class="card">
+                <input id="companySearch" placeholder="Search company...">
+                <button onclick="simulateNetworking()">Search</button>
 
-                <div class="card">
-                    <input type="text" id="companySearch" placeholder="Search Company (e.g. Google)">
-                    <button class="btn-primary" onclick="simulateNetworking()">Search Contacts</button>
+                <div id="contactGrid"></div>
+            </div>
+        </section>
 
-                    <div id="contactGrid" class="contact-grid"></div>
-                </div>
-            </section>
+        <!-- ========================= -->
+        <!-- SETTINGS -->
+        <!-- ========================= -->
+        <section id="themes" class="view-section">
+            <h1>Settings</h1>
 
-            <!-- ========================= -->
-            <!-- SETTINGS -->
-            <!-- ========================= -->
-            <section id="themes" class="view-section">
-                <h1>Settings</h1>
+            <div class="card">
+                <input type="color" id="colorPicker">
+                <input type="text" id="hexInput" placeholder="#000000">
+                <button onclick="applyHex()">Apply</button>
+            </div>
+        </section>
 
-                <div class="card">
-                    <h3>Theme Customization</h3>
+        <!-- ========================= -->
+        <!-- LOGIN -->
+        <!-- ========================= -->
+        <section id="login" class="view-section">
+            <div class="auth-card">
+                <input id="loginUser" placeholder="Username">
+                <input id="loginPass" type="password" placeholder="Password">
+                <button onclick="login()">Login</button>
+            </div>
+        </section>
 
-                    <div class="flex-row">
-                        <input type="color" id="colorPicker" value="#2383e2">
-                        <input type="text" id="hexInput" placeholder="#2383e2">
-                        <button class="btn-secondary" onclick="applyHex()">Apply</button>
-                    </div>
-                </div>
-            </section>
+        <!-- ========================= -->
+        <!-- SIGNUP -->
+        <!-- ========================= -->
+        <section id="signup" class="view-section">
+            <div class="auth-card">
+                <input id="signUser" placeholder="Username">
+                <input id="signPass" type="password">
+                <button onclick="CreateAccount()">Sign Up</button>
+            </div>
+        </section>
 
-            <!-- ========================= -->
-            <!-- LOGIN -->
-            <!-- ========================= -->
-            <section id="login" class="view-section">
-                <div class="auth-card">
-                    <h2>Sign In</h2>
+    </main>
+</div>
 
-                    <input id="loginUser" type="text" placeholder="Username">
-                    <input id="loginPass" type="password" placeholder="Password">
-
-                    <button class="btn-primary" onclick="login()">Login</button>
-                </div>
-            </section>
-
-            <!-- ========================= -->
-            <!-- SIGN UP -->
-            <!-- ========================= -->
-            <section id="signup" class="view-section">
-                <div class="auth-card">
-                    <h2>Create Account</h2>
-
-                    <input id="signUser" type="text" placeholder="Username">
-                    <input id="signPass" type="password" placeholder="Password">
-
-                    <button id="signupBtn" class="btn-primary" onclick="CreateAccount()">
-                        Sign Up
-                    </button>
-                </div>
-            </section>
-
-        </main>
-    </div>
-
-    <!-- ALERT -->
-    <div id="errorAlert" class="alert-toast hidden">
-        <span id="alertMessage"></span>
-    </div>
-
-    <!-- JS -->
-    <script src="script.js"></script>
+<!-- ========================= -->
+<!-- JS -->
+<!-- ========================= -->
+<script src="./script.js"></script>
 
 </body>
 </html>
