@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life OS | Futuristic AI Workspace</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
     <div class="app-container">
@@ -42,26 +43,43 @@
                             <div class="dropdown-header">
                                 <p id="currentUserDisplay">Guest User</p>
                             </div>
-                            <div class="dropdown-item" onclick="switchPage('home')">Profile</div>
-                            <div class="dropdown-item" onclick="switchPage('customize')">Personalization</div>
+                            <div class="dropdown-item" onclick="switchPage('home')">
+                                <i data-lucide="user-circle"></i> Profile
+                            </div>
+                            <div class="dropdown-item" onclick="switchPage('customize')">
+                                <i data-lucide="palette"></i> Personalization
+                            </div>
                             
                             <div class="menu-heading">Settings</div>
-                            <div class="dropdown-item" onclick="switchPage('settings-general')">General</div>
-                            <div class="dropdown-item" onclick="switchPage('settings-notifications')">Notifications</div>
+                            <div class="dropdown-item" onclick="switchPage('settings-general')">
+                                <i data-lucide="settings"></i> General
+                            </div>
+                            <div class="dropdown-item" onclick="switchPage('settings-notifications')">
+                                <i data-lucide="bell"></i> Notifications
+                            </div>
                             
                             <div class="menu-heading">User</div>
-                            <div class="dropdown-item" onclick="switchPage('account')">Account</div>
-                            <div class="dropdown-item" onclick="switchPage('signup')">Sign Up</div>
-                            <div class="dropdown-item logout-btn" onclick="logout()">Log Out</div>
+                            <div class="dropdown-item" onclick="switchPage('account')">
+                                <i data-lucide="user"></i> Account
+                            </div>
+                            <div class="dropdown-item" onclick="switchPage('signup')">
+                                <i data-lucide="user-plus"></i> Sign Up
+                            </div>
+                            <div class="dropdown-item logout-btn" onclick="logout()">
+                                <i data-lucide="log-out"></i> Log Out
+                            </div>
                         </div>
                     </div>
                 </div>
             </header>
 
             <section id="home" class="page view-section active">
-                <h1>Welcome.</h1>
-                <div class="glass-card">
-                    <p>System operational. Your AI-driven workspace is ready.</p>
+                <div class="hero-container">
+                    <div class="main-logo-center" onclick="goHome()">
+                        <div class="logo-glow-large"></div>
+                        <h1 class="logo-text-massive">LIFE OS</h1>
+                    </div>
+                    <p class="subtitle-center">System operational. Your AI-driven workspace is ready.</p>
                 </div>
             </section>
 
@@ -105,14 +123,14 @@
             <section id="settings-general" class="page view-section">
                 <h1>General Settings</h1>
                 <div class="glass-card">
-                    <p>General workspace preferences.</p>
+                    <p>General workspace preferences and system behavior.</p>
                 </div>
             </section>
 
             <section id="settings-notifications" class="page view-section">
                 <h1>Notifications</h1>
                 <div class="glass-card">
-                    <p>Manage system alerts.</p>
+                    <p>Manage system alerts and push notification preferences.</p>
                 </div>
             </section>
 
@@ -133,8 +151,13 @@
                     <button class="btn-glow" onclick="CreateAccount()">Create Account</button>
                 </div>
             </section>
+
         </main>
     </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
