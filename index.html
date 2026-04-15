@@ -70,6 +70,36 @@
                         <input type="color" id="colorPicker" value="#00f2ff">
                         <input type="text" id="hexInput" placeholder="#00F2FF">
                         <button class="btn-glow" onclick="applyHex()">Apply Hex</button>
+
+                        /**/  Profile Dropdown /**/ 
+
+                        <div class="profile-container">
+  <div class="profile-icon-circle" onclick="toggleProfileMenu()">
+    <img src="path/to/avatar.png" alt="Profile">
+  </div>
+
+  <div id="profileMenu" class="dropdown-content hidden">
+    <div onclick="switchPage('home')">Profile</div>
+    <div onclick="switchPage('personalization')">Personalization</div>
+    
+    <div class="menu-heading">Settings</div>
+    <div onclick="switchPage('settings-general')">⚙️ General</div>
+    <div onclick="switchPage('settings-notifications')">🔔 Notifications</div>
+    
+    <div class="menu-heading">User</div>
+    <div onclick="switchPage('account')">👤 Account</div>
+    <div onclick="switchPage('signup')">Sign Up</div>
+    <div onclick="logout()">Log Out</div>
+  </div>
+</div>
+
+<section id="account" class="page">
+  <div class="card">
+    <h2>Account Management</h2>
+    <p>Manage your account settings here.</p>
+    <button class="btn-danger" onclick="deleteAccount()">Delete Account</button>
+  </div>
+</section>
                     </div>
                 </div>
             </section>
