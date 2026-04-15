@@ -1,3 +1,4 @@
+  styles.css
 * {
   margin: 0;
   padding: 0;
@@ -43,22 +44,3 @@ main {
 .card {
   background: rgba(255,255,255,0.05);
   padding: 20px;
-  border-radius: 10px;
-}
-
-/* PAGE SYSTEM */
-.page {
-  display: none;
-}
-
-.page.active {
-  display: block;
-}
-
-/* INPUTS */
-input, button {
-  display: block;
-  margin-top: 10px;
-  padding: 10px;
-  width: 100%;
-}
