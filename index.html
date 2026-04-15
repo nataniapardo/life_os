@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life OS | Futuristic AI Workspace</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
@@ -18,7 +18,7 @@
             <ul class="nav-links">
                 <li onclick="switchPage('home')" class="nav-item active" data-section="home">Home</li>
                 <li onclick="switchPage('dashboard')" class="nav-item" data-section="dashboard">Dashboard</li>
-                <li onclick="switchPage('customize')" class="nav-item" data-section="customize">Customize</li>
+                <li onclick="switchPage('customize')" class="nav-item" data-section="customize">Appearance</li>
                 <hr class="nav-divider">
                 <li onclick="switchPage('login')" class="nav-item">Login</li>
                 <li onclick="switchPage('signup')" class="nav-item">Sign Up</li>
@@ -32,78 +32,105 @@
                 </div>
                 <div class="header-right">
                     <div id="clock" class="digital-clock">00:00:00</div>
+                    
                     <div class="profile-container">
-                        <div id="profileIcon" onclick="toggleProfileMenu()">
-                            <span id="userInitial">G</span>
+                        <div class="profile-icon-circle" onclick="toggleProfileMenu()">
+                            <img src="https://ui-avatars.com/api/?name=User&background=00f2ff&color=000" alt="Profile" id="navAvatar">
                         </div>
-                        <div id="profileMenu" class="dropdown-menu hidden">
-                            <div class="dropdown-user-info"><p id="currentUserDisplay">Guest User</p></div>
-                            <hr>
+
+                        <div id="profileMenu" class="dropdown-content hidden">
+                            <div class="dropdown-header">
+                                <p id="currentUserDisplay">Guest User</p>
+                            </div>
                             <div class="dropdown-item" onclick="switchPage('home')">Profile</div>
-                            <div class="dropdown-item" onclick="switchPage('customize')">Customize</div>
-                            <div class="dropdown-item" onclick="logout()">Sign Out</div>
+                            <div class="dropdown-item" onclick="switchPage('customize')">Personalization</div>
+                            
+                            <div class="menu-heading">Settings</div>
+                            <div class="dropdown-item" onclick="switchPage('settings-general')">General</div>
+                            <div class="dropdown-item" onclick="switchPage('settings-notifications')">Notifications</div>
+                            
+                            <div class="menu-heading">User</div>
+                            <div class="dropdown-item" onclick="switchPage('account')">Account</div>
+                            <div class="dropdown-item" onclick="switchPage('signup')">Sign Up</div>
+                            <div class="dropdown-item logout-btn" onclick="logout()">Log Out</div>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <section id="home" class="view-section active">
+            <section id="home" class="page view-section active">
                 <h1>Welcome.</h1>
                 <div class="glass-card">
-                    <p>System operational. Navigate to <b>Customize</b> to change your theme.</p>
+                    <p>System operational. Your AI-driven workspace is ready.</p>
                 </div>
             </section>
 
-            <section id="dashboard" class="view-section">
+            <section id="dashboard" class="page view-section">
                 <h1>Dashboard</h1>
                 <div class="glass-card">
-                    <input id="taskInput" placeholder="Add a task...">
-                    <button class="btn-glow" onclick="addTask()">Sync</button>
-                    <ul id="taskList"></ul>
+                    <div class="input-group">
+                        <input id="taskInput" placeholder="Capture a new mission...">
+                        <button class="btn-glow" onclick="addTask()">Sync Task</button>
+                    </div>
+                    <ul id="taskList" class="list-container"></ul>
                 </div>
             </section>
 
-            <section id="customize" class="view-section">
+            <section id="customize" class="page view-section">
                 <h1>Appearance</h1>
                 <div class="glass-card">
+                    <h3>Accent Theme</h3>
                     <div class="color-controls">
                         <input type="color" id="colorPicker" value="#00f2ff">
-                        <input type="text" id="hexInput" placeholder="#00F2FF">
-                        <button class="btn-glow" onclick="applyHex()">Apply Hex</button>
-
-// =========================
-// Profile Dropdown
-// =========================
-
-
-                        <div class="profile-container">
-  <div class="profile-icon-circle" onclick="toggleProfileMenu()">
-    <img src="path/to/avatar.png" alt="Profile">
-  </div>
-
-  <div id="profileMenu" class="dropdown-content hidden">
-    <div onclick="switchPage('home')">Profile</div>
-    <div onclick="switchPage('personalization')">Personalization</div>
-    
-    <div class="menu-heading">Settings</div>
-    <div onclick="switchPage('settings-general')">⚙️ General</div>
-    <div onclick="switchPage('settings-notifications')">🔔 Notifications</div>
-    
-    <div class="menu-heading">User</div>
-    <div onclick="switchPage('account')">👤 Account</div>
-    <div onclick="switchPage('signup')">Sign Up</div>
-    <div onclick="logout()">Log Out</div>
-  </div>
-</div>
-
-<section id="account" class="page">
-  <div class="card">
-    <h2>Account Management</h2>
-    <p>Manage your account settings here.</p>
-    <button class="btn-danger" onclick="deleteAccount()">Delete Account</button>
-  </div>
-</section>
+                        <div class="hex-box">
+                            <input type="text" id="hexInput" placeholder="#00F2FF">
+                            <button class="btn-glow" onclick="applyHex()">Apply Hex</button>
+                        </div>
                     </div>
+                </div>
+            </section>
+
+            <section id="account" class="page view-section">
+                <h1>Account Settings</h1>
+                <div class="glass-card danger-zone">
+                    <h2>Account Management</h2>
+                    <p>Manage your account status and security credentials here.</p>
+                    <hr class="nav-divider">
+                    <h3>Danger Zone</h3>
+                    <p>Deleting your account is permanent.</p>
+                    <button class="btn-danger" onclick="deleteAccount()">Delete Account</button>
+                </div>
+            </section>
+
+            <section id="settings-general" class="page view-section">
+                <h1>General Settings</h1>
+                <div class="glass-card">
+                    <p>General workspace preferences.</p>
+                </div>
+            </section>
+
+            <section id="settings-notifications" class="page view-section">
+                <h1>Notifications</h1>
+                <div class="glass-card">
+                    <p>Manage system alerts.</p>
+                </div>
+            </section>
+
+            <section id="login" class="page view-section">
+                <div class="auth-card">
+                    <h2>Login</h2>
+                    <input id="loginUser" placeholder="Username">
+                    <input id="loginPass" type="password" placeholder="Password">
+                    <button class="btn-glow" onclick="login()">Enter OS</button>
+                </div>
+            </section>
+
+            <section id="signup" class="page view-section">
+                <div class="auth-card">
+                    <h2>Register</h2>
+                    <input id="signUser" placeholder="Username">
+                    <input id="signPass" type="password" placeholder="Password">
+                    <button class="btn-glow" onclick="CreateAccount()">Create Account</button>
                 </div>
             </section>
         </main>
