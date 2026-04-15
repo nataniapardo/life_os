@@ -1,23 +1,25 @@
+// Initialize Supabase
 const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Page Routing
+// Routing Logic
 function switchPage(pageId) {
     const isLoggedIn = localStorage.getItem("loggedIn");
-    const protected = ["dashboard", "documents", "networking"];
+    const protectedRoutes = ["dashboard", "documents", "networking"];
 
-    if (protected.includes(pageId) && !isLoggedIn) {
-        showAlert("Please login first");
+    if (protectedRoutes.includes(pageId) && !isLoggedIn) {
+        showAlert("Access Denied: Please log in first.");
         return;
     }
 
-    document.querySelectorAll(".view-section").forEach(p => p.classList.remove("active"));
+    // Update visibility
+    document.querySelectorAll(".view-section").forEach(s => s.classList.remove("active"));
     document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
 
     const target = document.getElementById(pageId);
     if (target) target.classList.add("active");
-    
+
     const nav = document.querySelector(`[data-section="${pageId}"]`);
     if (nav) nav.classList.add("active");
 
@@ -26,14 +28,15 @@ function switchPage(pageId) {
 
 // Auth Logic
 async function CreateAccount() {
-    const username = document.getElementById("signUser").value.trim();
-    const password = document.getElementById("signPass").value.trim();
+    const user = document.getElementById("signUser").value.trim();
+    const pass = document.getElementById("signPass").value.trim();
+    if (!user || !pass) return showAlert("Fill in all fields");
 
-    const { error } = await db.from("users").insert([{ username, password }]);
-    if (error) return showAlert("Error creating account");
+    const { error } = await db.from("users").insert([{ username: user, password: pass }]);
+    if (error) return showAlert("Signup failed");
 
     localStorage.setItem("loggedIn", "true");
-    localStorage.setItem("currentUser", username);
+    localStorage.setItem("currentUser", user);
     switchPage("dashboard");
 }
 
@@ -42,7 +45,7 @@ async function login() {
     const pass = document.getElementById("loginPass").value.trim();
 
     const { data, error } = await db.from("users").select("*").eq("username", user).eq("password", pass).single();
-    if (error || !data) return showAlert("Invalid credentials");
+    if (error || !data) return showAlert("Invalid login details");
 
     localStorage.setItem("loggedIn", "true");
     localStorage.setItem("currentUser", user);
@@ -54,52 +57,48 @@ function logout() {
     location.reload();
 }
 
-// Feature Logic
-function handleAIExtraction() {
-    const prog = document.getElementById("extractionProgress");
-    const bar = prog.querySelector(".progress-bar");
-    prog.classList.remove("hidden");
-    
-    let w = 0;
-    const intv = setInterval(() => {
-        w += 10;
-        bar.style.width = w + "%";
-        if (w >= 100) {
-            clearInterval(intv);
-            prog.classList.add("hidden");
-            showAlert("AI: Successfully extracted milestones", "#10b981");
-        }
-    }, 200);
+// Tasks
+function addTask() {
+    const input = document.getElementById("taskInput");
+    if (!input.value) return;
+    const list = document.getElementById("taskList");
+    const li = document.createElement("li");
+    li.style.padding = "8px 0";
+    li.style.borderBottom = "1px solid #eee";
+    li.textContent = "• " + input.value;
+    list.appendChild(li);
+    input.value = "";
 }
 
-// Initialize
+// Settings
+function applyHex() {
+    const color = document.getElementById("hexInput").value;
+    if(/^#[0-9A-F]{6}$/i.test(color)) {
+        document.documentElement.style.setProperty('--primary-color', color);
+    }
+}
+
+// App Initialization
 window.onload = () => {
+    // Restore state
     const last = localStorage.getItem("lastPage") || "home";
     switchPage(last);
-    
-    // Clock
+
+    // Start Clock
     setInterval(() => {
-        const c = document.getElementById("clock");
-        if (c) c.textContent = new Date().toLocaleTimeString();
+        document.getElementById("clock").textContent = new Date().toLocaleTimeString();
     }, 1000);
-
-    // AI listener
-    const fInput = document.getElementById("fileInput");
-    if (fInput) fInput.addEventListener("change", handleAIExtraction);
-
-    // Signup listener
-    const sBtn = document.getElementById("signupBtn");
-    if (sBtn) sBtn.addEventListener("click", CreateAccount);
 };
 
 function toggleProfileMenu() {
     document.getElementById("profileMenu").classList.toggle("hidden");
 }
 
-function showAlert(msg, color = "#ef4444") {
+function showAlert(msg) {
     const alert = document.getElementById("errorAlert");
-    alert.style.background = color;
-    document.getElementById("alertMessage").innerText = msg;
+    document.getElementById("alertMessage").textContent = msg;
     alert.classList.remove("hidden");
     setTimeout(() => alert.classList.add("hidden"), 3000);
 }
+
+  
