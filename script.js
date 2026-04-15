@@ -1,3 +1,4 @@
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 const SUPABASE_URL = "https://bzwnjtofcduxllafdybw.supabase.co";
 const SUPABASE_KEY = "sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl";
 
