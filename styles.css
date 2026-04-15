@@ -1,287 +1,47 @@
-/* ========================= */
-/* ROOT THEME */
-/* ========================= */
-:root {
-  --accent: #6366f1;
-  --bg: #0f172a;
-  --card: rgba(255, 255, 255, 0.05);
-  --sidebar: rgba(255, 255, 255, 0.04);
-  --text: #e2e8f0;
-  --subtext: #94a3b8;
-  --border: rgba(255, 255, 255, 0.08);
-  --radius: 12px;
-}
-
-/* ========================= */
-/* RESET */
-/* ========================= */
+  styles.css
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* ========================= */
-/* BODY LAYOUT */
-/* ========================= */
 body {
-  font-family: "Inter", -apple-system, sans-serif;
-  background: radial-gradient(circle at top, #1e293b, #020617);
-  color: var(--text);
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
   display: grid;
-  grid-template-columns: 240px 1fr;
-  grid-template-rows: 70px 1fr;
+  grid-template-columns: 220px 1fr;
   height: 100vh;
-  overflow: hidden;
 }
 
-/* ========================= */
 /* HEADER */
-/* ========================= */
 header {
   grid-column: 1 / span 2;
+  padding: 15px;
+  background: rgba(0,0,0,0.4);
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 0 24px;
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
 }
 
-/* LOGO */
-.logo {
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* HEADER RIGHT */
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-/* CLOCK */
-#clock {
-  font-size: 13px;
-  color: var(--subtext);
-  font-family: monospace;
-}
-
-/* ICON */
-.icon {
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--subtext);
-  transition: 0.2s;
-}
-.icon:hover {
-  color: var(--text);
-}
-
-/* ========================= */
 /* SIDEBAR */
-/* ========================= */
 aside {
-  background: var(--sidebar);
-  backdrop-filter: blur(12px);
-  padding: 20px;
-  border-right: 1px solid var(--border);
-}
-
-aside h3 {
-  margin-bottom: 10px;
-  font-size: 13px;
-  color: var(--subtext);
-}
-
-aside ul {
-  list-style: none;
+  padding: 15px;
+  background: rgba(255,255,255,0.05);
 }
 
 aside li {
+  list-style: none;
   padding: 10px;
-  border-radius: var(--radius);
   cursor: pointer;
-  font-size: 14px;
-  transition: 0.2s;
 }
 
-aside li:hover {
-  background: var(--card);
-}
-
-/* ========================= */
 /* MAIN */
-/* ========================= */
 main {
-  padding: 30px;
-  overflow-y: auto;
-  background-size: cover;
-  background-position: center;
+  padding: 20px;
 }
 
-/* ========================= */
-/* PAGE SYSTEM */
-/* ========================= */
-.page {
-  display: none;
-}
-
-.page.active {
-  display: block;
-  animation: fadeIn 0.3s ease;
-}
-
-/* ========================= */
 /* CARD */
-/* ========================= */
 .card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: 25px;
-  border-radius: var(--radius);
-  backdrop-filter: blur(10px);
-  margin-bottom: 20px;
-}
-
-/* ========================= */
-/* TYPOGRAPHY */
-/* ========================= */
-h2 {
-  margin-bottom: 15px;
-}
-
-h3 {
-  margin-top: 20px;
-  margin-bottom: 10px;
-  font-size: 14px;
-  color: var(--subtext);
-}
-
-/* ========================= */
-/* INPUTS */
-/* ========================= */
-input, select, button {
-  width: 100%;
-  margin-top: 10px;
-  padding: 10px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
   background: rgba(255,255,255,0.05);
-  color: var(--text);
-  outline: none;
-}
+  padding: 20px;
 
-/* BUTTON */
-button {
-  background: var(--accent);
-  border: none;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-button:hover {
-  opacity: 0.85;
-}
-
-/* ========================= */
-/* LISTS */
-/* ========================= */
-ul {
-  margin-top: 10px;
-}
-
-li {
-  padding: 8px;
-  border-bottom: 1px solid var(--border);
-  font-size: 14px;
-}
-
-/* ========================= */
-/* PROFILE */
-/* ========================= */
-.profile-container {
-  position: relative;
-  cursor: pointer;
-}
-
-#profileIcon {
-  width: 36px;
-  height: 36px;
-  background: var(--accent);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-}
-
-#profileMenu {
-  position: absolute;
-  right: 0;
-  top: 50px;
-  background: #020617;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 10px;
-  width: 150px;
-}
-
-#profileMenu button {
-  width: 100%;
-  background: none;
-  border: none;
-  color: var(--text);
-  text-align: left;
-  padding: 8px;
-  cursor: pointer;
-}
-
-#profileMenu button:hover {
-  background: var(--card);
-}
-
-/* ========================= */
-/* TIMER */
-/* ========================= */
-#timer {
-  font-size: 24px;
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-/* ========================= */
-/* UTIL */
-/* ========================= */
-.hidden {
-  display: none;
-}
-
-/* ========================= */
-/* ANIMATIONS */
-/* ========================= */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ========================= */
-/* SCROLLBAR */
-/* ========================= */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--accent);
-  border-radius: 10px;
-}
