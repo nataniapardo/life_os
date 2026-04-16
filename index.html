@@ -33,13 +33,17 @@
         <main class="content-area">
             <header class="top-bar">
                 <div class="header-left"></div>
+
                 <div class="header-right">
                     <div class="search-wrapper">
                         <i data-lucide="search" class="search-icon"></i>
                         <input type="text" id="globalSearch" placeholder="Search...">
                     </div>
 
-                    <div id="clock" class="digital-clock">00:00:00</div>
+                    <div class="time-date-container">
+                        <div id="date" class="date-display"></div>
+                        <div id="clock" class="digital-clock">00:00:00</div>
+                    </div>
                     
                     <div class="profile-container">
                         <div class="profile-icon-circle" id="profileTrigger" onclick="toggleProfileMenu()">
@@ -81,7 +85,6 @@
                     </div>
                 </div>
             </header>
-
             <section id="login" class="page view-section">
                 <div class="auth-page-container">
                     <div class="auth-logo-large">
