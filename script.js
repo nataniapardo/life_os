@@ -9,49 +9,52 @@ const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // PAGE SYSTEM (ROUTER)
 // =========================
 function switchPage(pageId) {
-  const isLoggedIn = localStorage.getItem("loggedIn");
+    const isLoggedIn = localStorage.getItem("loggedIn") === "true";
 
-  // Protection for private pages
-  const privatePages = ["dashboard", "settings-general", "settings-notifications", "account", "personalization", "customize"];
-  if (privatePages.includes(pageId) && !isLoggedIn) {
-    alert("Please login first to access this area.");
-    switchPage("login");
-    return;
-  }
+    // Toggle UI visibility based on login status (Gating Logic)
+    if (!isLoggedIn) {
+        document.body.classList.add("logged-out");
+        // Force them to login or signup if they try to wander off
+        if (pageId !== 'login' && pageId !== 'signup') {
+            pageId = 'login';
+        }
+    } else {
+        document.body.classList.remove("logged-out");
+    }
 
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    const page = document.getElementById(pageId);
+    
+    if (page) {
+        page.classList.add("active");
+    } else {
+        console.warn(`Page ID "${pageId}" not found in HTML.`);
+    }
 
-  const page = document.getElementById(pageId);
-  if (page) {
-    page.classList.add("active");
-  } else {
-    console.warn(`Page ID "${pageId}" not found in HTML.`);
-  }
-
-  // Close dropdown whenever we switch pages
-  closeProfileMenu();
-  localStorage.setItem("lastPage", pageId);
+    // Close dropdown whenever we switch pages
+    closeProfileMenu();
+    localStorage.setItem("lastPage", pageId);
 }
 
 function goHome() {
-  switchPage("home");
+    switchPage("home");
 }
 
 // =========================
 // PROFILE & AVATAR LOGIC
 // =========================
 function toggleProfileMenu() {
-  const menu = document.getElementById("profileMenu");
-  if (menu) {
-    menu.classList.toggle("hidden");
-  }
+    const menu = document.getElementById("profileMenu");
+    if (menu) {
+        menu.classList.toggle("hidden");
+    }
 }
 
 function closeProfileMenu() {
-  const menu = document.getElementById("profileMenu");
-  if (menu) {
-    menu.classList.add("hidden");
-  }
+    const menu = document.getElementById("profileMenu");
+    if (menu) {
+        menu.classList.add("hidden");
+    }
 }
 
 // Trigger the hidden file input
@@ -131,10 +134,10 @@ function loadProfile() {
 
 // Close menu when clicking outside
 window.addEventListener("click", (e) => {
-  const container = document.querySelector(".profile-container");
-  if (container && !container.contains(e.target)) {
-    closeProfileMenu();
-  }
+    const container = document.querySelector(".profile-container");
+    if (container && !container.contains(e.target)) {
+        closeProfileMenu();
+    }
 });
 
 // =========================
@@ -176,142 +179,147 @@ function updateThemeUI(theme) {
 // AUTHENTICATION
 // =========================
 async function CreateAccount() {
-  const username = document.getElementById("signUser").value.trim();
-  const password = document.getElementById("signPass").value.trim();
+    const username = document.getElementById("signUser").value.trim();
+    const password = document.getElementById("signPass").value.trim();
 
-  if (!username || !password) {
-    alert("Please enter username and password");
-    return;
-  }
+    if (!username || !password) {
+        alert("Please enter username and password");
+        return;
+    }
 
-  const { data: existing, error: fetchError } = await db
-    .from("users")
-    .select("*")
-    .eq("username", username);
+    const { data: existing, error: fetchError } = await db
+        .from("users")
+        .select("*")
+        .eq("username", username);
 
-  if (existing && existing.length > 0) {
-    alert("Username already exists");
-    return;
-  }
+    if (existing && existing.length > 0) {
+        alert("Username already exists");
+        return;
+    }
 
-  const { error: insertError } = await db
-    .from("users")
-    .insert([{ username, password }]);
+    const { error: insertError } = await db
+        .from("users")
+        .insert([{ username, password }]);
 
-  if (insertError) {
-    alert("Error creating account");
-    return;
-  }
+    if (insertError) {
+        alert("Error creating account");
+        return;
+    }
 
-  localStorage.setItem("loggedIn", "true");
-  localStorage.setItem("currentUser", username);
-  alert("Account created and logged in!");
-  loadProfile();
-  switchPage("dashboard");
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("currentUser", username);
+    alert("Account created and logged in!");
+    
+    // UI REFRESH
+    document.body.classList.remove("logged-out");
+    loadProfile();
+    switchPage("home");
 }
 
 async function login() {
-  const username = document.getElementById("loginUser").value.trim();
-  const password = document.getElementById("loginPass").value.trim();
+    const username = document.getElementById("loginUser").value.trim();
+    const password = document.getElementById("loginPass").value.trim();
 
-  if (!username || !password) {
-    alert("Enter username and password");
-    return;
-  }
+    if (!username || !password) return alert("Enter credentials");
 
-  const { data, error } = await db
-    .from("users")
-    .select("*")
-    .eq("username", username)
-    .eq("password", password)
-    .single();
+    const { data, error } = await db
+        .from("users")
+        .select("*")
+        .eq("username", username)
+        .eq("password", password)
+        .single();
 
-  if (error || !data) {
-    alert("Invalid credentials");
-    return;
-  }
+    if (error || !data) return alert("Invalid credentials");
 
-  localStorage.setItem("loggedIn", "true");
-  localStorage.setItem("currentUser", username);
-  alert("Login successful");
-  loadProfile();
-  switchPage("dashboard");
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("currentUser", username);
+    
+    // UI REFRESH
+    document.body.classList.remove("logged-out");
+    loadProfile();
+    switchPage("home"); // Redirect to home after success
 }
 
 function logout() {
-  localStorage.removeItem("loggedIn");
-  localStorage.removeItem("currentUser");
-  localStorage.removeItem("userAvatar");
-  alert("Logged out successfully");
-  loadProfile();
-  switchPage("home");
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("userAvatar");
+    
+    // UI REFRESH
+    document.body.classList.add("logged-out");
+    switchPage("login");
 }
 
 // =========================
 // ACCOUNT MANAGEMENT
 // =========================
 async function deleteAccount() {
-  const username = localStorage.getItem("currentUser");
-  const confirmDelete = confirm("CRITICAL: Are you sure you want to delete your account? This cannot be undone.");
+    const username = localStorage.getItem("currentUser");
+    const confirmDelete = confirm("CRITICAL: Are you sure you want to delete your account? This cannot be undone.");
 
-  if (!confirmDelete) return;
+    if (!confirmDelete) return;
 
-  const { error } = await db
-    .from("users")
-    .delete()
-    .eq("username", username);
+    const { error } = await db
+        .from("users")
+        .delete()
+        .eq("username", username);
 
-  if (error) {
-    alert("Error deleting account: " + error.message);
-  } else {
-    alert("Account successfully deleted.");
-    logout();
-  }
+    if (error) {
+        alert("Error deleting account: " + error.message);
+    } else {
+        alert("Account successfully deleted.");
+        logout();
+    }
 }
 
 // =========================
 // TASK SYSTEM
 // =========================
 function addTask() {
-  const input = document.getElementById("taskInput");
-  if (!input || !input.value) return;
+    const input = document.getElementById("taskInput");
+    if (!input || !input.value) return;
 
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  tasks.push(input.value);
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.push(input.value);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 
-  input.value = "";
-  renderTasks();
+    input.value = "";
+    renderTasks();
 }
 
 function renderTasks() {
-  const list = document.getElementById("taskList");
-  if (!list) return;
-  list.innerHTML = "";
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  tasks.forEach(task => {
-    const li = document.createElement("li");
-    li.textContent = task;
-    list.appendChild(li);
-  });
+    const list = document.getElementById("taskList");
+    if (!list) return;
+    list.innerHTML = "";
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.forEach(task => {
+        const li = document.createElement("li");
+        li.textContent = task;
+        list.appendChild(li);
+    });
 }
 
 // =========================
 // INITIALIZATION
 // =========================
 window.addEventListener('DOMContentLoaded', () => {
-  initTheme();
-  loadProfile();
-  renderTasks();
-  
-  const last = localStorage.getItem("lastPage") || "home";
-  switchPage(last);
-  
-  // Set the clock
-  setInterval(() => {
-    const clock = document.getElementById("clock");
-    if (clock) clock.textContent = new Date().toLocaleTimeString();
-  }, 1000);
-  
-  if (window.lucide) lucide.createIcons();
+    initTheme();
+    
+    const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+    if (!isLoggedIn) {
+        switchPage('login');
+    } else {
+        loadProfile();
+        renderTasks();
+        const last = localStorage.getItem("lastPage") || "home";
+        switchPage(last);
+    }
+
+    // Set the clock
+    setInterval(() => {
+        const clock = document.getElementById("clock");
+        if (clock) clock.textContent = new Date().toLocaleTimeString();
+    }, 1000);
+
+    if (window.lucide) lucide.createIcons();
 });
