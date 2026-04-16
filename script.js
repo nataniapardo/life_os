@@ -23,15 +23,24 @@ const resourceData = {
 // PAGE SYSTEM (ROUTER)
 // =========================
 function switchPage(pageId) {
+    console.log("Attempting to switch to:", pageId); // Debugging line
+
     const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-    const pages = document.querySelectorAll(".page");
     
-    // Auth Gating logic
+    // 1. Auth Guard & Gating Logic
     if (!isLoggedIn && (pageId !== 'login' && pageId !== 'signup')) {
+        console.warn("User not logged in. Redirecting to login.");
         document.body.classList.add("logged-out");
         pageId = 'login';
     } else if (isLoggedIn) {
         document.body.classList.remove("logged-out");
+    }
+
+    // 2. Hide all pages
+    const pages = document.querySelectorAll(".page");
+    if (pages.length === 0) {
+        console.error("No elements with class '.page' found!");
+        return;
     }
 
     pages.forEach(p => {
@@ -40,6 +49,7 @@ function switchPage(pageId) {
         p.classList.remove("active");
     });
 
+    // 3. Show active page
     const activePage = document.getElementById(pageId);
     if (activePage) {
         activePage.classList.remove("hidden");
@@ -49,8 +59,11 @@ function switchPage(pageId) {
         // Trigger feature-specific renders
         if (pageId === 'calendar') renderCalendar();
         if (pageId === 'resources') updateResources();
+    } else {
+        console.error(`Page ID "${pageId}" does not exist in HTML!`);
     }
 
+    // 4. Update UI visuals & cleanup
     updateSidebarUI(pageId);
     closeProfileMenu();
     localStorage.setItem("lastPage", pageId);
