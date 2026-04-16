@@ -149,7 +149,9 @@ nav.sidebar {
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    z-index: 1001;
+    /* FIX: Ensure the sidebar is definitely on top of the content area */
+    z-index: 9999 !important;
+    position: relative;
 }
 
 .logo-area {
@@ -185,6 +187,11 @@ nav.sidebar {
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
+/* FIX: Ensure the click goes through the icon/text to the LI tag's onclick */
+.nav-links li * {
+    pointer-events: none;
 }
 
 .nav-links li:hover, .nav-links li.active {
