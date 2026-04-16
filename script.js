@@ -8,6 +8,7 @@ const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // =========================
 // DATA INITIALIZATION
 // =========================
+let currentNavDate = new Date(); // Global state for Calendar
 const countries = ["USA", "Canada", "UK", "Australia", "India"];
 const currencies = ["USD", "EUR", "GBP", "CAD", "INR"];
 const languages = { "es": "Spanish", "fr": "French", "de": "German", "zh": "Chinese", "ja": "Japanese" };
@@ -23,8 +24,6 @@ const resourceData = {
 // =========================
 function switchPage(pageId) {
     const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-    
-    // Select all pages
     const pages = document.querySelectorAll(".page");
     
     // Auth Gating logic
@@ -46,15 +45,70 @@ function switchPage(pageId) {
         activePage.classList.remove("hidden");
         activePage.style.display = 'block';
         activePage.classList.add("active");
+        
+        // Trigger feature-specific renders
+        if (pageId === 'calendar') renderCalendar();
+        if (pageId === 'resources') updateResources();
     }
 
+    updateSidebarUI(pageId);
     closeProfileMenu();
     localStorage.setItem("lastPage", pageId);
     if (window.lucide) lucide.createIcons();
 }
 
+function updateSidebarUI(pageId) {
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('onclick')?.includes(`'${pageId}'`)) {
+            item.classList.add('active');
+        }
+    });
+}
+
 function goHome() {
     switchPage("home");
+}
+
+// =========================
+// CALENDAR ENGINE
+// =========================
+function renderCalendar() {
+    const calendarDays = document.getElementById("calendarDays");
+    const monthDisplay = document.getElementById("monthDisplay");
+    if (!calendarDays || !monthDisplay) return;
+
+    calendarDays.innerHTML = "";
+    const year = currentNavDate.getFullYear();
+    const month = currentNavDate.getMonth();
+
+    monthDisplay.innerText = currentNavDate.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date();
+
+    // Padding for first week
+    for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement("div");
+        empty.classList.add("empty-day");
+        calendarDays.appendChild(empty);
+    }
+
+    // Days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+        const cell = document.createElement("div");
+        cell.innerText = day;
+        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+            cell.classList.add("today");
+        }
+        calendarDays.appendChild(cell);
+    }
+}
+
+function moveMonth(offset) {
+    currentNavDate.setMonth(currentNavDate.getMonth() + offset);
+    renderCalendar();
 }
 
 // =========================
@@ -91,109 +145,56 @@ function handleImageUpload(event) {
 function syncAvatarUI(imageData) {
     const navImg = document.getElementById('navAvatar');
     const navPlace = document.getElementById('avatarPlaceholder');
-    const bigImg = document.getElementById('bigAvatar');
-    const bigPlace = document.getElementById('bigPlaceholder');
-
-    if (imageData) {
-        if (navImg) { navImg.src = imageData; navImg.classList.remove('hidden'); }
-        if (bigImg) { bigImg.src = imageData; bigImg.classList.remove('hidden'); }
+    if (imageData && navImg) {
+        navImg.src = imageData;
+        navImg.classList.remove('hidden');
         if (navPlace) navPlace.classList.add('hidden');
-        if (bigPlace) bigPlace.classList.add('hidden');
     }
 }
 
 function loadProfile() {
     const savedAvatar = localStorage.getItem('userAvatar');
     const username = localStorage.getItem('currentUser') || "Guest";
-    
     const userDisplay = document.getElementById('currentUserDisplay');
     if (userDisplay) userDisplay.textContent = username;
-    
-    const fullNameDisplay = document.getElementById('fullProfileName');
-    if (fullNameDisplay) fullNameDisplay.textContent = username;
 
     if (savedAvatar) {
         syncAvatarUI(savedAvatar);
     } else {
         const initials = username.substring(0, 2).toUpperCase();
         const navPlace = document.getElementById('avatarPlaceholder');
-        const bigPlace = document.getElementById('bigPlaceholder');
         if (navPlace) { navPlace.innerText = initials; navPlace.classList.remove('hidden'); }
-        if (bigPlace) { bigPlace.innerText = initials; bigPlace.classList.remove('hidden'); }
     }
-}
-
-// =========================
-// CALCULATOR LOGIC
-// =========================
-function calcIn(val) { 
-    document.getElementById('calcDisplay').value += val; 
-}
-
-function calcClear() { 
-    document.getElementById('calcDisplay').value = ""; 
-}
-
-function calcSolve() {
-    try {
-        const expression = document.getElementById('calcDisplay').value;
-        const result = eval(expression); 
-        addCalcHistory(expression + " = " + result);
-        document.getElementById('calcDisplay').value = result;
-    } catch { 
-        alert("Invalid Equation"); 
-    }
-}
-
-function calcScientific(func) {
-    document.getElementById('calcDisplay').value += func + "(";
-}
-
-function addCalcHistory(item) {
-    const hist = document.getElementById('calcHistory');
-    if (!hist) return;
-    const li = document.createElement('li');
-    li.style.borderBottom = "1px solid var(--border-color)";
-    li.style.padding = "5px 0";
-    li.innerText = item;
-    hist.prepend(li);
-}
-
-function saveMathNotes() {
-    const notes = document.getElementById('mathNotes').value;
-    localStorage.setItem('mathNotes', notes);
-    alert("Notes saved to your system memory.");
 }
 
 // =========================
 // WORLD TOOLS & RESOURCES
 // =========================
-async function translateText() {
+function translateText() {
     const text = document.getElementById('transInput').value;
-    const lang = document.getElementById('langList').value;
-    document.getElementById('transOutput').innerText = `[Simulated Translation to ${lang}]: ${text}`;
+    const langCode = document.getElementById('langList').value;
+    const langName = languages[langCode] || langCode;
+    document.getElementById('transOutput').innerText = `[Simulated Translation to ${langName}]: ${text}`;
 }
 
 function convertCurrency() {
     const amount = document.getElementById('currAmount').value;
     const from = document.getElementById('currFrom').value;
     const to = document.getElementById('currTo').value;
-    const rate = 1.2; 
+    const rate = 1.25; 
     document.getElementById('currResult').innerText = `${amount} ${from} = ${(amount * rate).toFixed(2)} ${to}`;
 }
 
-// FIXED: Resource Update with Guard Clauses to prevent Null errors
 function updateResources() {
     const countrySelect = document.getElementById('countryList');
     const container = document.getElementById('resourceContainer');
-
     if (!countrySelect || !container) return;
 
     const country = countrySelect.value;
     const list = resourceData[country] || ["No data currently available for this region."];
     
     container.innerHTML = list.map(item => `
-        <div class="glass-card" style="margin-bottom:10px; padding:15px;">
+        <div class="glass-card" style="margin-bottom:10px; padding:15px; border-left: 4px solid var(--accent-color);">
             ${item}
         </div>
     `).join('');
@@ -202,12 +203,6 @@ function updateResources() {
 // =========================
 // THEME & AUTH
 // =========================
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeUI(savedTheme);
-}
-
 function toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
@@ -228,21 +223,13 @@ function updateThemeUI(theme) {
 async function login() {
     const user = document.getElementById("loginUser").value.trim();
     const pass = document.getElementById("loginPass").value.trim();
-
     if (!user || !pass) return alert("Please enter credentials");
 
-    const { data, error } = await db.from("users")
-        .select("*")
-        .eq("username", user)
-        .eq("password", pass)
-        .single();
-
+    const { data, error } = await db.from("users").select("*").eq("username", user).eq("password", pass).single();
     if (error || !data) return alert("Invalid credentials");
 
     localStorage.setItem("loggedIn", "true");
     localStorage.setItem("currentUser", user);
-    
-    alert("System Access Granted");
     switchPage("home");
     location.reload(); 
 }
@@ -250,38 +237,32 @@ async function login() {
 async function CreateAccount() {
     const username = document.getElementById("signUser").value.trim();
     const password = document.getElementById("signPass").value.trim();
-
     if (!username || !password) return alert("Enter credentials");
 
     const { error } = await db.from("users").insert([{ username, password }]);
-
     if (error) return alert("Error creating account.");
 
     localStorage.setItem("loggedIn", "true");
     localStorage.setItem("currentUser", username);
-    alert("Account initialized!");
     switchPage("home");
     location.reload();
 }
 
 function logout() {
-    localStorage.removeItem("loggedIn");
-    localStorage.removeItem("currentUser");
-    localStorage.removeItem("userAvatar");
-    document.body.classList.add("logged-out");
-    switchPage("login");
+    localStorage.clear();
+    location.reload();
 }
 
 // =========================
 // INITIALIZATION
 // =========================
 window.addEventListener('DOMContentLoaded', () => {
-    // Force theme initialization
+    // Theme Init
     const savedTheme = localStorage.getItem('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
     updateThemeUI(savedTheme);
 
-    // Populate Dynamic Lists
+    // Dynamic List Population
     const langSelect = document.getElementById('langList');
     const countrySelect = document.getElementById('countryList');
     const currFrom = document.getElementById('currFrom');
@@ -294,41 +275,29 @@ window.addEventListener('DOMContentLoaded', () => {
         currTo.innerHTML += `<option value="${curr}">${curr}</option>`;
     });
 
-    // Load Math Notes
-    const notesBox = document.getElementById('mathNotes');
-    if (notesBox) notesBox.value = localStorage.getItem('mathNotes') || "";
-
-    // Auth gating logic
+    // Auth gating
     const isLoggedIn = localStorage.getItem("loggedIn") === "true";
     if (!isLoggedIn) {
         switchPage('login');
     } else {
         loadProfile();
-        updateResources(); 
         const last = localStorage.getItem("lastPage") || "home";
         switchPage(last);
     }
 
-    // System Clock & Date
+    // System Clock
     setInterval(() => {
         const clock = document.getElementById("clock");
         const dateElement = document.getElementById("date");
         const now = new Date();
-
-        if (clock) {
-            clock.textContent = now.toLocaleTimeString();
-        }
-
-        if (dateElement) {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            dateElement.textContent = now.toLocaleDateString(undefined, options);
-        }
+        if (clock) clock.textContent = now.toLocaleTimeString();
+        if (dateElement) dateElement.textContent = now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     }, 1000);
 
     if (window.lucide) lucide.createIcons();
 });
 
-// Outside click listener for profile menu
+// Click outside menu listener
 window.addEventListener("click", (e) => {
     const container = document.querySelector(".profile-container");
     if (container && !container.contains(e.target)) closeProfileMenu();
