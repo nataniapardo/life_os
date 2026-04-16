@@ -20,6 +20,10 @@
             <ul class="nav-links">
                 <li onclick="switchPage('home')" class="nav-item active" data-section="home">Home</li>
                 <li onclick="switchPage('dashboard')" class="nav-item" data-section="dashboard">Dashboard</li>
+                <li onclick="switchPage('calendar')" class="nav-item" data-section="calendar">Calendar</li>
+                <li onclick="switchPage('world')" class="nav-item" data-section="world">World Tools</li>
+                <li onclick="switchPage('vault')" class="nav-item" data-section="vault">The Vault</li>
+                <li onclick="switchPage('resources')" class="nav-item" data-section="resources">Resources</li>
                 <li onclick="switchPage('customize')" class="nav-item" data-section="customize">Appearance</li>
                 <hr class="nav-divider">
                 <li onclick="switchPage('login')" class="nav-item">Login</li>
@@ -70,17 +74,8 @@
                             <div class="dropdown-item" onclick="switchPage('settings-general')">
                                 <i data-lucide="settings"></i> General
                             </div>
-                            <div class="dropdown-item" onclick="switchPage('settings-notifications')">
-                                <i data-lucide="bell"></i> Notifications
-                            </div>
                             
                             <div class="menu-heading">User</div>
-                            <div class="dropdown-item" onclick="switchPage('account')">
-                                <i data-lucide="user"></i> Account
-                            </div>
-                            <div class="dropdown-item" onclick="switchPage('signup')">
-                                <i data-lucide="user-plus"></i> Sign Up
-                            </div>
                             <div class="dropdown-item logout-btn" onclick="logout()">
                                 <i data-lucide="log-out"></i> Log Out
                             </div>
@@ -100,27 +95,6 @@
                         <input id="loginUser" placeholder="Username">
                         <input id="loginPass" type="password" placeholder="Password">
                         <button class="btn-glow" onclick="login()">Enter OS</button>
-                        <p style="margin-top: 15px; font-size: 12px; color: var(--text-secondary);">
-                            New user? <span onclick="switchPage('signup')" style="color: var(--accent-color); cursor: pointer;">Create Account</span>
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <section id="signup" class="page view-section">
-                <div class="auth-page-container">
-                    <div class="auth-logo-large">
-                        <i data-lucide="globe" class="logo-icon-globe" style="width: 60px; height: 60px; margin-bottom: 20px;"></i>
-                        <h1 class="logo-text-massive" style="font-size: 5rem;">LIFE OS</h1>
-                    </div>
-                    <div class="auth-card glass-card">
-                        <h2>Sign Up</h2>
-                        <input id="signUser" placeholder="Username">
-                        <input id="signPass" type="password" placeholder="Password">
-                        <button class="btn-glow" onclick="CreateAccount()">Initialize Identity</button>
-                        <p style="margin-top: 15px; font-size: 12px; color: var(--text-secondary);">
-                            Already have an account? <span onclick="switchPage('login')" style="color: var(--accent-color); cursor: pointer;">Login</span>
-                        </p>
                     </div>
                 </div>
             </section>
@@ -135,78 +109,23 @@
                 </div>
             </section>
 
-            <section id="dashboard" class="page view-section">
-                <h1>Dashboard</h1>
+            <section id="world" class="page view-section">
+                <h1 style="font-family: 'Papyrus', fantasy;">World Tools</h1>
                 <div class="glass-card">
-                    <div class="input-group">
-                        <input id="taskInput" placeholder="Capture a new mission...">
-                        <button class="btn-glow" onclick="addTask()">Sync Task</button>
-                    </div>
-                    <ul id="taskList" class="list-container"></ul>
+                    <h3>Universal Translator</h3>
+                    <select id="langList" style="width: 100%; margin-top: 10px;"></select>
+                    <textarea id="transInput" placeholder="Enter text to translate..." style="width:100%; height:80px; margin-top:10px;"></textarea>
+                    <button class="btn-glow" onclick="translateText()">Translate</button>
+                    <div id="transOutput" style="margin-top:10px; color: var(--accent-color);"></div>
                 </div>
-            </section>
 
-            <section id="customize" class="page view-section">
-                <h1>Appearance</h1>
-                <div class="glass-card">
-                    <h3>Accent Theme</h3>
-                    <div class="color-controls">
-                        <input type="color" id="colorPicker" value="#00f2ff">
-                        <div class="hex-box">
-                            <input type="text" id="hexInput" placeholder="#00F2FF">
-                            <button class="btn-glow" onclick="applyHex()">Apply Hex</button>
-                        </div>
+                <div class="glass-card" style="margin-top:20px;">
+                    <h3>Currency Exchange</h3>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <input type="number" id="currAmount" placeholder="Amount" style="flex:1;">
+                        <select id="currFrom" style="flex:1;"></select>
+                        <span style="display:flex; align-items:center;">to</span>
+                        <select id="currTo" style="flex:1;"></select>
                     </div>
-                </div>
-            </section>
-
-            <section id="account" class="page view-section">
-                <h1>Full Profile</h1>
-                <div class="glass-card profile-card-full">
-                    <div class="big-avatar-circle">
-                        <div id="bigPlaceholder" class="big-avatar-initials">JD</div>
-                        <img src="" alt="Full Profile" id="bigAvatar" class="hidden">
-                    </div>
-                    
-                    <div class="profile-info">
-                        <h2 id="fullProfileName" style="font-size: 2rem; margin-bottom: 5px;">User Name</h2>
-                        <p style="color: var(--accent-color); letter-spacing: 2px;">SYSTEM OPERATOR</p>
-                    </div>
-
-                    <button class="btn-glow" onclick="triggerUpload()">Change Profile Picture</button>
-                    
-                    <hr class="nav-divider" style="width: 100%;">
-                    
-                    <div class="danger-zone" style="margin-top: 20px; width: 100%;">
-                        <h3>Security</h3>
-                        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 15px;">
-                            Terminating your account will erase all synced tasks and personalization data.
-                        </p>
-                        <button class="btn-danger" onclick="deleteAccount()">Terminate Account</button>
-                    </div>
-                </div>
-            </section>
-
-            <section id="settings-general" class="page view-section">
-                <h1>General Settings</h1>
-                <div class="glass-card">
-                    <p>General workspace preferences and system behavior.</p>
-                </div>
-            </section>
-
-            <section id="settings-notifications" class="page view-section">
-                <h1>Notifications</h1>
-                <div class="glass-card">
-                    <p>Manage system alerts and push notification preferences.</p>
-                </div>
-            </section>
-
-        </main>
-    </div>
-
-    <script>
-        lucide.createIcons();
-    </script>
-    <script src="script.js"></script>
-</body>
-</html>
+                    <button class="btn-glow" style="margin-top:10px;" onclick="convertCurrency()">Convert</button>
+                    <p id="currResult"
