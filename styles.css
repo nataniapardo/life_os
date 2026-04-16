@@ -1,12 +1,22 @@
 :root {
     --accent-color: #00f2ff;
     --bg-dark: #0a0c10;
-    --sidebar-bg: rgba(13, 17, 13, 0.9); /* Darkened for Papyrus contrast */
+    --sidebar-bg: rgba(13, 17, 13, 0.9);
     --card-bg: rgba(255, 255, 255, 0.03);
     --text-primary: #ffffff;
     --text-secondary: #94a3b8;
     --border-color: rgba(255, 255, 255, 0.1);
     --glass-blur: blur(12px);
+}
+
+/* LIGHT MODE OVERRIDES - This fixes the theme feature */
+:root[data-theme="light"] {
+    --bg-dark: #f8fafc;
+    --sidebar-bg: rgba(241, 245, 249, 0.9);
+    --card-bg: rgba(0, 0, 0, 0.05);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --border-color: rgba(0, 0, 0, 0.1);
 }
 
 * {
@@ -20,7 +30,7 @@ body {
     background-color: var(--bg-dark);
     color: var(--text-primary);
     display: grid;
-    grid-template-columns: 260px 1fr;
+    grid-template-columns: 280px 1fr; /* Updated to match sidebar width */
     height: 100vh;
     overflow: hidden;
     background-image: radial-gradient(circle at 50% -20%, var(--accent-color) -200%, transparent 40%);
@@ -36,7 +46,7 @@ body.logged-out .top-bar {
 }
 
 body.logged-out {
-    grid-template-columns: 1fr; /* Center content when logged out */
+    grid-template-columns: 1fr;
 }
 
 /* AUTHENTICATION LAYOUT */
@@ -115,29 +125,42 @@ header.top-bar {
     z-index: 100;
 }
 
+/* SIDEBAR VISIBILITY & ALIGNMENT */
 aside.sidebar, nav.sidebar {
-    padding: 30px 15px;
+    width: 280px; 
+    padding: 30px 10px; 
     background: var(--sidebar-bg);
     backdrop-filter: var(--glass-blur);
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
+    z-index: 1000;
+}
+
+/* Move navigation list more to the right */
+.nav-links {
+    padding-left: 20px; 
+    width: 100%;
 }
 
 .nav-links li {
     list-style: none;
-    padding: 12px 16px;
-    margin-bottom: 6px;
-    border-radius: 12px;
+    padding: 12px 20px;
+    margin-bottom: 8px;
+    border-radius: 12px 0 0 12px; /* Stylish right-aligned tabs */
     color: var(--text-secondary);
     cursor: pointer;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
     font-size: 14px;
 }
 
 .nav-links li:hover, .nav-links li.active {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--card-bg);
     color: var(--accent-color);
+    box-shadow: -4px 0 0 var(--accent-color);
 }
 
 .nav-divider {
@@ -176,7 +199,7 @@ aside.sidebar, nav.sidebar {
 select, input, textarea {
     background: rgba(0,0,0,0.3);
     border: 1px solid var(--border-color);
-    color: white;
+    color: var(--text-primary);
     padding: 10px;
     border-radius: 8px;
     font-family: inherit;
