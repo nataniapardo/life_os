@@ -23,27 +23,34 @@ const resourceData = {
 // =========================
 function switchPage(pageId) {
     const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-
-    if (!isLoggedIn) {
+    
+    // Select all pages
+    const pages = document.querySelectorAll(".page");
+    
+    // Fix: Ensure we can actually see the Login/Signup pages even when logged out
+    if (!isLoggedIn && (pageId !== 'login' && pageId !== 'signup')) {
         document.body.classList.add("logged-out");
-        if (pageId !== 'login' && pageId !== 'signup') {
-            pageId = 'login';
-        }
-    } else {
+        pageId = 'login';
+    } else if (isLoggedIn) {
         document.body.classList.remove("logged-out");
     }
 
-    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-    const page = document.getElementById(pageId);
-    
-    if (page) {
-        page.classList.add("active");
-    } else {
-        console.warn(`Page ID "${pageId}" not found in HTML.`);
+    pages.forEach(p => {
+        p.classList.add("hidden"); 
+        p.style.display = 'none';
+        p.classList.remove("active");
+    });
+
+    const activePage = document.getElementById(pageId);
+    if (activePage) {
+        activePage.classList.remove("hidden");
+        activePage.style.display = 'block';
+        activePage.classList.add("active");
     }
 
     closeProfileMenu();
     localStorage.setItem("lastPage", pageId);
+    if (window.lucide) lucide.createIcons();
 }
 
 function goHome() {
@@ -130,7 +137,6 @@ function calcClear() {
 function calcSolve() {
     try {
         const expression = document.getElementById('calcDisplay').value;
-        // Note: eval is used here for simplicity as requested for a basic OS simulation
         const result = eval(expression); 
         addCalcHistory(expression + " = " + result);
         document.getElementById('calcDisplay').value = result;
@@ -172,7 +178,7 @@ function convertCurrency() {
     const amount = document.getElementById('currAmount').value;
     const from = document.getElementById('currFrom').value;
     const to = document.getElementById('currTo').value;
-    const rate = 1.2; // Mock conversion rate
+    const rate = 1.2; 
     document.getElementById('currResult').innerText = `${amount} ${from} = ${(amount * rate).toFixed(2)} ${to}`;
 }
 
@@ -185,7 +191,7 @@ function updateResources() {
 }
 
 // =========================
-// THEME & AUTH & TASKS (Legacy)
+// THEME & AUTH
 // =========================
 function initTheme() {
     const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -211,15 +217,43 @@ function updateThemeUI(theme) {
 }
 
 async function login() {
-    const username = document.getElementById("loginUser").value.trim();
-    const password = document.getElementById("loginPass").value.trim();
-    const { data, error } = await db.from("users").select("*").eq("username", username).eq("password", password).single();
+    const user = document.getElementById("loginUser").value.trim();
+    const pass = document.getElementById("loginPass").value.trim();
+
+    if (!user || !pass) return alert("Please enter credentials");
+
+    // Real Supabase Auth Logic
+    const { data, error } = await db.from("users")
+        .select("*")
+        .eq("username", user)
+        .eq("password", pass)
+        .single();
+
     if (error || !data) return alert("Invalid credentials");
+
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("currentUser", user);
+    
+    alert("System Access Granted");
+    switchPage("home");
+    location.reload(); 
+}
+
+async function CreateAccount() {
+    const username = document.getElementById("signUser").value.trim();
+    const password = document.getElementById("signPass").value.trim();
+
+    if (!username || !password) return alert("Enter credentials");
+
+    const { error } = await db.from("users").insert([{ username, password }]);
+
+    if (error) return alert("Error creating account.");
+
     localStorage.setItem("loggedIn", "true");
     localStorage.setItem("currentUser", username);
-    document.body.classList.remove("logged-out");
-    loadProfile();
+    alert("Account initialized!");
     switchPage("home");
+    location.reload();
 }
 
 function logout() {
@@ -234,7 +268,10 @@ function logout() {
 // INITIALIZATION
 // =========================
 window.addEventListener('DOMContentLoaded', () => {
-    initTheme();
+    // Force theme initialization
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeUI(savedTheme);
 
     // Populate Dynamic Lists
     const langSelect = document.getElementById('langList');
@@ -253,18 +290,18 @@ window.addEventListener('DOMContentLoaded', () => {
     const notesBox = document.getElementById('mathNotes');
     if (notesBox) notesBox.value = localStorage.getItem('mathNotes') || "";
 
-    // Auth gating
+    // Auth gating logic
     const isLoggedIn = localStorage.getItem("loggedIn") === "true";
     if (!isLoggedIn) {
         switchPage('login');
     } else {
         loadProfile();
-        updateResources(); // Initial load for resources
+        updateResources(); 
         const last = localStorage.getItem("lastPage") || "home";
         switchPage(last);
     }
 
-    // Clock and Icons
+    // System Clock
     setInterval(() => {
         const clock = document.getElementById("clock");
         if (clock) clock.textContent = new Date().toLocaleTimeString();
@@ -273,7 +310,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) lucide.createIcons();
 });
 
-// Outside click listener for profile
+// Outside click listener for profile menu
 window.addEventListener("click", (e) => {
     const container = document.querySelector(".profile-container");
     if (container && !container.contains(e.target)) closeProfileMenu();
