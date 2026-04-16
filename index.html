@@ -13,7 +13,7 @@
     <div class="app-container">
         <nav class="sidebar">
             <div class="logo-area" onclick="goHome()">
-                <div class="logo-glow"></div>
+                <i data-lucide="globe" class="logo-icon-globe"></i>
                 <span class="logo-text">LIFE OS</span>
             </div>
             <ul class="nav-links">
@@ -28,21 +28,36 @@
 
         <main class="content-area">
             <header class="top-bar">
-                <div class="search-wrapper">
-                    <input type="text" id="globalSearch" placeholder="Search Command...">
-                </div>
+                <div class="header-left"></div>
+
                 <div class="header-right">
+                    <div class="search-wrapper">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" id="globalSearch" placeholder="Search Command...">
+                    </div>
+
                     <div id="clock" class="digital-clock">00:00:00</div>
                     
                     <div class="profile-container">
-                        <div class="profile-icon-circle" onclick="toggleProfileMenu()">
-                            <img src="https://ui-avatars.com/api/?name=User&background=00f2ff&color=000" alt="Profile" id="navAvatar">
+                        <div class="profile-icon-circle" id="profileTrigger" onclick="toggleProfileMenu()">
+                            <div id="avatarPlaceholder" class="avatar-initials">JD</div>
+                            <img src="" alt="Profile" id="navAvatar" class="hidden">
                         </div>
 
                         <div id="profileMenu" class="dropdown-content hidden">
                             <div class="dropdown-header">
                                 <p id="currentUserDisplay">Guest User</p>
+                                <button class="btn-text-only" onclick="triggerUpload()">Update Photo</button>
+                                <input type="file" id="imageUpload" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
                             </div>
+                            
+                            <div class="dropdown-item" onclick="toggleTheme()">
+                                <i data-lucide="sun" id="themeIcon"></i> 
+                                <span id="themeText">Light Mode</span>
+                            </div>
+
+                            <hr class="nav-divider">
+                            
                             <div class="dropdown-item" onclick="switchPage('home')">
                                 <i data-lucide="user-circle"></i> Profile
                             </div>
@@ -145,7 +160,7 @@
 
             <section id="signup" class="page view-section">
                 <div class="auth-card">
-                    <h2>Register</h2>
+                    <h2>Sign Up</h2>
                     <input id="signUser" placeholder="Username">
                     <input id="signPass" type="password" placeholder="Password">
                     <button class="btn-glow" onclick="CreateAccount()">Create Account</button>
@@ -156,6 +171,7 @@
     </div>
 
     <script>
+        // Initializing Lucide Icons
         lucide.createIcons();
     </script>
     <script src="script.js"></script>
