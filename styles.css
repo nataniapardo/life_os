@@ -42,7 +42,7 @@ header.top-bar {
     z-index: 100;
 }
 
-/* SIDEBAR */
+/* SIDEBAR & CENTERED LOGO */
 aside.sidebar, nav.sidebar {
     padding: 30px 15px;
     background: var(--sidebar-bg);
@@ -54,18 +54,24 @@ aside.sidebar, nav.sidebar {
 
 .logo-area {
     display: flex;
+    flex-direction: column; /* Stack globe over text */
+    justify-content: center;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     margin-bottom: 40px;
+    width: 100%;
+    text-align: center;
     cursor: pointer;
 }
 
-/* GLOBE LOGO STYLING */
+/* GLOWING GLOBE - Updates with --accent-color */
 .logo-icon-globe {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     color: var(--accent-color);
-    filter: drop-shadow(0 0 8px var(--accent-color));
+    /* Dual layer glow for intensity */
+    filter: drop-shadow(0 0 10px var(--accent-color)) drop-shadow(0 0 20px var(--accent-color));
+    transition: color 0.3s ease, filter 0.3s ease;
 }
 
 .logo-text {
@@ -102,7 +108,7 @@ main {
     overflow-y: auto;
 }
 
-/* HERO SECTION (CENTERED LOGO) */
+/* HERO SECTION */
 .hero-container {
     display: flex;
     flex-direction: column;
@@ -110,19 +116,6 @@ main {
     align-items: center;
     height: 60vh;
     text-align: center;
-}
-
-.main-logo-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.main-logo-center:hover {
-    transform: scale(1.05);
 }
 
 .logo-text-massive {
@@ -136,23 +129,6 @@ main {
     margin: 0;
 }
 
-.logo-glow-large {
-    width: 60px;
-    height: 60px;
-    background: var(--accent-color);
-    border-radius: 12px;
-    box-shadow: 0 0 50px var(--accent-color), 0 0 100px var(--accent-color);
-    animation: pulse-glow 3s infinite;
-}
-
-.subtitle-center {
-    margin-top: 20px;
-    color: var(--text-secondary);
-    font-size: 1.2rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
-
 /* GLASS CARDS */
 .card, .glass-card {
     background: var(--card-bg);
@@ -163,67 +139,44 @@ main {
     margin-bottom: 20px;
 }
 
-/* PAGE SYSTEM */
-.page {
-    display: none;
-    animation: fadeIn 0.4s ease-out;
+/* FULL PROFILE VIEW STYLING */
+.profile-card-full {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 40px;
+    text-align: center;
 }
 
-.page.active {
-    display: block;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse-glow {
-    0% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.1); opacity: 1; }
-    100% { transform: scale(1); opacity: 0.8; }
-}
-
-/* INPUTS & BUTTONS */
-input {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-color);
-    padding: 12px 20px;
-    border-radius: 12px;
-    color: var(--text-primary);
-    width: 100%;
-    outline: none;
-}
-
-input:focus {
-    border-color: var(--accent-color);
-}
-
-button.btn-glow {
+.big-avatar-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
     background: var(--accent-color);
-    color: #000;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
-    margin-top: 15px;
+    border: 4px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
 }
 
-.btn-danger {
-    background: #ff4d4d;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
+.big-avatar-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.big-avatar-initials {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #000;
 }
 
 /* PROFILE & DROPDOWN FIXES */
 .profile-container { 
-    position: relative; /* Anchor for the dropdown */
+    position: relative; 
 }
 
 .profile-icon-circle {
@@ -260,7 +213,7 @@ button.btn-glow {
 /* POSITIONING THE LIST */
 .dropdown-content {
     position: absolute;
-    top: calc(100% + 12px); /* Perfectly below the icon */
+    top: calc(100% + 12px);
     right: 0;
     width: 240px;
     background: var(--sidebar-bg);
