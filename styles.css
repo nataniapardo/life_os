@@ -39,7 +39,7 @@ body.logged-out {
     grid-template-columns: 1fr; /* Center content when logged out */
 }
 
-/* AUTHENTICATION LAYOUT (Centered Logo/Card) */
+/* AUTHENTICATION LAYOUT */
 .auth-page-container {
     display: flex;
     flex-direction: column;
@@ -69,16 +69,14 @@ body.logged-out {
     cursor: pointer;
 }
 
-/* LARGE GLOWING GLOBE */
 .logo-icon-globe {
-    width: 45px;  /* Increased size */
-    height: 45px; /* Increased size */
+    width: 45px;
+    height: 45px;
     color: var(--accent-color);
     filter: drop-shadow(0 0 15px var(--accent-color)) drop-shadow(0 0 30px var(--accent-color));
     transition: color 0.3s ease, filter 0.3s ease;
 }
 
-/* PAPYRUS LOGO TEXT */
 .logo-text {
     font-family: 'Papyrus', fantasy;
     font-weight: 800;
@@ -88,7 +86,6 @@ body.logged-out {
     color: var(--text-primary);
 }
 
-/* MASSIVE HERO LOGO */
 .logo-text-massive {
     font-family: 'Papyrus', fantasy;
     font-size: 8rem;
@@ -150,6 +147,48 @@ aside.sidebar, nav.sidebar {
 }
 
 /* ========================= */
+/* VAULT & CALCULATOR TOOLS  */
+/* ========================= */
+.calc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.calc-grid button {
+    padding: 10px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid var(--border-color);
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: inherit;
+    transition: 0.2s;
+}
+
+.calc-grid button:hover {
+    background: var(--accent-color);
+    color: black;
+}
+
+/* FORM CONTROLS & INPUTS */
+select, input, textarea {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    font-family: inherit;
+    width: 100%;
+    outline: none;
+}
+
+select:focus, input:focus, textarea:focus {
+    border-color: var(--accent-color);
+}
+
+/* ========================= */
 /* MAIN CONTENT & CARDS      */
 /* ========================= */
 main {
@@ -178,6 +217,23 @@ main {
 .auth-card {
     width: 100%;
     max-width: 400px;
+}
+
+.btn-glow {
+    background: var(--accent-color);
+    color: black;
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+    transition: 0.3s;
+}
+
+.btn-glow:hover {
+    box-shadow: 0 0 25px rgba(0, 242, 255, 0.4);
+    transform: translateY(-1px);
 }
 
 /* ========================= */
