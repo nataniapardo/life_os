@@ -66,37 +66,66 @@ function handleImageUpload(event) {
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            const navAvatar = document.getElementById('navAvatar');
-            const placeholder = document.getElementById('avatarPlaceholder');
+            const imageData = e.target.result;
+            localStorage.setItem('userAvatar', imageData);
             
-            navAvatar.src = e.target.result;
-            navAvatar.classList.remove('hidden');
-            placeholder.classList.add('hidden');
-            
-            localStorage.setItem('userAvatar', e.target.result);
+            // Update all UI elements showing the avatar
+            syncAvatarUI(imageData);
         };
         reader.readAsDataURL(file);
+    }
+}
+
+// Synchronize all avatar elements (Nav and Full Profile)
+function syncAvatarUI(imageData) {
+    const navImg = document.getElementById('navAvatar');
+    const navPlace = document.getElementById('avatarPlaceholder');
+    const bigImg = document.getElementById('bigAvatar');
+    const bigPlace = document.getElementById('bigPlaceholder');
+
+    if (imageData) {
+        // Show images
+        if (navImg) { navImg.src = imageData; navImg.classList.remove('hidden'); }
+        if (bigImg) { bigImg.src = imageData; bigImg.classList.remove('hidden'); }
+        // Hide placeholders
+        if (navPlace) navPlace.classList.add('hidden');
+        if (bigPlace) bigPlace.classList.add('hidden');
     }
 }
 
 // Load saved avatar or initials on boot
 function loadProfile() {
     const savedAvatar = localStorage.getItem('userAvatar');
-    const navAvatar = document.getElementById('navAvatar');
-    const placeholder = document.getElementById('avatarPlaceholder');
-    const userDisplay = document.getElementById('currentUserDisplay');
+    const username = localStorage.getItem('currentUser') || "Guest";
     
-    const username = localStorage.getItem('currentUser') || "Guest User";
+    // Update Name Displays
+    const userDisplay = document.getElementById('currentUserDisplay');
     if (userDisplay) userDisplay.textContent = username;
+    
+    const fullNameDisplay = document.getElementById('fullProfileName');
+    if (fullNameDisplay) fullNameDisplay.textContent = username;
 
-    if (savedAvatar && navAvatar && placeholder) {
-        navAvatar.src = savedAvatar;
-        navAvatar.classList.remove('hidden');
-        placeholder.classList.add('hidden');
-    } else if (placeholder) {
-        placeholder.innerText = username.substring(0, 2).toUpperCase();
-        if (navAvatar) navAvatar.classList.add('hidden');
-        placeholder.classList.remove('hidden');
+    if (savedAvatar) {
+        syncAvatarUI(savedAvatar);
+    } else {
+        // Set Initials
+        const initials = username.substring(0, 2).toUpperCase();
+        const navPlace = document.getElementById('avatarPlaceholder');
+        const bigPlace = document.getElementById('bigPlaceholder');
+        const navImg = document.getElementById('navAvatar');
+        const bigImg = document.getElementById('bigAvatar');
+
+        if (navPlace) {
+            navPlace.innerText = initials;
+            navPlace.classList.remove('hidden');
+        }
+        if (bigPlace) {
+            bigPlace.innerText = initials;
+            bigPlace.classList.remove('hidden');
+        }
+        // Ensure images are hidden if no avatar exists
+        if (navImg) navImg.classList.add('hidden');
+        if (bigImg) bigImg.classList.add('hidden');
     }
 }
 
@@ -177,7 +206,7 @@ async function CreateAccount() {
   localStorage.setItem("loggedIn", "true");
   localStorage.setItem("currentUser", username);
   alert("Account created and logged in!");
-  loadProfile(); // Update initials/display
+  loadProfile();
   switchPage("dashboard");
 }
 
@@ -212,7 +241,7 @@ async function login() {
 function logout() {
   localStorage.removeItem("loggedIn");
   localStorage.removeItem("currentUser");
-  localStorage.removeItem("userAvatar"); // Optional: clear avatar on logout
+  localStorage.removeItem("userAvatar");
   alert("Logged out successfully");
   loadProfile();
   switchPage("home");
