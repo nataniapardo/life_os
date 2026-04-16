@@ -26,12 +26,16 @@
     box-sizing: border-box;
 }
 
+/* ========================= */
+/* MAIN LAYOUT (GRID)        */
+/* ========================= */
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
     background-color: var(--bg-dark);
     color: var(--text-primary);
+    /* Strict Grid: Sidebar on left (280px), Content on right (1fr) */
     display: grid;
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 280px 1fr; 
     height: 100vh;
     overflow: hidden;
     background-image: radial-gradient(circle at 50% -20%, var(--accent-color) -200%, transparent 40%);
@@ -60,9 +64,10 @@ body.logged-out {
 }
 
 /* ========================= */
-/* TOP BAR & HEADER          */
+/* TOP BAR (TOP RIGHT)       */
 /* ========================= */
 .top-bar {
+    grid-column: 2; /* Forces Top Bar to stay in the right column */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -80,8 +85,7 @@ body.logged-out {
     display: flex;
     align-items: center;
     gap: 20px;
-    flex-grow: 1;
-    justify-content: flex-end;
+    margin-left: auto; /* Pushes Search/Profile to the far right */
 }
 
 /* SEARCH BAR STYLING */
@@ -102,12 +106,6 @@ body.logged-out {
     box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
 }
 
-.search-icon {
-    width: 16px;
-    height: 16px;
-    color: var(--text-secondary);
-}
-
 .search-wrapper input {
     background: transparent;
     border: none;
@@ -118,30 +116,11 @@ body.logged-out {
     font-family: inherit;
 }
 
-/* DATE AND TIME */
-.time-date-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    min-width: 120px;
-}
-
-.date-display {
-    font-size: 10px;
-    text-transform: uppercase;
-    color: var(--accent-color);
-    letter-spacing: 1px;
-}
-
-.digital-clock {
-    font-size: 14px;
-    font-weight: 700;
-}
-
 /* ========================= */
-/* SIDEBAR NAVIGATION        */
+/* SIDEBAR (LEFT SIDE)       */
 /* ========================= */
 nav.sidebar {
+    grid-column: 1; /* Keeps Sidebar locked to the left column */
     width: 280px; 
     padding: 30px 10px; 
     background: var(--sidebar-bg);
@@ -149,6 +128,7 @@ nav.sidebar {
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
+    height: 100vh;
     /* FIX: Ensure the sidebar is definitely on top of the content area */
     z-index: 9999 !important;
     position: relative;
@@ -163,19 +143,6 @@ nav.sidebar {
     cursor: pointer;
 }
 
-.logo-icon-globe {
-    width: 24px;
-    height: 24px;
-    color: var(--accent-color);
-    filter: drop-shadow(0 0 8px var(--accent-color));
-}
-
-.logo-text {
-    font-weight: 800;
-    letter-spacing: 2px;
-    font-size: 1.2rem;
-}
-
 .nav-links li {
     list-style: none;
     padding: 12px 20px;
@@ -183,10 +150,11 @@ nav.sidebar {
     border-radius: 12px;
     color: var(--text-secondary);
     cursor: pointer;
-    transition: 0.3s;
     display: flex;
     align-items: center;
     gap: 12px;
+    position: relative;
+    transition: all 0.3s ease;
 }
 
 /* FIX: Ensure the click goes through the icon/text to the LI tag's onclick */
@@ -194,10 +162,12 @@ nav.sidebar {
     pointer-events: none;
 }
 
+/* HOVER & ACTIVE HIGHLIGHTS */
 .nav-links li:hover, .nav-links li.active {
     background: var(--card-bg);
     color: var(--accent-color);
-    box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.05);
+    padding-left: 25px; /* Subtle shift effect */
+    box-shadow: inset 4px 0 0 var(--accent-color); /* Neon bar on the left */
 }
 
 /* ========================= */
@@ -245,35 +215,20 @@ nav.sidebar {
     z-index: 2000;
 }
 
-.dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: 0.2s;
-}
-
-.dropdown-item:hover {
-    background: rgba(255,255,255,0.05);
-    color: var(--accent-color);
-}
-
-.hidden { display: none !important; }
-
 /* ========================= */
-/* CARDS & MAIN CONTENT      */
+/* CONTENT AREA              */
 /* ========================= */
 .content-area {
+    grid-column: 2; /* Content stays in the right column */
     overflow-y: auto;
-    height: 100vh;
+    height: calc(100vh - 70px);
 }
 
 .page {
     padding: 40px;
 }
+
+.hidden { display: none !important; }
 
 .glass-card {
     background: var(--card-bg);
