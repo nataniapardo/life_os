@@ -24,6 +24,7 @@ body {
     height: 100vh;
     overflow: hidden;
     background-image: radial-gradient(circle at 50% -20%, var(--accent-color) -200%, transparent 40%);
+    transition: background-color 0.3s ease;
 }
 
 /* TOP BAR */
@@ -59,12 +60,12 @@ aside.sidebar, nav.sidebar {
     cursor: pointer;
 }
 
-.logo-glow {
-    width: 20px;
-    height: 20px;
-    background: var(--accent-color);
-    border-radius: 4px;
-    box-shadow: 0 0 15px var(--accent-color);
+/* GLOBE LOGO STYLING */
+.logo-icon-globe {
+    width: 24px;
+    height: 24px;
+    color: var(--accent-color);
+    filter: drop-shadow(0 0 8px var(--accent-color));
 }
 
 .logo-text {
@@ -189,7 +190,7 @@ input {
     border: 1px solid var(--border-color);
     padding: 12px 20px;
     border-radius: 12px;
-    color: white;
+    color: var(--text-primary);
     width: 100%;
     outline: none;
 }
@@ -220,34 +221,57 @@ button.btn-glow {
     cursor: pointer;
 }
 
-/* PROFILE & DROPDOWN */
-.profile-container { position: relative; }
-
-.profile-icon-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 2px solid var(--accent-color);
-    cursor: pointer;
+/* PROFILE & DROPDOWN FIXES */
+.profile-container { 
+    position: relative; /* Anchor for the dropdown */
 }
 
-.profile-icon-circle img {
+.profile-icon-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: 0.3s;
+}
+
+.profile-icon-circle:hover {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+}
+
+.avatar-initials {
+    font-weight: 700;
+    color: #000;
+    font-size: 14px;
+}
+
+#navAvatar {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
+/* POSITIONING THE LIST */
 .dropdown-content {
     position: absolute;
-    top: 60px;
+    top: calc(100% + 12px); /* Perfectly below the icon */
     right: 0;
-    background: #11141b;
+    width: 240px;
+    background: var(--sidebar-bg);
+    backdrop-filter: var(--glass-blur);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    width: 220px;
-    padding: 10px;
+    border-radius: 16px;
+    padding: 12px;
     z-index: 1000;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    transform-origin: top right;
+    animation: dropdownSlide 0.2s ease-out;
 }
 
 .hidden { display: none; }
@@ -276,10 +300,25 @@ button.btn-glow {
 
 .logout-btn i { color: #ff4d4d; }
 
+.btn-text-only {
+    background: none;
+    border: none;
+    color: var(--accent-color);
+    font-size: 11px;
+    cursor: pointer;
+    padding: 4px 0;
+    text-decoration: underline;
+}
+
+@keyframes dropdownSlide {
+    from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
     body { grid-template-columns: 1fr; }
-    aside.sidebar { display: none; }
+    aside.sidebar, nav.sidebar { display: none; }
     header.top-bar { grid-column: 1; }
     .logo-text-massive {
         font-size: 4rem;
