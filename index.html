@@ -16,6 +16,7 @@
                 <i data-lucide="globe" class="logo-icon-globe"></i>
                 <span class="logo-text">LIFE OS</span>
             </div>
+
             <ul class="nav-links">
                 <li onclick="switchPage('home')" class="nav-item active" data-section="home">Home</li>
                 <li onclick="switchPage('dashboard')" class="nav-item" data-section="dashboard">Dashboard</li>
@@ -124,14 +125,29 @@
             </section>
 
             <section id="account" class="page view-section">
-                <h1>Account Settings</h1>
-                <div class="glass-card danger-zone">
-                    <h2>Account Management</h2>
-                    <p>Manage your account status and security credentials here.</p>
-                    <hr class="nav-divider">
-                    <h3>Danger Zone</h3>
-                    <p>Deleting your account is permanent.</p>
-                    <button class="btn-danger" onclick="deleteAccount()">Delete Account</button>
+                <h1>Full Profile</h1>
+                <div class="glass-card profile-card-full">
+                    <div class="big-avatar-circle">
+                        <div id="bigPlaceholder" class="big-avatar-initials">JD</div>
+                        <img src="" alt="Full Profile" id="bigAvatar" class="hidden">
+                    </div>
+                    
+                    <div class="profile-info">
+                        <h2 id="fullProfileName" style="font-size: 2rem; margin-bottom: 5px;">User Name</h2>
+                        <p style="color: var(--accent-color); letter-spacing: 2px;">SYSTEM OPERATOR</p>
+                    </div>
+
+                    <button class="btn-glow" onclick="triggerUpload()">Change Profile Picture</button>
+                    
+                    <hr class="nav-divider" style="width: 100%;">
+                    
+                    <div class="danger-zone" style="margin-top: 20px; width: 100%;">
+                        <h3>Security</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 15px;">
+                            Terminating your account will erase all synced tasks and personalization data.
+                        </p>
+                        <button class="btn-danger" onclick="deleteAccount()">Terminate Account</button>
+                    </div>
                 </div>
             </section>
 
