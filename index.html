@@ -18,12 +18,27 @@
             </div>
 
             <ul class="nav-links">
-                <li onclick="switchPage('home')" class="nav-item active" data-section="home">Home</li>
-                <li onclick="switchPage('dashboard')" class="nav-item" data-section="dashboard">Dashboard</li>
-                <li onclick="switchPage('world')" class="nav-item" data-section="world">World Tools</li>
-                <li onclick="switchPage('vault')" class="nav-item" data-section="vault">The Vault</li>
-                <li onclick="switchPage('resources')" class="nav-item" data-section="resources">Resources</li>
-                <li onclick="switchPage('customize')" class="nav-item" data-section="customize">Appearance</li>
+                <li onclick="switchPage('home')" class="nav-item active" data-section="home">
+                    <i data-lucide="home"></i> Home
+                </li>
+                <li onclick="switchPage('dashboard')" class="nav-item" data-section="dashboard">
+                    <i data-lucide="layout-dashboard"></i> Dashboard
+                </li>
+                <li onclick="switchPage('calendar')" class="nav-item" data-section="calendar">
+                    <i data-lucide="calendar"></i> Calendar
+                </li>
+                <li onclick="switchPage('world')" class="nav-item" data-section="world">
+                    <i data-lucide="languages"></i> World Tools
+                </li>
+                <li onclick="switchPage('vault')" class="nav-item" data-section="vault">
+                    <i data-lucide="lock"></i> The Vault
+                </li>
+                <li onclick="switchPage('resources')" class="nav-item" data-section="resources">
+                    <i data-lucide="book-open"></i> Resources
+                </li>
+                <li onclick="switchPage('customize')" class="nav-item" data-section="customize">
+                    <i data-lucide="palette"></i> Appearance
+                </li>
                 <hr class="nav-divider">
                 <li onclick="switchPage('login')" class="nav-item">Login</li>
                 <li onclick="switchPage('signup')" class="nav-item">Sign Up</li>
@@ -68,6 +83,7 @@
                             <div class="dropdown-item" onclick="switchPage('home')">
                                 <i data-lucide="user-circle"></i> Profile
                             </div>
+
                             <div class="dropdown-item" onclick="switchPage('customize')">
                                 <i data-lucide="palette"></i> Personalization
                             </div>
@@ -76,7 +92,7 @@
                             <div class="dropdown-item" onclick="switchPage('settings-general')">
                                 <i data-lucide="settings"></i> General
                             </div>
-                            
+
                             <div class="menu-heading">User</div>
                             <div class="dropdown-item logout-btn" onclick="logout()">
                                 <i data-lucide="log-out"></i> Log Out
@@ -85,6 +101,7 @@
                     </div>
                 </div>
             </header>
+
             <section id="login" class="page view-section">
                 <div class="auth-page-container">
                     <div class="auth-logo-large">
@@ -111,7 +128,7 @@
                 </div>
             </section>
 
-            <section id="home" class="page view-section">
+            <section id="home" class="page view-section hidden">
                 <div class="hero-container">
                     <div class="main-logo-center" onclick="goHome()">
                         <div class="logo-glow-large"></div>
@@ -121,8 +138,27 @@
                 </div>
             </section>
 
-            <section id="world" class="page view-section">
+            <section id="calendar" class="page view-section hidden">
+                <div class="calendar-header-wrapper" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h1 id="monthDisplay" style="color: var(--accent-color);">Month Year</h1>
+                    <div class="calendar-controls" style="display: flex; gap: 15px;">
+                        <button class="btn-glow" onclick="moveMonth(-1)">← Prev</button>
+                        <button class="btn-glow" onclick="moveMonth(1)">Next →</button>
+                    </div>
+                </div>
+                
+                <div class="glass-card">
+                    <div class="calendar-grid-header" style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: bold; padding-bottom: 15px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); margin-bottom: 15px;">
+                        <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
+                    </div>
+                    <div id="calendarDays" class="calendar-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px;">
+                        </div>
+                </div>
+            </section>
+
+            <section id="world" class="page view-section hidden">
                 <h1 style="font-family: 'Papyrus', fantasy;">World Tools</h1>
+                
                 <div class="glass-card">
                     <h3>Universal Translator</h3>
                     <select id="langList" style="width: 100%; margin-top: 10px;"></select>
@@ -143,6 +179,15 @@
                     <p id="currResult" style="margin-top:10px; font-weight: bold;"></p>
                 </div>
             </section>
+
+            <section id="resources" class="page view-section hidden">
+                <h1>Resources</h1>
+                <div class="glass-card">
+                    <select id="countryList" onchange="updateResources()"></select>
+                    <div id="resourceContainer" style="margin-top: 20px;"></div>
+                </div>
+            </section>
+
         </main>
     </div>
     <script src="script.js"></script>
