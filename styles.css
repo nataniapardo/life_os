@@ -1,7 +1,7 @@
 :root {
     --accent-color: #00f2ff;
     --bg-dark: #0a0c10;
-    --sidebar-bg: rgba(13, 17, 23, 0.8);
+    --sidebar-bg: rgba(13, 17, 13, 0.9); /* Darkened for Papyrus contrast */
     --card-bg: rgba(255, 255, 255, 0.03);
     --text-primary: #ffffff;
     --text-secondary: #94a3b8;
@@ -36,16 +36,17 @@ body.logged-out .top-bar {
 }
 
 body.logged-out {
-    grid-template-columns: 1fr; /* Remove sidebar space when logged out */
+    grid-template-columns: 1fr; /* Center content when logged out */
 }
 
-/* CENTER LOGO & CONTENT FOR LOGIN/SIGNUP */
+/* AUTHENTICATION LAYOUT (Centered Logo/Card) */
 .auth-page-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
+    width: 100%;
 }
 
 .auth-logo-large {
@@ -54,7 +55,54 @@ body.logged-out {
 }
 
 /* ========================= */
-/* TOP BAR                   */
+/* LOGO & BRANDING           */
+/* ========================= */
+.logo-area {
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 40px;
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+}
+
+/* LARGE GLOWING GLOBE */
+.logo-icon-globe {
+    width: 45px;  /* Increased size */
+    height: 45px; /* Increased size */
+    color: var(--accent-color);
+    filter: drop-shadow(0 0 15px var(--accent-color)) drop-shadow(0 0 30px var(--accent-color));
+    transition: color 0.3s ease, filter 0.3s ease;
+}
+
+/* PAPYRUS LOGO TEXT */
+.logo-text {
+    font-family: 'Papyrus', fantasy;
+    font-weight: 800;
+    letter-spacing: 3px;
+    font-size: 22px;
+    text-transform: uppercase;
+    color: var(--text-primary);
+}
+
+/* MASSIVE HERO LOGO */
+.logo-text-massive {
+    font-family: 'Papyrus', fantasy;
+    font-size: 8rem;
+    font-weight: 800;
+    letter-spacing: 15px;
+    background: linear-gradient(to bottom, #ffffff, var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 30px rgba(0, 242, 255, 0.3));
+    margin: 0;
+}
+
+/* ========================= */
+/* TOP BAR & NAVIGATION      */
 /* ========================= */
 header.top-bar {
     grid-column: 2;
@@ -70,9 +118,6 @@ header.top-bar {
     z-index: 100;
 }
 
-/* ========================= */
-/* SIDEBAR & LOGO            */
-/* ========================= */
 aside.sidebar, nav.sidebar {
     padding: 30px 15px;
     background: var(--sidebar-bg);
@@ -80,33 +125,6 @@ aside.sidebar, nav.sidebar {
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-}
-
-.logo-area {
-    display: flex;
-    flex-direction: column; 
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 40px;
-    width: 100%;
-    text-align: center;
-    cursor: pointer;
-}
-
-/* GLOWING GLOBE - Updates with --accent-color */
-.logo-icon-globe {
-    width: 28px;
-    height: 28px;
-    color: var(--accent-color);
-    filter: drop-shadow(0 0 10px var(--accent-color)) drop-shadow(0 0 20px var(--accent-color));
-    transition: color 0.3s ease, filter 0.3s ease;
-}
-
-.logo-text {
-    font-weight: 800;
-    letter-spacing: 2px;
-    font-size: 18px;
 }
 
 .nav-links li {
@@ -132,14 +150,13 @@ aside.sidebar, nav.sidebar {
 }
 
 /* ========================= */
-/* MAIN CONTENT AREA         */
+/* MAIN CONTENT & CARDS      */
 /* ========================= */
 main {
     padding: 40px;
     overflow-y: auto;
 }
 
-/* HERO SECTION */
 .hero-container {
     display: flex;
     flex-direction: column;
@@ -149,18 +166,6 @@ main {
     text-align: center;
 }
 
-.logo-text-massive {
-    font-size: 8rem;
-    font-weight: 800;
-    letter-spacing: 15px;
-    background: linear-gradient(to bottom, #ffffff, var(--accent-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 30px rgba(0, 242, 255, 0.3));
-    margin: 0;
-}
-
-/* GLASS CARDS */
 .card, .glass-card {
     background: var(--card-bg);
     backdrop-filter: var(--glass-blur);
@@ -170,45 +175,15 @@ main {
     margin-bottom: 20px;
 }
 
-/* FULL PROFILE VIEW STYLING */
-.profile-card-full {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    padding: 40px;
-    text-align: center;
-}
-
-.big-avatar-circle {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: var(--accent-color);
-    border: 4px solid var(--border-color);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
-}
-
-.big-avatar-circle img {
+.auth-card {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 400px;
 }
 
-.big-avatar-initials {
-    font-size: 3rem;
-    font-weight: 800;
-    color: #000;
-}
-
-/* PROFILE & DROPDOWN */
-.profile-container { 
-    position: relative; 
-}
+/* ========================= */
+/* PROFILE & DROPDOWN        */
+/* ========================= */
+.profile-container { position: relative; }
 
 .profile-icon-circle {
     width: 42px;
@@ -275,22 +250,33 @@ main {
     color: var(--accent-color);
 }
 
-.dropdown-item i {
-    width: 18px;
-    height: 18px;
-    color: var(--accent-color);
+/* FULL PROFILE VIEW STYLING */
+.profile-card-full {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 40px;
+    text-align: center;
 }
 
-.logout-btn i { color: #ff4d4d; }
+.big-avatar-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    border: 4px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
+}
 
-.btn-text-only {
-    background: none;
-    border: none;
-    color: var(--accent-color);
-    font-size: 11px;
-    cursor: pointer;
-    padding: 4px 0;
-    text-decoration: underline;
+.big-avatar-initials {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #000;
 }
 
 @keyframes dropdownSlide {
@@ -298,7 +284,9 @@ main {
     to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* RESPONSIVE */
+/* ========================= */
+/* RESPONSIVE                */
+/* ========================= */
 @media (max-width: 768px) {
     body { grid-template-columns: 1fr; }
     aside.sidebar, nav.sidebar { display: none; }
