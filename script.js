@@ -27,7 +27,7 @@ function switchPage(pageId) {
     // Select all pages
     const pages = document.querySelectorAll(".page");
     
-    // Fix: Ensure we can actually see the Login/Signup pages even when logged out
+    // Auth Gating logic
     if (!isLoggedIn && (pageId !== 'login' && pageId !== 'signup')) {
         document.body.classList.add("logged-out");
         pageId = 'login';
@@ -182,12 +182,21 @@ function convertCurrency() {
     document.getElementById('currResult').innerText = `${amount} ${from} = ${(amount * rate).toFixed(2)} ${to}`;
 }
 
+// FIXED: Resource Update with Guard Clauses to prevent Null errors
 function updateResources() {
-    const country = document.getElementById('countryList').value;
+    const countrySelect = document.getElementById('countryList');
     const container = document.getElementById('resourceContainer');
-    if (!container) return;
+
+    if (!countrySelect || !container) return;
+
+    const country = countrySelect.value;
     const list = resourceData[country] || ["No data currently available for this region."];
-    container.innerHTML = list.map(item => `<div class="glass-card" style="margin-bottom:10px; padding:15px;">${item}</div>`).join('');
+    
+    container.innerHTML = list.map(item => `
+        <div class="glass-card" style="margin-bottom:10px; padding:15px;">
+            ${item}
+        </div>
+    `).join('');
 }
 
 // =========================
@@ -222,7 +231,6 @@ async function login() {
 
     if (!user || !pass) return alert("Please enter credentials");
 
-    // Real Supabase Auth Logic
     const { data, error } = await db.from("users")
         .select("*")
         .eq("username", user)
@@ -301,10 +309,20 @@ window.addEventListener('DOMContentLoaded', () => {
         switchPage(last);
     }
 
-    // System Clock
+    // System Clock & Date
     setInterval(() => {
         const clock = document.getElementById("clock");
-        if (clock) clock.textContent = new Date().toLocaleTimeString();
+        const dateElement = document.getElementById("date");
+        const now = new Date();
+
+        if (clock) {
+            clock.textContent = now.toLocaleTimeString();
+        }
+
+        if (dateElement) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dateElement.textContent = now.toLocaleDateString(undefined, options);
+        }
     }, 1000);
 
     if (window.lucide) lucide.createIcons();
