@@ -1,3 +1,6 @@
+/* ========================= */
+/* THEME & FONT SETUP        */
+/* ========================= */
 :root {
     --accent-color: #00f2ff;
     --accent-gradient: linear-gradient(135deg, #00f2ff, #0072ff);
@@ -24,22 +27,52 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    /* FONT OVERRIDE: Papyrus as primary with fantasy fallbacks */
+    font-family: 'Papyrus', 'Fantasy', 'Copperplate', 'Segoe UI', sans-serif;
 }
 
 /* ========================= */
 /* MAIN LAYOUT (GRID)        */
 /* ========================= */
 body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
     background-color: var(--bg-dark);
     color: var(--text-primary);
-    /* Strict Grid: Sidebar on left (280px), Content on right (1fr) */
+    /* Strict Grid: Sidebar left (280px), Content right (1fr) */
     display: grid;
     grid-template-columns: 280px 1fr; 
     height: 100vh;
     overflow: hidden;
     background-image: radial-gradient(circle at 50% -20%, var(--accent-color) -200%, transparent 40%);
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+/* ========================= */
+/* PERSONALIZATION CLASSES   */
+/* ========================= */
+
+/* High Contrast Mode */
+body.high-contrast {
+    --bg-dark: #000000;
+    --text-secondary: #ffffff;
+    --border-color: #ffffff;
+    --card-bg: rgba(255, 255, 255, 0.1);
+}
+
+/* Rounded UI Mode */
+body.extra-rounded .glass-card, 
+body.extra-rounded .nav-links li,
+body.extra-rounded .search-wrapper,
+body.extra-rounded .profile-icon-circle {
+    border-radius: 40px !important;
+}
+
+/* Neon Glow Mode */
+body.neon-mode {
+    --accent-color: #ff00ff; /* Hot Pink */
+    --accent-gradient: linear-gradient(135deg, #ff00ff, #8000ff);
+}
+body.neon-mode .nav-links li:hover {
+    box-shadow: 0 0 15px var(--accent-color);
 }
 
 /* ========================= */
@@ -129,7 +162,6 @@ nav.sidebar {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    /* FIX: Ensure the sidebar is definitely on top of the content area */
     z-index: 9999 !important;
     position: relative;
 }
@@ -157,7 +189,6 @@ nav.sidebar {
     transition: all 0.3s ease;
 }
 
-/* FIX: Ensure the click goes through the icon/text to the LI tag's onclick */
 .nav-links li * {
     pointer-events: none;
 }
@@ -166,8 +197,8 @@ nav.sidebar {
 .nav-links li:hover, .nav-links li.active {
     background: var(--card-bg);
     color: var(--accent-color);
-    padding-left: 25px; /* Subtle shift effect */
-    box-shadow: inset 4px 0 0 var(--accent-color); /* Neon bar on the left */
+    padding-left: 25px;
+    box-shadow: inset 4px 0 0 var(--accent-color);
 }
 
 /* ========================= */
