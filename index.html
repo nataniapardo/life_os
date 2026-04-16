@@ -20,7 +20,6 @@
             <ul class="nav-links">
                 <li onclick="switchPage('home')" class="nav-item active" data-section="home">Home</li>
                 <li onclick="switchPage('dashboard')" class="nav-item" data-section="dashboard">Dashboard</li>
-                <li onclick="switchPage('calendar')" class="nav-item" data-section="calendar">Calendar</li>
                 <li onclick="switchPage('world')" class="nav-item" data-section="world">World Tools</li>
                 <li onclick="switchPage('vault')" class="nav-item" data-section="vault">The Vault</li>
                 <li onclick="switchPage('resources')" class="nav-item" data-section="resources">Resources</li>
@@ -34,11 +33,10 @@
         <main class="content-area">
             <header class="top-bar">
                 <div class="header-left"></div>
-
                 <div class="header-right">
                     <div class="search-wrapper">
                         <i data-lucide="search" class="search-icon"></i>
-                        <input type="text" id="globalSearch" placeholder="Search Command...">
+                        <input type="text" id="globalSearch" placeholder="Search...">
                     </div>
 
                     <div id="clock" class="digital-clock">00:00:00</div>
@@ -99,6 +97,17 @@
                 </div>
             </section>
 
+            <section id="signup" class="page view-section hidden">
+                <div class="auth-page-container">
+                    <div class="auth-card glass-card">
+                        <h2>Create Account</h2>
+                        <input id="signUser" placeholder="Username">
+                        <input id="signPass" type="password" placeholder="Password">
+                        <button class="btn-glow" onclick="CreateAccount()">Initialize Identity</button>
+                    </div>
+                </div>
+            </section>
+
             <section id="home" class="page view-section">
                 <div class="hero-container">
                     <div class="main-logo-center" onclick="goHome()">
@@ -128,4 +137,11 @@
                         <select id="currTo" style="flex:1;"></select>
                     </div>
                     <button class="btn-glow" style="margin-top:10px;" onclick="convertCurrency()">Convert</button>
-                    <p id="currResult"
+                    <p id="currResult" style="margin-top:10px; font-weight: bold;"></p>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
