@@ -12,7 +12,7 @@ function switchPage(pageId) {
   const isLoggedIn = localStorage.getItem("loggedIn");
 
   // Protection for private pages
-  const privatePages = ["dashboard", "settings-general", "settings-notifications", "account", "personalization"];
+  const privatePages = ["dashboard", "settings-general", "settings-notifications", "account", "personalization", "customize"];
   if (privatePages.includes(pageId) && !isLoggedIn) {
     alert("Please login first to access this area.");
     switchPage("login");
@@ -38,7 +38,7 @@ function goHome() {
 }
 
 // =========================
-// PROFILE DROPDOWN LOGIC
+// PROFILE & AVATAR LOGIC
 // =========================
 function toggleProfileMenu() {
   const menu = document.getElementById("profileMenu");
@@ -54,7 +54,53 @@ function closeProfileMenu() {
   }
 }
 
-// Close menu when clicking outside of the profile area
+// Trigger the hidden file input
+function triggerUpload() {
+    const input = document.getElementById('imageUpload');
+    if (input) input.click();
+}
+
+// Handle file selection and update UI
+function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const navAvatar = document.getElementById('navAvatar');
+            const placeholder = document.getElementById('avatarPlaceholder');
+            
+            navAvatar.src = e.target.result;
+            navAvatar.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+            
+            localStorage.setItem('userAvatar', e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// Load saved avatar or initials on boot
+function loadProfile() {
+    const savedAvatar = localStorage.getItem('userAvatar');
+    const navAvatar = document.getElementById('navAvatar');
+    const placeholder = document.getElementById('avatarPlaceholder');
+    const userDisplay = document.getElementById('currentUserDisplay');
+    
+    const username = localStorage.getItem('currentUser') || "Guest User";
+    if (userDisplay) userDisplay.textContent = username;
+
+    if (savedAvatar && navAvatar && placeholder) {
+        navAvatar.src = savedAvatar;
+        navAvatar.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+    } else if (placeholder) {
+        placeholder.innerText = username.substring(0, 2).toUpperCase();
+        if (navAvatar) navAvatar.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+    }
+}
+
+// Close menu when clicking outside
 window.addEventListener("click", (e) => {
   const container = document.querySelector(".profile-container");
   if (container && !container.contains(e.target)) {
@@ -63,13 +109,43 @@ window.addEventListener("click", (e) => {
 });
 
 // =========================
-// AUTHENTICATION
+// THEME SYSTEM
 // =========================
-
-async function signup() {
-  return CreateAccount();
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeUI(savedTheme);
 }
 
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeUI(newTheme);
+}
+
+function updateThemeUI(theme) {
+    const themeText = document.getElementById('themeText');
+    const themeIcon = document.getElementById('themeIcon');
+    
+    if (!themeText || !themeIcon) return;
+
+    if (theme === 'light') {
+        themeText.innerText = "Dark Mode";
+        themeIcon.setAttribute('data-lucide', 'moon');
+    } else {
+        themeText.innerText = "Light Mode";
+        themeIcon.setAttribute('data-lucide', 'sun');
+    }
+    
+    if (window.lucide) lucide.createIcons();
+}
+
+// =========================
+// AUTHENTICATION
+// =========================
 async function CreateAccount() {
   const username = document.getElementById("signUser").value.trim();
   const password = document.getElementById("signPass").value.trim();
@@ -101,6 +177,7 @@ async function CreateAccount() {
   localStorage.setItem("loggedIn", "true");
   localStorage.setItem("currentUser", username);
   alert("Account created and logged in!");
+  loadProfile(); // Update initials/display
   switchPage("dashboard");
 }
 
@@ -128,13 +205,16 @@ async function login() {
   localStorage.setItem("loggedIn", "true");
   localStorage.setItem("currentUser", username);
   alert("Login successful");
+  loadProfile();
   switchPage("dashboard");
 }
 
 function logout() {
   localStorage.removeItem("loggedIn");
   localStorage.removeItem("currentUser");
+  localStorage.removeItem("userAvatar"); // Optional: clear avatar on logout
   alert("Logged out successfully");
+  loadProfile();
   switchPage("home");
 }
 
@@ -156,7 +236,7 @@ async function deleteAccount() {
     alert("Error deleting account: " + error.message);
   } else {
     alert("Account successfully deleted.");
-    logout(); // Clear session and redirect to home
+    logout();
   }
 }
 
@@ -165,7 +245,7 @@ async function deleteAccount() {
 // =========================
 function addTask() {
   const input = document.getElementById("taskInput");
-  if (!input.value) return;
+  if (!input || !input.value) return;
 
   let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
   tasks.push(input.value);
@@ -190,14 +270,19 @@ function renderTasks() {
 // =========================
 // INITIALIZATION
 // =========================
-window.onload = () => {
+window.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  loadProfile();
+  renderTasks();
+  
   const last = localStorage.getItem("lastPage") || "home";
   switchPage(last);
-  renderTasks();
   
   // Set the clock
   setInterval(() => {
     const clock = document.getElementById("clock");
     if (clock) clock.textContent = new Date().toLocaleTimeString();
   }, 1000);
-};
+  
+  if (window.lucide) lucide.createIcons();
+});
