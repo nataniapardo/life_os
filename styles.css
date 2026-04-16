@@ -27,7 +27,35 @@ body {
     transition: background-color 0.3s ease;
 }
 
-/* TOP BAR */
+/* ========================= */
+/* GATING LOGIC              */
+/* ========================= */
+body.logged-out .sidebar, 
+body.logged-out .top-bar {
+    display: none !important;
+}
+
+body.logged-out {
+    grid-template-columns: 1fr; /* Remove sidebar space when logged out */
+}
+
+/* CENTER LOGO & CONTENT FOR LOGIN/SIGNUP */
+.auth-page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.auth-logo-large {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* ========================= */
+/* TOP BAR                   */
+/* ========================= */
 header.top-bar {
     grid-column: 2;
     padding: 20px 40px;
@@ -42,7 +70,9 @@ header.top-bar {
     z-index: 100;
 }
 
-/* SIDEBAR & CENTERED LOGO */
+/* ========================= */
+/* SIDEBAR & LOGO            */
+/* ========================= */
 aside.sidebar, nav.sidebar {
     padding: 30px 15px;
     background: var(--sidebar-bg);
@@ -54,7 +84,7 @@ aside.sidebar, nav.sidebar {
 
 .logo-area {
     display: flex;
-    flex-direction: column; /* Stack globe over text */
+    flex-direction: column; 
     justify-content: center;
     align-items: center;
     gap: 10px;
@@ -69,7 +99,6 @@ aside.sidebar, nav.sidebar {
     width: 28px;
     height: 28px;
     color: var(--accent-color);
-    /* Dual layer glow for intensity */
     filter: drop-shadow(0 0 10px var(--accent-color)) drop-shadow(0 0 20px var(--accent-color));
     transition: color 0.3s ease, filter 0.3s ease;
 }
@@ -102,7 +131,9 @@ aside.sidebar, nav.sidebar {
     margin: 20px 0;
 }
 
-/* MAIN CONTENT AREA */
+/* ========================= */
+/* MAIN CONTENT AREA         */
+/* ========================= */
 main {
     padding: 40px;
     overflow-y: auto;
@@ -174,7 +205,7 @@ main {
     color: #000;
 }
 
-/* PROFILE & DROPDOWN FIXES */
+/* PROFILE & DROPDOWN */
 .profile-container { 
     position: relative; 
 }
@@ -210,7 +241,6 @@ main {
     object-fit: cover;
 }
 
-/* POSITIONING THE LIST */
 .dropdown-content {
     position: absolute;
     top: calc(100% + 12px);
