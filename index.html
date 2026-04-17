@@ -3,79 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | AI Dashboard</title>
+    <title>Life OS | Futuristic AI Workspace</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-    <nav class="sidebar">
-        <div class="logo-area">
-            <span class="logo-text">LIFE</span>
-            <div class="globe-container">
-                <div class="globe-core"></div>
-                <div class="globe-lines"></div>
-            </div>
-            <span class="logo-text">OS</span>
-        </div>
-
-        <ul class="nav-links">
-            <li class="active" onclick="showPage('dashboard')"><i data-lucide="layout-dashboard"></i> <span>Dashboard</span></li>
-            <li onclick="showPage('tasks')"><i data-lucide="check-square"></i> <span>Tasks</span></li>
-            <li onclick="showPage('habits')"><i data-lucide="activity"></i> <span>Habits</span></li>
-            <li onclick="showPage('documents')"><i data-lucide="file-text"></i> <span>Documents</span></li>
-            <li onclick="showPage('contacts')"><i data-lucide="users"></i> <span>Contacts</span></li>
-            <li onclick="showPage('appearance')"><i data-lucide="palette"></i> <span>Appearance</span></li>
-        </ul>
-    </nav>
-
-    <header class="top-bar">
-        <div class="header-right">
-            <div class="search-wrapper">
-                <i data-lucide="search"></i>
-                <input type="text" id="globalSearch" placeholder="Search Life OS (Keywords & Synonyms)...">
-            </div>
-            <div class="profile-container">
-                <div class="profile-icon-circle" onclick="toggleProfile()">
-                    <span>JD</span>
+<body class="logged-out"> <div class="app-container">
+        <nav class="sidebar">
+            <div class="logo-area" onclick="switchPage('home')">
+                <span class="logo-text">LIFE</span>
+                <div class="globe-container">
+                    <div class="globe-core"></div>
+                    <div class="globe-lines"></div>
                 </div>
+                <span class="logo-text">OS</span>
             </div>
-        </div>
-    </header>
 
-    <main class="content-area">
-        <section id="dashboard" class="page">
-            <div class="glass-card">
-                <h1>Welcome, User</h1>
-                <p>Your Life Blueprint is 85% complete.</p>
-            </div>
+            <ul class="nav-links">
+                <li onclick="switchPage('home')" class="nav-item active" data-section="home">
+                    <i data-lucide="home"></i> <span>Home</span>
+                </li>
+                <li onclick="switchPage('dashboard')" class="nav-item" data-section="dashboard">
+                    <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+                </li>
+                <li onclick="switchPage('tasks')" class="nav-item" data-section="tasks">
+                    <i data-lucide="check-square"></i> <span>Tasks</span>
+                </li>
+                <li onclick="switchPage('calendar')" class="nav-item" data-section="calendar">
+                    <i data-lucide="calendar"></i> <span>Calendar</span>
+                </li>
+                <li onclick="switchPage('habits')" class="nav-item" data-section="habits">
+                    <i data-lucide="activity"></i> <span>Habits</span>
+                </li>
+                <li onclick="switchPage('documents')" class="nav-item" data-section="documents">
+                    <i data-lucide="file-text"></i> <span>Documents</span>
+                </li>
+                <li onclick="switchPage('world')" class="nav-item" data-section="world">
+                    <i data-lucide="languages"></i> <span>World Tools</span>
+                </li>
+                <li onclick="switchPage('contacts')" class="nav-item" data-section="contacts">
+                    <i data-lucide="users"></i> <span>Contacts</span>
+                </li>
+                <li onclick="switchPage('appearance')" class="nav-item" data-section="appearance">
+                    <i data-lucide="palette"></i> <span>Appearance</span>
+                </li>
+                
+                <hr class="nav-divider">
+                
+                <li onclick="switchPage('login')" class="nav-item auth-only">Login</li>
+                <li onclick="switchPage('signup')" class="nav-item auth-only">Sign Up</li>
+            </ul>
+        </nav>
+
+        <main class="content-area">
             
-            <div class="glass-card">
-                <h3><i data-lucide="bot"></i> AI Data Decipher</h3>
-                <p>Upload any document (Notes, Resume, To-Do) and let AI organize it.</p>
-                <input type="file" id="aiUpload" hidden onchange="handleFileUpload(event)">
-                <button class="btn-glow" onclick="document.getElementById('aiUpload').click()">Upload & Organize</button>
-                <div id="uploadStatus"></div>
-            </div>
-        </section>
+            <header class="top-bar">
+                <div class="header-right">
+                    <div class="search-wrapper">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" id="globalSearch" placeholder="Search system (Keywords & Synonyms)...">
+                    </div>
 
-        <section id="appearance" class="page hidden">
-            <div class="glass-card">
-                <h2>Appearance Settings</h2>
-                <div class="settings-grid">
-                    <button class="btn-glow" onclick="toggleStyle('high-contrast')">High Contrast</button>
-                    <button class="btn-glow" onclick="toggleStyle('extra-rounded')">Rounded UI</button>
-                    <button class="btn-glow" onclick="toggleStyle('neon-mode')">Neon Mode</button>
+                    <div class="time-date-container">
+                        <div id="date" class="date-display"></div>
+                        <div id="clock" class="digital-clock">00:00:00</div>
+                    </div>
+                    
+                    <div class="profile-container">
+                        <div class="profile-icon-circle" id="profileTrigger" onclick="toggleProfileMenu()">
+                            <div id="avatarPlaceholder" class="avatar-initials">JD</div>
+                            <img src="" alt="Profile" id="navAvatar" class="hidden">
+                        </div>
+
+                        <div id="profileMenu" class="dropdown-content hidden">
+                            <div class="dropdown-header">
+                                <p id="currentUserDisplay">Guest User</p>
+                                <button class="btn-text-only" onclick="triggerUpload()">Update Photo</button>
+                                <input type="file" id="imageUpload" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                            </div>
+                            <div class="dropdown-item" onclick="toggleTheme()">
+                                <i data-lucide="sun" id="themeIcon"></i> 
+                                <span id="themeText">Light Mode</span>
+                            </div>
+                            <hr class="nav-divider">
+                            <div class="dropdown-item" onclick="switchPage('appearance')">
+                                <i data-lucide="palette"></i> Personalization
+                            </div>
+                            <div class="dropdown-item logout-btn" onclick="logout()">
+                                <i data-lucide="log-out"></i> Log Out
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div style="margin-top: 20px;">
-                    <label>Theme Color Picker:</label>
-                    <input type="color" id="colorPicker" onchange="updateThemeColor(this.value)">
+            </header>
+
+            <section id="login" class="page view-section">
+                <div class="auth-page-container">
+                    <div class="auth-logo-large">
+                        <div class="logo-area" style="font-size: 3rem;">
+                            <span class="logo-text">LIFE</span>
+                            <div class="globe-container" style="width: 80px; height: 80px;">
+                                <div class="globe-core" style="width: 40px; height: 40px;"></div>
+                                <div class="globe-lines"></div>
+                            </div>
+                            <span class="logo-text">OS</span>
+                        </div>
+                    </div>
+                    <div class="auth-card glass-card">
+                        <h2>Login</h2>
+                        <input id="loginUser" placeholder="Username">
+                        <input id="loginPass" type="password" placeholder="Password">
+                        <button class="btn-glow" onclick="login()">Enter OS</button>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+
+            <section id="signup" class="page view-section hidden">
+                <div class="auth-page-container">
+                    <div class="auth-card glass-card">
+                        <h2>Create Account</h2>
+                        <input id="signUser" placeholder="Username">
+                        <input id="signPass" type="password" placeholder="Password">
+                        <button class="btn-glow" onclick="CreateAccount()">Initialize Identity</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="home" class="page view-section hidden">
+                <div class="hero-container">
+                    <div class="main-logo-center">
+                        <h1 class="logo-text-massive">LIFE OS</h1>
+                        <div class="logo-glow-large"></div>
+                    </div>
+                    <p class="subtitle-center">System operational. Your AI-driven workspace is ready.</p>
+                </div>
+            </section>
+
+            <section id="dashboard" class="page view-section hidden">
+                <div class="glass-card">
+                    <h1>Welcome, User</h1>
+                    <p>Your Life Blueprint is 85% complete.</p>
+                </div>
+                
+                <div class="glass-card">
+                    <h3><i data-lucide="bot"></i> AI Data Decipher</h3>
+                    <p>Upload any document (Notes, Resume, To-Do) and let AI organize it.</p>
+                    <input type="file" id="aiUpload" hidden onchange="handleFileUpload(event)">
+                    <button class="btn-glow" onclick="document.getElementById('aiUpload').click()">Upload & Organize</button>
+                    <div id="uploadStatus"></div>
+                </div>
+            </section>
+
+            <section id="calendar" class="page view-section hidden">
+                <div class="calendar-header-wrapper" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h1 id="monthDisplay" style="color: var(--accent-color);">Month Year</h1>
+                    <div class="calendar-controls" style="display: flex; gap: 15px;">
+                        <button class="btn-glow" onclick="moveMonth(-1)">← Prev</button>
+                        <button class="btn-glow" onclick="moveMonth(1)">Next →</button>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="calendar-grid-header" style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: bold; padding-bottom: 15px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); margin-bottom: 15px;">
+                        <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
+                    </div>
+                    <div id="calendarDays" class="calendar-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px;"></div>
+                </div>
+            </section>
+
+            <section id="world" class="page view-section hidden">
+                <h1>World Tools</h1>
+                <div class="glass-card">
+                    <h3>Universal Translator</h3>
+                    <select id="langList" style="width: 100%; margin-top: 10px;"></select>
+                    <textarea id="transInput" placeholder="Enter text to translate..." style="width:100%; height:80px; margin-top:10px;"></textarea>
+                    <button class="btn-glow" onclick="translateText()">Translate</button>
+                    <div id="transOutput" style="margin-top:10px; color: var(--accent-color);"></div>
+                </div>
+
+                <div class="glass-card" style="margin-top:20px;">
+                    <h3>Currency Exchange</h3>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <input type="number" id="currAmount" placeholder="Amount" style="flex:1;">
+                        <select id="currFrom" style="flex:1;"></select>
+                        <span style="display:flex; align-items:center;">to</span>
+                        <select id="currTo" style="flex:1;"></select>
+                    </div>
+                    <button class="btn-glow" style="margin-top:10px;" onclick="convertCurrency()">Convert</button>
+                    <p id="currResult" style="margin-top:10px; font-weight: bold;"></p>
+                </div>
+            </section>
+
+            <section id="appearance" class="page view-section hidden">
+                <div class="glass-card">
+                    <h2>Appearance Settings</h2>
+                    <div class="settings-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 20px;">
+                        <button class="btn-glow" onclick="toggleStyle('high-contrast')">High Contrast</button>
+                        <button class="btn-glow" onclick="toggleStyle('extra-rounded')">Rounded UI</button>
+                        <button class="btn-glow" onclick="toggleStyle('neon-mode')">Neon Mode</button>
+                    </div>
+                    <div style="margin-top: 30px; padding: 20px; border-top: 1px solid var(--border-color);">
+                        <label style="display: block; margin-bottom: 10px;">Theme Color Picker:</label>
+                        <input type="color" id="colorPicker" onchange="updateThemeColor(this.value)" style="width: 100px; height: 50px; cursor: pointer;">
+                    </div>
+                </div>
+            </section>
 
         </main>
+    </div>
 
     <script src="script.js"></script>
-    <script>lucide.createIcons();</script>
+    <script>
+        // Ensure icons are rendered
+        lucide.createIcons();
+    </script>
 </body>
 </html>
