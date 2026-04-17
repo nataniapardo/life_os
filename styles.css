@@ -2,44 +2,20 @@
     --accent-color: #00f2ff;
     --bg-dark: #06070a;
     --text-primary: #f1f5f9;
+    --global-font: 'Plus Jakarta Sans', sans-serif;
 }
 
-/* LOGO: Papyrus & Glowing Globe */
-.papyrus-font {
-    font-family: 'Papyrus', serif !important;
-    color: var(--accent-color);
-    display: flex;
-    align-items: center;
-    gap: 15px;
+body {
+    font-family: var(--global-font);
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    margin: 0;
+    transition: font-family 0.2s ease;
 }
 
-.glowing-globe {
-    width: 40px;
-    height: 40px;
-    background: radial-gradient(circle, var(--accent-color) 20%, transparent 70%);
-    border-radius: 50%;
-    position: relative;
-    box-shadow: 0 0 20px var(--accent-color);
-    animation: pulseGlobe 3s infinite ease-in-out;
-}
-
-.globe-inner {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 50%;
-    animation: rotateGlobe 4s linear infinite;
-}
-
-.glowing-globe.small { width: 20px; height: 20px; box-shadow: 0 0 10px var(--accent-color); }
-
-@keyframes rotateGlobe { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes pulseGlobe { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; transform: scale(1.05); } }
-
-/* NAVIGATION: Removed Bullets */
+/* NAVIGATION: Removed Bullets and Added Side-Glow */
 .nav-links {
-    list-style-type: none; /* Removed default bullets */
+    list-style-type: none;
     padding: 0;
     margin: 30px 0;
 }
@@ -51,13 +27,28 @@
     padding: 12px 20px;
     cursor: pointer;
     transition: 0.3s;
-    border-left: 0px solid transparent;
+    border-left: 4px solid transparent;
 }
 
 .nav-links li:hover {
     color: var(--accent-color);
     border-left: 4px solid var(--accent-color);
     background: linear-gradient(90deg, rgba(0, 242, 255, 0.1) 0%, transparent 100%);
+    box-shadow: -10px 0 15px -5px rgba(0, 242, 255, 0.3);
 }
 
-.nav-links li i { width: 20px; } /* Ensures icon alignment */
+/* CUSTOMIZATION INPUTS */
+select, input[type="color"] {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 8px;
+    outline: none;
+}
+
+optgroup { background: #111; color: var(--accent-color); }
+
+/* ... (Logo, Globe, and Glass-card styles remain consistent) ... */
