@@ -16,15 +16,15 @@
             <div class="auth-logo-large">
                 <div class="logo-area">
                     <span class="logo-text-massive">LIFE</span>
-                    <div class="globe-container">
-                        <div class="globe-core"></div>
-                        <div class="globe-lines"></div>
+                    <div class="earth-globe-large">
+                        <div class="earth-surface"></div>
+                        <div class="earth-atmosphere"></div>
                     </div>
                     <span class="logo-text-massive">OS</span>
                 </div>
             </div>
 
-            <div class="auth-card glass-card">
+            <div id="loginCard" class="auth-card glass-card">
                 <h2>Login</h2>
                 <input id="loginUser" placeholder="Username">
                 <input id="loginPass" type="password" placeholder="Password">
@@ -65,18 +65,15 @@
         <main class="main-layout">
             <header class="top-bar">
                 <div class="header-left"><div id="aiStatus" class="ai-status">AI: Operational</div></div>
-                
                 <div class="header-right">
                     <div class="datetime-block">
                         <div id="dateDisplay" class="date-text">--</div>
                         <div id="clockDisplay" class="time-text">00:00:00</div>
                     </div>
-
                     <div class="search-wrapper">
                         <i data-lucide="search" class="search-icon"></i>
                         <input type="text" id="globalSearch" placeholder="Search Life OS...">
                     </div>
-
                     <div class="profile-area">
                         <div class="profile-trigger" onclick="toggleProfileMenu()">
                             <div id="userAvatar" class="avatar-circle">JD</div>
@@ -100,18 +97,33 @@
                     <div class="settings-grid">
                         <div class="glass-card">
                             <h3>Workspace Customization</h3>
-                            <label>Interface Font</label>
+                            
+                            <label>Global Typography</label>
                             <select id="fontSelector">
-                                <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans</option>
-                                <option value="Papyrus, serif">Papyrus</option>
-                                <option value="'Roboto Mono', monospace">Terminal Mono</option>
+                                <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans (Modern)</option>
+                                <option value="'Inter', sans-serif">Inter UI (Clean)</option>
+                                <option value="'Montserrat', sans-serif">Montserrat (Bold)</option>
+                                <option value="'Roboto Mono', monospace">Roboto Mono (Tech)</option>
+                                <option value="'Playfair Display', serif">Playfair (Elegant)</option>
+                                <option value="'Ubuntu', sans-serif">Ubuntu (Friendly)</option>
+                                <option value="'Oswald', sans-serif">Oswald (Impact)</option>
+                                <option value="Papyrus, serif">Papyrus (Themed)</option>
+                                <option value="'Open Sans', sans-serif">Open Sans (Standard)</option>
                             </select>
                             
                             <label style="margin-top:20px; display:block;">Accent Stimulation Color</label>
                             <input type="color" id="accentPicker" value="#00f2ff">
+
+                            <label style="margin-top:20px; display:block;">Stimulation Themes</label>
+                            <div class="theme-grid">
+                                <button class="theme-btn" onclick="applyTheme('cyber')">Cyberpunk</button>
+                                <button class="theme-btn" onclick="applyTheme('forest')">Deep Forest</button>
+                                <button class="theme-btn" onclick="applyTheme('nova')">Supernova</button>
+                                <button class="theme-btn" onclick="applyTheme('mono')">Monochrome</button>
+                            </div>
                             
                             <div style="margin-top: 25px;">
-                                <button class="btn-glow" id="saveCustomBtn" onclick="saveCustomization()">Save</button>
+                                <button class="btn-glow" onclick="saveCustomization()">Update OS</button>
                             </div>
                         </div>
                     </div>
