@@ -5,41 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life OS | Enterprise Workspace</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Inter:wght@400;700&family=Roboto+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="logged-out">
+<body class="logged-out" id="globalBody">
 
     <section id="login" class="page view-section">
         <div class="auth-page-container">
             <div class="auth-logo-large">
-                <div class="logo-area">
-                    <span class="logo-text-massive">LIFE</span>
-                    <div class="globe-container"><div class="globe-core"></div></div>
-                    <span class="logo-text-massive">OS</span>
+                <div class="logo-area papyrus-font">
+                    <span>LIFE</span>
+                    <div class="oval-spinner"></div>
+                    <span>OS</span>
                 </div>
             </div>
             <div class="auth-card glass-card">
-                <h2>Initialize Identity</h2>
+                <h2>System Access</h2>
                 <input type="text" id="loginId" placeholder="Username or Email">
                 <input type="password" id="loginPass" placeholder="Password">
-                <button class="btn-glow" onclick="login()">Access Workspace</button>
+                <button class="btn-glow" onclick="login()">Enter OS</button>
             </div>
         </div>
     </section>
 
     <div id="appContainer" class="app-container hidden">
         <nav class="sidebar">
-            <div class="logo-area-branding">
+            <div class="logo-area-branding papyrus-font">
                 <span>LIFE</span>
-                <div class="globe-container small"><div class="globe-core"></div></div>
+                <div class="oval-spinner small"></div>
                 <span>OS</span>
             </div>
             
             <ul class="nav-links">
                 <li class="active" onclick="switchPage('nexus')"><i data-lucide="layout"></i> Nexus</li>
                 <li onclick="switchPage('tasks')"><i data-lucide="columns"></i> Kanban</li>
+                <li onclick="switchPage('timer-page')"><i data-lucide="timer"></i> Timers</li>
                 <li onclick="switchPage('database')"><i data-lucide="database"></i> Records</li>
                 <li onclick="switchPage('vault')"><i data-lucide="edit-3"></i> Editor</li>
             </ul>
@@ -64,13 +65,7 @@
                         <div class="profile-trigger" onclick="toggleProfileMenu()">
                             <div id="userAvatar" class="avatar-circle">JD</div>
                         </div>
-                        
                         <div id="profileDropdown" class="dropdown-menu glass-card hidden">
-                            <div class="dropdown-header">
-                                <p id="displayInitials">JD</p>
-                                <span>System Director</span>
-                            </div>
-                            <hr>
                             <ul>
                                 <li onclick="switchPage('guide')"><i data-lucide="book-open"></i> Guide</li>
                                 <li onclick="switchPage('settings')"><i data-lucide="settings"></i> Settings</li>
@@ -82,39 +77,32 @@
             </header>
 
             <div id="contentSections">
-                <section id="nexus" class="view-section"><h1>Nexus</h1></section>
-                <section id="tasks" class="view-section hidden"><h1>Kanban</h1></section>
-                <section id="database" class="view-section hidden"><h1>Records</h1></section>
-                <section id="vault" class="view-section hidden"><h1>Editor</h1></section>
-
-                <section id="guide" class="view-section hidden">
-                    <h1><i data-lucide="book-open"></i> Guide</h1>
-                    <div class="glass-card">
-                        <h3>System Documentation</h3>
-                        <p>Welcome to Life OS. Use the Kanban to track workflows and the Editor for rich-text planning.</p>
-                    </div>
-                </section>
-
                 <section id="settings" class="view-section hidden">
-                    <h1><i data-lucide="settings"></i> Settings</h1>
+                    <h1>System Settings</h1>
                     <div class="settings-grid">
                         <div class="glass-card">
-                            <h3>Profile Identity</h3>
-                            <label>Change Initials</label>
-                            <input type="text" id="initialsInput" placeholder="e.g. JD" maxlength="2">
-                            <label>Profile Picture URL</label>
-                            <input type="text" id="avatarUrlInput" placeholder="Paste image link...">
-                            <button class="btn-glow" onclick="updateProfile()">Save Identity</button>
-                        </div>
-                        
-                        <div class="glass-card">
-                            <h3>Customize Interface</h3>
-                            <label>Global Accent</label>
-                            <input type="color" id="accentPicker" value="#00f2ff">
-                            <button class="btn-glow" style="margin-top:10px" onclick="applyCustomTheme()">Apply Theme</button>
+                            <h3>Workspace Customization</h3>
+                            <label>Interface Font</label>
+                            <select id="fontSelector" onchange="changeGlobalFont()">
+                                <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans (Default)</option>
+                                <option value="'Inter', sans-serif">Inter Professional</option>
+                                <option value="'Roboto Mono', monospace">Terminal Mono</option>
+                                <option value="serif">Classic Serif</option>
+                                <option value="Papyrus, serif">Papyrus</option>
+                            </select>
+                            
+                            <label style="margin-top:20px; display:block;">Accent Color</label>
+                            <input type="color" id="accentPicker" value="#00f2ff" onchange="applyCustomTheme()">
                         </div>
                     </div>
                 </section>
+
+                <section id="nexus" class="view-section"><h1>Nexus</h1></section>
+                <section id="tasks" class="view-section hidden"><h1>Kanban</h1></section>
+                <section id="timer-page" class="view-section hidden"><h1>Timers</h1></section>
+                <section id="database" class="view-section hidden"><h1>Records</h1></section>
+                <section id="vault" class="view-section hidden"><h1>Editor</h1></section>
+                <section id="guide" class="view-section hidden"><h1>Guide</h1></section>
             </div>
         </main>
     </div>
