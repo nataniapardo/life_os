@@ -22,11 +22,22 @@
                     <span>OS</span>
                 </div>
             </div>
-            <div class="auth-card glass-card">
-                <h2>System Access</h2>
+
+            <div id="loginCard" class="auth-card glass-card">
+                <h2>Log In</h2>
                 <input type="text" id="loginId" placeholder="Username or Email">
                 <input type="password" id="loginPass" placeholder="Password">
                 <button class="btn-glow" onclick="login()">Enter OS</button>
+                <p class="auth-toggle">New User? <span class="highlight-link" onclick="toggleAuthMode('signup')">Create Account</span></p>
+            </div>
+
+            <div id="signupCard" class="auth-card glass-card hidden">
+                <h2>Create Account</h2>
+                <input type="text" id="regEmail" placeholder="Email Address">
+                <input type="password" id="regPass" placeholder="New Password">
+                <input type="password" id="regConfirm" placeholder="Confirm Password">
+                <button class="btn-glow" onclick="handleSignUp()">Initialize Identity</button>
+                <p class="auth-toggle">Existing User? <span class="highlight-link" onclick="toggleAuthMode('login')">Log In</span></p>
             </div>
         </div>
     </section>
@@ -35,12 +46,9 @@
         <nav class="sidebar">
             <div class="logo-area-branding papyrus-font">
                 <span>LIFE</span>
-                <div class="glowing-globe small">
-                    <div class="globe-inner"></div>
-                </div>
+                <div class="glowing-globe small"><div class="globe-inner"></div></div>
                 <span>OS</span>
             </div>
-            
             <ul class="nav-links">
                 <li class="active" onclick="switchPage('nexus')"><i data-lucide="layout"></i> Nexus</li>
                 <li onclick="switchPage('tasks')"><i data-lucide="columns"></i> Kanban</li>
@@ -53,18 +61,15 @@
         <main class="main-layout">
             <header class="top-bar">
                 <div class="header-left"><div id="aiStatus" class="ai-status">AI: Operational</div></div>
-                
                 <div class="header-right">
                     <div class="datetime-block">
                         <div id="dateDisplay" class="date-text">--</div>
                         <div id="clockDisplay" class="time-text">00:00:00</div>
                     </div>
-
                     <div class="search-wrapper">
                         <i data-lucide="search" class="search-icon"></i>
                         <input type="text" id="globalSearch" placeholder="Search Life OS...">
                     </div>
-
                     <div class="profile-area">
                         <div class="profile-trigger" onclick="toggleProfileMenu()">
                             <div id="userAvatar" class="avatar-circle">JD</div>
@@ -81,52 +86,22 @@
             </header>
 
             <div id="contentSections">
+                <section id="nexus" class="view-section"><h1>Nexus Dashboard</h1></section>
                 <section id="settings" class="view-section hidden">
                     <h1>System Settings</h1>
                     <div class="settings-grid">
                         <div class="glass-card">
                             <h3>Workspace Customization</h3>
-                            
                             <label>Interface Font Library</label>
                             <select id="fontSelector">
-                                <optgroup label="Modern Sans-Serif">
-                                    <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans (Default)</option>
-                                    <option value="'Inter', sans-serif">Inter UI</option>
-                                    <option value="'Montserrat', sans-serif">Montserrat</option>
-                                    <option value="'Open Sans', sans-serif">Open Sans</option>
-                                    <option value="'Ubuntu', sans-serif">Ubuntu</option>
-                                </optgroup>
-                                <optgroup label="Professional Serif">
-                                    <option value="'Playfair Display', serif">Playfair Display</option>
-                                    <option value="Georgia, serif">Georgia</option>
-                                    <option value="'Times New Roman', serif">Classic Times</option>
-                                </optgroup>
-                                <optgroup label="Themed Fonts">
-                                    <option value="Papyrus, serif">Papyrus (Themed)</option>
-                                    <option value="'Roboto Mono', monospace">Terminal Mono</option>
-                                    <option value="'Oswald', sans-serif">Oswald Bold</option>
-                                    <option value="cursive">Script</option>
-                                </optgroup>
+                                <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans</option>
+                                <option value="Papyrus, serif">Papyrus</option>
                             </select>
-                            
-                            <label style="margin-top:20px; display:block;">Accent Tint</label>
-                            <input type="color" id="accentPicker" value="#00f2ff">
-                            
-                            <div class="save-container" style="margin-top: 30px;">
-                                <button class="btn-glow" id="saveCustomBtn" onclick="saveCustomization()">Save Changes</button>
-                                <span id="saveFeedback" class="hidden" style="color: var(--accent-color); margin-left: 15px; font-size: 0.8rem;">Changes Locked.</span>
-                            </div>
+                            <button class="btn-glow" id="saveCustomBtn" onclick="saveCustomization()" style="margin-top:20px;">Save Changes</button>
                         </div>
                     </div>
                 </section>
-                
-                <section id="nexus" class="view-section"><h1>Nexus Dashboard</h1></section>
-                <section id="tasks" class="view-section hidden"><h1>Kanban</h1></section>
-                <section id="timer-page" class="view-section hidden"><h1>Timers</h1></section>
-                <section id="database" class="view-section hidden"><h1>Records</h1></section>
-                <section id="vault" class="view-section hidden"><h1>Editor</h1></section>
-                <section id="guide" class="view-section hidden"><h1>Guide</h1></section>
-            </div>
+                </div>
         </main>
     </div>
 
