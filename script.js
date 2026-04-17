@@ -5,68 +5,64 @@ const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// --- 1. SESSION MANAGEMENT ---
-function login() {
-    const user = document.getElementById('loginId').value;
-    if(user) {
-        document.getElementById('login').classList.add('hidden');
-        document.getElementById('appContainer').classList.remove('hidden');
-        lucide.createIcons();
-        startClock();
-        renderDatabase();
+// --- 1. PROFILE LOGIC ---
+function toggleProfileMenu() {
+    const menu = document.getElementById('profileDropdown');
+    menu.classList.toggle('hidden');
+}
+
+function updateProfile() {
+    const initials = document.getElementById('initialsInput').value;
+    const avatarUrl = document.getElementById('avatarUrlInput').value;
+    const avatarDiv = document.getElementById('userAvatar');
+    const displayInit = document.getElementById('displayInitials');
+
+    if (initials) {
+        avatarDiv.innerText = initials.toUpperCase();
+        displayInit.innerText = initials.toUpperCase();
+    }
+    
+    if (avatarUrl) {
+        avatarDiv.style.backgroundImage = `url('${avatarUrl}')`;
+        avatarDiv.innerText = ""; // Hide text if image exists
+    }
+    
+    alert("Identity updated successfully.");
+}
+
+function logout() {
+    const confirmOut = confirm("Are you sure you want to terminate the session?");
+    if(confirmOut) {
+        window.location.reload(); // Returns to login state
     }
 }
 
-// --- 2. NAVIGATION ---
+// --- 2. THEME CUSTOMIZATION ---
+function applyCustomTheme() {
+    const color = document.getElementById('accentPicker').value;
+    document.documentElement.style.setProperty('--accent-color', color);
+}
+
+// --- 3. PAGE ROUTING ---
 function switchPage(pageId) {
     document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
     document.getElementById(pageId).classList.remove('hidden');
+    document.getElementById('profileDropdown').classList.add('hidden'); // Close menu on click
     
-    document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
-    event.currentTarget.classList.add('active');
+    if (event && event.currentTarget.tagName === 'LI') {
+        document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    }
 }
 
-// --- 3. TOOLS: POMODORO & CALC ---
-let timer;
-function toggleTimer() {
-    let timeLeft = 25 * 60;
-    const display = document.getElementById('timer');
-    timer = setInterval(() => {
-        let mins = Math.floor(timeLeft / 60);
-        let secs = timeLeft % 60;
-        display.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        if (--timeLeft < 0) clearInterval(timer);
-    }, 1000);
+// --- 4. INITIALIZATION ---
+function login() {
+    document.getElementById('login').classList.add('hidden');
+    document.getElementById('appContainer').classList.remove('hidden');
+    lucide.createIcons();
+    startClock();
 }
 
-function calc(val) { document.getElementById('calcDisplay').value += val; }
-function solve() { 
-    try { document.getElementById('calcDisplay').value = eval(document.getElementById('calcDisplay').value); } 
-    catch { document.getElementById('calcDisplay').value = "Error"; }
-}
-function clearCalc() { document.getElementById('calcDisplay').value = ""; }
-
-// --- 4. DATABASE FORMULAS ---
-const sampleData = [
-    { name: "Global Strategy", status: "Active", date: "2026-06-01" },
-    { name: "Financial Audit", status: "Review", date: "2026-04-25" }
-];
-
-function renderDatabase() {
-    const tbody = document.getElementById('db-body');
-    if(!tbody) return;
-    tbody.innerHTML = sampleData.map(item => {
-        const daysLeft = Math.ceil((new Date(item.date) - new Date()) / (86400000));
-        return `<tr>
-            <td>${item.name}</td>
-            <td><span class="btn-glow" style="padding:4px 8px; font-size:10px">${item.status}</span></td>
-            <td>${item.date}</td>
-            <td style="color:var(--accent-color)">${daysLeft} Days Remaining</td>
-        </tr>`;
-    }).join('');
-}
-
-// --- 5. UI UTILITIES ---
 function startClock() {
     setInterval(() => {
         const now = new Date();
@@ -75,4 +71,9 @@ function startClock() {
     }, 1000);
 }
 
-function exec(cmd) { document.execCommand(cmd, false, null); }
+// Close dropdown when clicking outside
+window.addEventListener('click', (e) => {
+    if (!e.target.closest('.profile-area')) {
+        document.getElementById('profileDropdown').classList.add('hidden');
+    }
+});
