@@ -14,30 +14,34 @@
     <section id="login" class="page view-section">
         <div class="auth-page-container">
             <div class="auth-logo-large">
-                <div class="logo-area papyrus-font">
-                    <span>LIFE</span>
-                    <div class="glowing-globe">
-                        <div class="globe-inner"></div>
+                <div class="logo-area">
+                    <span class="logo-text-massive">LIFE</span>
+                    <div class="globe-container">
+                        <div class="globe-core"></div>
+                        <div class="globe-lines"></div>
                     </div>
-                    <span>OS</span>
+                    <span class="logo-text-massive">OS</span>
                 </div>
             </div>
 
-            <div id="loginCard" class="auth-card glass-card">
-                <h2>Log In</h2>
-                <input type="text" id="loginId" placeholder="Username or Email">
-                <input type="password" id="loginPass" placeholder="Password">
+            <div class="auth-card glass-card">
+                <h2>Login</h2>
+                <input id="loginUser" placeholder="Username">
+                <input id="loginPass" type="password" placeholder="Password">
                 <button class="btn-glow" onclick="login()">Enter OS</button>
-                <p class="auth-toggle">New User? <span class="highlight-link" onclick="toggleAuthMode('signup')">Create Account</span></p>
+                <p class="auth-toggle" style="margin-top:15px; font-size:0.8rem; opacity:0.7;">
+                    New User? <span class="highlight-link" onclick="toggleAuthMode('signup')" style="cursor:pointer; text-decoration:underline;">Create Account</span>
+                </p>
             </div>
-
+            
             <div id="signupCard" class="auth-card glass-card hidden">
-                <h2>Create Account</h2>
-                <input type="text" id="regEmail" placeholder="Email Address">
-                <input type="password" id="regPass" placeholder="New Password">
-                <input type="password" id="regConfirm" placeholder="Confirm Password">
-                <button class="btn-glow" onclick="handleSignUp()">Initialize Identity</button>
-                <p class="auth-toggle">Existing User? <span class="highlight-link" onclick="toggleAuthMode('login')">Log In</span></p>
+                <h2>Initialize Identity</h2>
+                <input id="regEmail" placeholder="Email Address">
+                <input id="regPass" type="password" placeholder="New Password">
+                <button class="btn-glow" onclick="login()">Create Account</button>
+                <p class="auth-toggle" style="margin-top:15px; font-size:0.8rem; opacity:0.7;">
+                    Existing User? <span class="highlight-link" onclick="toggleAuthMode('login')" style="cursor:pointer; text-decoration:underline;">Login</span>
+                </p>
             </div>
         </div>
     </section>
@@ -61,15 +65,18 @@
         <main class="main-layout">
             <header class="top-bar">
                 <div class="header-left"><div id="aiStatus" class="ai-status">AI: Operational</div></div>
+                
                 <div class="header-right">
                     <div class="datetime-block">
                         <div id="dateDisplay" class="date-text">--</div>
                         <div id="clockDisplay" class="time-text">00:00:00</div>
                     </div>
+
                     <div class="search-wrapper">
                         <i data-lucide="search" class="search-icon"></i>
                         <input type="text" id="globalSearch" placeholder="Search Life OS...">
                     </div>
+
                     <div class="profile-area">
                         <div class="profile-trigger" onclick="toggleProfileMenu()">
                             <div id="userAvatar" class="avatar-circle">JD</div>
@@ -93,7 +100,6 @@
                     <div class="settings-grid">
                         <div class="glass-card">
                             <h3>Workspace Customization</h3>
-                            
                             <label>Interface Font</label>
                             <select id="fontSelector">
                                 <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans</option>
