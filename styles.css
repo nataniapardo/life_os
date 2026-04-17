@@ -1,22 +1,77 @@
-/* AUTH TOGGLE HIGHLIGHT */
-.auth-toggle {
-    margin-top: 20px;
-    font-size: 0.85rem;
-    color: var(--text-dim);
+:root {
+    --accent-color: #00f2ff;
+    --bg-dark: #06070a;
+    --text-primary: #f1f5f9;
+    --global-font: 'Plus Jakarta Sans', sans-serif;
 }
 
-.highlight-link {
-    color: var(--accent-color);
+body {
+    background-color: var(--bg-dark); /* Fixed: Background now respects the variable */
+    color: var(--text-primary);
+    font-family: var(--global-font);
+    margin: 0;
+    transition: background 0.5s ease, font-family 0.3s ease;
+}
+
+/* THE GLOWING GLOBE STIMULATION */
+.glowing-globe {
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 0 20px var(--accent-color), inset 0 0 10px var(--accent-color);
+    animation: pulseStimulus 2s infinite ease-in-out;
+}
+
+.globe-inner {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-top: 2px solid var(--accent-color);
+    border-radius: 50%;
+    animation: rotateGlobe 3s linear infinite;
+}
+
+.glowing-globe.small {
+    width: 20px;
+    height: 20px;
+    box-shadow: 0 0 10px var(--accent-color);
+}
+
+@keyframes rotateGlobe {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulseStimulus {
+    0%, 100% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.1); filter: brightness(1.3); box-shadow: 0 0 35px var(--accent-color); }
+}
+
+/* BUTTON GLOW */
+.btn-glow {
+    background: var(--accent-color);
+    color: #000;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
     font-weight: 800;
     cursor: pointer;
-    text-decoration: underline;
-    transition: 0.3s;
+    box-shadow: 0 0 15px var(--accent-color);
+    transition: 0.3s ease;
 }
 
-.highlight-link:hover {
-    text-shadow: 0 0 10px var(--accent-color);
+.btn-glow:hover {
+    box-shadow: 0 0 30px var(--accent-color);
 }
 
-.hidden { display: none !important; }
-
-/* ... (Existing Logo, Globe, Sidebar Glow, and Glass Card styles) ... */
+/* AUTH & GLASS CARDS */
+.glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 16px;
+}
