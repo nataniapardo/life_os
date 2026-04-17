@@ -46,9 +46,12 @@
         <nav class="sidebar">
             <div class="logo-area-branding papyrus-font">
                 <span>LIFE</span>
-                <div class="glowing-globe small"><div class="globe-inner"></div></div>
+                <div class="glowing-globe small">
+                    <div class="globe-inner"></div>
+                </div>
                 <span>OS</span>
             </div>
+            
             <ul class="nav-links">
                 <li class="active" onclick="switchPage('nexus')"><i data-lucide="layout"></i> Nexus</li>
                 <li onclick="switchPage('tasks')"><i data-lucide="columns"></i> Kanban</li>
@@ -61,15 +64,18 @@
         <main class="main-layout">
             <header class="top-bar">
                 <div class="header-left"><div id="aiStatus" class="ai-status">AI: Operational</div></div>
+                
                 <div class="header-right">
                     <div class="datetime-block">
                         <div id="dateDisplay" class="date-text">--</div>
                         <div id="clockDisplay" class="time-text">00:00:00</div>
                     </div>
+
                     <div class="search-wrapper">
                         <i data-lucide="search" class="search-icon"></i>
                         <input type="text" id="globalSearch" placeholder="Search Life OS...">
                     </div>
+
                     <div class="profile-area">
                         <div class="profile-trigger" onclick="toggleProfileMenu()">
                             <div id="userAvatar" class="avatar-circle">JD</div>
@@ -86,22 +92,46 @@
             </header>
 
             <div id="contentSections">
-                <section id="nexus" class="view-section"><h1>Nexus Dashboard</h1></section>
+                <section id="nexus" class="view-section">
+                    <h1>Nexus Dashboard</h1>
+                </section>
+
                 <section id="settings" class="view-section hidden">
                     <h1>System Settings</h1>
                     <div class="settings-grid">
                         <div class="glass-card">
                             <h3>Workspace Customization</h3>
+                            
                             <label>Interface Font Library</label>
                             <select id="fontSelector">
-                                <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans</option>
-                                <option value="Papyrus, serif">Papyrus</option>
+                                <optgroup label="Modern Sans-Serif">
+                                    <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans (Default)</option>
+                                    <option value="'Inter', sans-serif">Inter UI</option>
+                                    <option value="'Montserrat', sans-serif">Montserrat</option>
+                                </optgroup>
+                                <optgroup label="Themed">
+                                    <option value="Papyrus, serif">Papyrus</option>
+                                    <option value="'Roboto Mono', monospace">Terminal Mono</option>
+                                </optgroup>
                             </select>
-                            <button class="btn-glow" id="saveCustomBtn" onclick="saveCustomization()" style="margin-top:20px;">Save Changes</button>
+                            
+                            <label style="margin-top:20px; display:block;">Accent Color</label>
+                            <input type="color" id="accentPicker" value="#00f2ff">
+                            
+                            <div class="save-container" style="margin-top: 25px;">
+                                <button class="btn-glow" id="saveCustomBtn" onclick="saveCustomization()">Save</button>
+                                <span id="saveFeedback" class="hidden" style="color: var(--accent-color); margin-left: 15px; font-size: 0.8rem;">Changes Saved.</span>
+                            </div>
                         </div>
                     </div>
                 </section>
-                </div>
+
+                <section id="tasks" class="view-section hidden"><h1>Kanban</h1></section>
+                <section id="timer-page" class="view-section hidden"><h1>Timers</h1></section>
+                <section id="database" class="view-section hidden"><h1>Records</h1></section>
+                <section id="vault" class="view-section hidden"><h1>Editor</h1></section>
+                <section id="guide" class="view-section hidden"><h1>User Guide</h1></section>
+            </div>
         </main>
     </div>
 
