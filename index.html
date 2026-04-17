@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | AI Life Productivity Workspace</title>
+    <title>Life OS | AI Productivity Workspace</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Inter:wght@400;700&family=Roboto+Mono&family=Montserrat:wght@400;700&family=Playfair+Display:ital,wght@0,400;1,700&family=Open+Sans&family=Oswald&family=Ubuntu&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -26,21 +26,21 @@
 
             <div id="loginCard" class="auth-card glass-card">
                 <h2>Login</h2>
-                <input id="loginUser" placeholder="Username">
+                <input id="loginUser" type="text" placeholder="Username">
                 <input id="loginPass" type="password" placeholder="Password">
                 <button class="btn-glow" onclick="login()">Enter OS</button>
-                <p class="auth-toggle" style="margin-top:15px; font-size:0.8rem; opacity:0.7;">
-                    New User? <span class="highlight-link" onclick="toggleAuthMode('signup')" style="cursor:pointer; text-decoration:underline;">Create Account</span>
+                <p class="auth-toggle">
+                    New User? <span class="highlight-link" onclick="toggleAuthMode('signup')">Create Account</span>
                 </p>
             </div>
             
             <div id="signupCard" class="auth-card glass-card hidden">
                 <h2>Initialize Identity</h2>
-                <input id="regEmail" placeholder="Email Address">
+                <input id="regEmail" type="email" placeholder="Email Address">
                 <input id="regPass" type="password" placeholder="New Password">
                 <button class="btn-glow" onclick="login()">Create Account</button>
-                <p class="auth-toggle" style="margin-top:15px; font-size:0.8rem; opacity:0.7;">
-                    Existing User? <span class="highlight-link" onclick="toggleAuthMode('login')" style="cursor:pointer; text-decoration:underline;">Login</span>
+                <p class="auth-toggle">
+                    Existing User? <span class="highlight-link" onclick="toggleAuthMode('login')">Login</span>
                 </p>
             </div>
         </div>
@@ -48,7 +48,7 @@
 
     <div id="appContainer" class="app-container hidden">
         <nav class="sidebar">
-            <div class="logo-area-branding papyrus-font">
+            <div class="logo-area-branding" id="sideLogo">
                 <span>LIFE</span>
                 <div class="glowing-globe small"><div class="globe-inner"></div></div>
                 <span>OS</span>
@@ -66,17 +66,27 @@
             <header class="top-bar">
                 <div class="header-left">
                     <div id="aiStatus" class="ai-status">AI: Operational</div>
-                    <h1 style="font-size: 1.2rem; margin-top: 5px;">Welcome back</h1>
+                    <h1 class="welcome-text">Welcome back</h1>
                 </div>
+
+                <div class="search-wrapper">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="text" id="globalSearch" placeholder="Search Life OS...">
+                </div>
+
                 <div class="header-right">
                     <div class="datetime-block">
                         <div id="dateDisplay" class="date-text">--</div>
                         <div id="clockDisplay" class="time-text">00:00:00</div>
                     </div>
-                    <button class="btn-glow" style="padding: 8px 16px; font-size: 0.8rem;" id="openQuickAction">+ Quick Add</button>
+                    <button class="btn-glow small-btn" id="openQuickAction">+ Quick Add</button>
                     <div class="profile-area">
-                        <div class="profile-trigger" onclick="toggleProfileMenu()">
-                            <div id="userAvatar" class="avatar-circle">JD</div>
+                        <div class="avatar-circle" onclick="toggleProfileMenu()">JD</div>
+                        <div id="profileDropdown" class="dropdown-menu glass-card hidden">
+                            <ul>
+                                <li onclick="switchPage('settings')"><i data-lucide="settings"></i> Settings</li>
+                                <li onclick="logout()" class="logout-item"><i data-lucide="log-out"></i> Log Out</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -84,63 +94,44 @@
 
             <div id="contentSections">
                 <section id="nexus" class="view-section">
-                    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px;">
-                        <div class="glass-card stat-card">
+                    <div class="stats-grid">
+                        <div class="glass-card stat-box">
                             <h3>Goals in Progress</h3>
-                            <p class="stat-number" style="font-size: 2rem; font-weight: 800;">5</p>
+                            <p class="stat-number">5</p>
                         </div>
-                        <div class="glass-card stat-card">
+                        <div class="glass-card stat-box">
                             <h3>Tasks Due Today</h3>
-                            <p class="stat-number" id="taskCount" style="font-size: 2rem; font-weight: 800; color: var(--accent-color);">3</p>
+                            <p class="stat-number accent">3</p>
                         </div>
-                        <div class="glass-card stat-card">
+                        <div class="glass-card stat-box">
                             <h3>Habits Completed</h3>
-                            <p class="stat-number" id="habitCount" style="font-size: 2rem; font-weight: 800;">2/4</p>
+                            <p class="stat-number">2/4</p>
                         </div>
-                        <div class="glass-card stat-card">
-                            <h3>Opportunities Tracked</h3>
-                            <p class="stat-number" style="font-size: 2rem; font-weight: 800;">4</p>
+                        <div class="glass-card stat-box">
+                            <h3>Opportunities</h3>
+                            <p class="stat-number">4</p>
                         </div>
                     </div>
 
-                    <div class="dashboard-grid" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px;">
-                        <div class="glass-card">
-                            <h2>AI Life Coach Summary</h2>
-                            <p style="margin: 15px 0; line-height: 1.6; opacity: 0.9;">
-                                Your focus this week is <strong>career momentum and consistency</strong>. 
-                                Prioritize your top 3 actions, follow up on networking opportunities, 
-                                and complete your morning routine 4 days this week.
+                    <div class="dashboard-grid">
+                        <div class="glass-card large-span">
+                            <h2>AI Coach Summary</h2>
+                            <p class="coach-paragraph">
+                                Focus: <strong>career momentum</strong>. Prioritize top 3 actions, 
+                                follow up on networking, and maintain routine consistency.
                             </p>
-                            <div class="pill-row" style="display: flex; gap: 10px;">
-                                <span class="glass-card" style="padding: 5px 12px; font-size: 0.7rem; border-radius: 20px;">Priority: Career Growth</span>
-                                <span class="glass-card" style="padding: 5px 12px; font-size: 0.7rem; border-radius: 20px;">Theme: Consistency</span>
+                            <div class="pill-container">
+                                <span class="pill">Priority: Growth</span>
+                                <span class="pill">Theme: Focus</span>
                             </div>
                         </div>
 
                         <div class="glass-card">
                             <h2>Daily Priorities</h2>
-                            <ul class="check-list" style="list-style: none; padding: 15px 0;">
-                                <li style="margin-bottom: 10px;"><label style="display: flex; align-items: center; gap: 10px; cursor: pointer;"><input type="checkbox" style="width: 18px; height: 18px;"> Follow up with mentor contact</label></li>
-                                <li style="margin-bottom: 10px;"><label style="display: flex; align-items: center; gap: 10px; cursor: pointer;"><input type="checkbox" style="width: 18px; height: 18px;"> Update application tracker</label></li>
-                                <li style="margin-bottom: 10px;"><label style="display: flex; align-items: center; gap: 10px; cursor: pointer;"><input type="checkbox" style="width: 18px; height: 18px;"> Complete 30-minute learning block</label></li>
-                            </ul>
-                        </div>
-
-                        <div class="glass-card">
-                            <h2>Life Blueprint</h2>
-                            <ul style="list-style: none; padding: 15px 0;">
-                                <li style="margin-bottom: 8px; border-left: 3px solid var(--accent-color); padding-left: 10px;">Land a media/entertainment opportunity</li>
-                                <li style="margin-bottom: 8px; border-left: 3px solid var(--accent-color); padding-left: 10px;">Build skill growth plan</li>
-                                <li style="margin-bottom: 8px; border-left: 3px solid var(--accent-color); padding-left: 10px;">Expand networking pipeline</li>
-                            </ul>
-                        </div>
-
-                        <div class="glass-card">
-                            <h2>Habit Tracker</h2>
-                            <ul class="check-list" style="list-style: none; padding: 15px 0;">
-                                <li style="margin-bottom: 10px;"><label style="display: flex; align-items: center; gap: 10px; cursor: pointer;"><input type="checkbox" checked style="width: 18px; height: 18px;"> Morning planning</label></li>
-                                <li style="margin-bottom: 10px;"><label style="display: flex; align-items: center; gap: 10px; cursor: pointer;"><input type="checkbox" checked style="width: 18px; height: 18px;"> LinkedIn outreach</label></li>
-                                <li style="margin-bottom: 10px;"><label style="display: flex; align-items: center; gap: 10px; cursor: pointer;"><input type="checkbox" style="width: 18px; height: 18px;"> Workout / movement</label></li>
+                            <ul class="todo-list">
+                                <li><label><input type="checkbox"> Mentorship follow-up</label></li>
+                                <li><label><input type="checkbox"> Application update</label></li>
+                                <li><label><input type="checkbox"> Learning block</label></li>
                             </ul>
                         </div>
                     </div>
@@ -148,54 +139,55 @@
 
                 <section id="settings" class="view-section hidden">
                     <h1>System Settings</h1>
-                    <div class="settings-grid">
-                        <div class="glass-card">
-                            <h3>Workspace Customization</h3>
+                    <div class="settings-container glass-card">
+                        <h3>Customization & Stimulation</h3>
+                        
+                        <div class="setting-item">
                             <label>Global Typography</label>
-                            <select id="fontSelector" style="width: 100%; padding: 10px; margin-top: 10px; background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.1);">
-                                <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans (Modern)</option>
-                                <option value="'Inter', sans-serif">Inter UI (Clean)</option>
-                                <option value="'Montserrat', sans-serif">Montserrat (Bold)</option>
-                                <option value="'Roboto Mono', monospace">Roboto Mono (Tech)</option>
-                                <option value="'Playfair Display', serif">Playfair (Elegant)</option>
-                                <option value="Papyrus, serif">Papyrus (Themed)</option>
+                            <select id="fontSelector">
+                                <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans</option>
+                                <option value="'Inter', sans-serif">Inter UI</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Roboto Mono', monospace">Terminal Mono</option>
+                                <option value="'Playfair Display', serif">Playfair</option>
+                                <option value="Papyrus, serif">Themed Papyrus</option>
                             </select>
-                            
-                            <label style="margin-top:20px; display:block;">Accent Stimulation Color</label>
-                            <input type="color" id="accentPicker" value="#00f2ff" style="width: 100%; height: 40px; border: none; background: none; margin-top: 10px;">
+                        </div>
 
-                            <label style="margin-top:20px; display:block;">Stimulation Themes</label>
-                            <div class="theme-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-                                <button class="btn-glow" style="font-size: 0.7rem;" onclick="applyTheme('cyber')">Cyberpunk</button>
-                                <button class="btn-glow" style="font-size: 0.7rem;" onclick="applyTheme('forest')">Deep Forest</button>
-                                <button class="btn-glow" style="font-size: 0.7rem;" onclick="applyTheme('nova')">Supernova</button>
-                                <button class="btn-glow" style="font-size: 0.7rem;" onclick="applyTheme('mono')">Monochrome</button>
-                            </div>
-                            
-                            <div style="margin-top: 25px;">
-                                <button class="btn-glow" onclick="saveCustomization()">Update OS</button>
+                        <div class="setting-item">
+                            <label>Accent Stimulation Color</label>
+                            <input type="color" id="accentPicker" value="#00f2ff">
+                        </div>
+
+                        <div class="setting-item">
+                            <label>Theme Presets</label>
+                            <div class="theme-grid">
+                                <button class="theme-btn" onclick="applyTheme('cyber')">Cyberpunk</button>
+                                <button class="theme-btn" onclick="applyTheme('forest')">Forest</button>
+                                <button class="theme-btn" onclick="applyTheme('nova')">Nova</button>
+                                <button class="theme-btn" onclick="applyTheme('mono')">Mono</button>
                             </div>
                         </div>
+
+                        <button class="btn-glow" id="saveCustomBtn" onclick="saveCustomization()">Update OS</button>
                     </div>
                 </section>
-
+                
                 <section id="tasks" class="view-section hidden"><h1>Kanban</h1></section>
                 <section id="timer-page" class="view-section hidden"><h1>Timers</h1></section>
                 <section id="database" class="view-section hidden"><h1>Records</h1></section>
                 <section id="vault" class="view-section hidden"><h1>Editor</h1></section>
-                <section id="guide" class="view-section hidden"><h1>User Guide</h1></section>
             </div>
         </main>
     </div>
 
-    <div class="modal hidden" id="quickModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000;">
-        <div class="glass-card" style="width: 400px;">
+    <div id="quickModal" class="modal-overlay hidden">
+        <div class="glass-card modal-content">
             <h2>Quick Add</h2>
-            <p style="margin: 10px 0; opacity: 0.7;">Add a quick task to your dashboard.</p>
-            <input type="text" id="quickTaskInput" placeholder="Enter a new task..." style="width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white;">
-            <div class="modal-actions" style="display: flex; justify-content: flex-end; gap: 10px;">
-                <button class="btn-glow" style="background: rgba(255,255,255,0.1); color: white;" onclick="document.getElementById('quickModal').classList.add('hidden')">Cancel</button>
-                <button class="btn-glow" id="saveTaskBtn">Save Task</button>
+            <input type="text" placeholder="Entry name...">
+            <div class="modal-actions">
+                <button onclick="document.getElementById('quickModal').classList.add('hidden')">Cancel</button>
+                <button class="btn-glow">Save</button>
             </div>
         </div>
     </div>
