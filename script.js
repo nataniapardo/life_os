@@ -5,80 +5,56 @@ const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// --- 1. RELATIONAL DATABASE & FORMULAS ---
-const database = [
-    { id: 1, title: "Launch Marketing Plan", priority: "High", deadline: "2026-05-20", status: "In Progress" },
-    { id: 2, title: "AI Core Extraction", priority: "Urgent", deadline: "2026-04-30", status: "Pending" }
+// --- 1. INITIALIZATION ---
+let supabaseClient = null;
+
+// Fix: Check if Supabase is defined before initialization
+if (typeof supabase !== 'undefined') {
+    // Replace with your actual credentials if using Supabase
+    // supabaseClient = supabase.createClient('URL', 'KEY'); 
+} else {
+    console.warn("Supabase library not loaded. Local mode active.");
+}
+
+const dbData = [
+    { title: "Quarterly Audit", status: "Pending", deadline: "2026-05-15" },
+    { title: "System Integration", status: "In Progress", deadline: "2026-04-30" }
 ];
 
-function renderDatabase() {
-    const body = document.getElementById('db-body');
-    if(!body) return;
-
-    body.innerHTML = database.map(row => {
-        // FORMULA CALCULATION: Days remaining until deadline
-        const today = new Date();
-        const target = new Date(row.deadline);
-        const diffTime = target - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
-        return `
-            <tr>
-                <td><b>${row.title}</b></td>
-                <td><span class="tag">${row.priority}</span></td>
-                <td style="color: ${diffDays < 5 ? '#ff4d4d' : '#00f2ff'}">
-                    ${diffDays} Days Remaining
-                </td>
-                <td>${row.status}</td>
-            </tr>
-        `;
-    }).join('');
-}
-
-// --- 2. KANBAN LOGIC ---
-function renderKanban() {
-    const cols = {
-        'Pending': document.querySelector('#col-pending .kanban-cards'),
-        'In Progress': document.querySelector('#col-progress .kanban-cards'),
-        'Completed': document.querySelector('#col-done .kanban-cards')
-    };
-
-    database.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'glass-card kanban-card';
-        card.style.marginBottom = '10px';
-        card.innerHTML = `<h4>${item.title}</h4><p>${item.deadline}</p>`;
-        
-        if(cols[item.status]) cols[item.status].appendChild(card);
-    });
-}
-
-// --- 3. EDITOR COMMANDS ---
-function execCmd(command) {
-    document.execCommand(command, false, null);
-}
-
-// --- 4. NAVIGATION & CLOCK ---
-function switchPage(pageId) {
-    document.querySelectorAll('.view-section').forEach(p => p.classList.add('hidden'));
-    document.getElementById(pageId).classList.remove('hidden');
-    
-    if(pageId === 'database') renderDatabase();
-    if(pageId === 'tasks') renderKanban();
-}
-
-function updateClock() {
-    const now = new Date();
-    document.getElementById('clockDisplay').innerText = now.toLocaleTimeString();
-    document.getElementById('dateDisplay').innerText = now.toLocaleDateString(undefined, {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
-}
-setInterval(updateClock, 1000);
-
-// LOGIN LOGIC
+// --- 2. CORE FUNCTIONS ---
 function login() {
     document.getElementById('login').classList.add('hidden');
     document.getElementById('appContainer').classList.remove('hidden');
-    document.body.classList.remove('logged-out');
     lucide.createIcons();
-    updateClock();
+    startClock();
 }
+
+function startClock() {
+    setInterval(() => {
+        const now = new Date();
+        document.getElementById('clockDisplay').innerText = now.toLocaleTimeString();
+        document.getElementById('dateDisplay').innerText = now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+    }, 1000);
+}
+
+function switchPage(pageId) {
+    document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
+    document.getElementById(pageId).classList.remove('hidden');
+    
+    // Toggle active state in sidebar
+    document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
+    if (event && event.currentTarget) event.currentTarget.classList.add('active');
+
+    if(pageId === 'database') renderDatabase();
+}
+
+function renderDatabase() {
+    const tbody = document.getElementById('db-body');
+    if (!tbody) return;
+    tbody.innerHTML = dbData.map(row => {
+        const diff = Math.ceil((new Date(row.deadline) - new Date()) / (1000 * 60 * 60 * 24));
+        return `<tr><td>${row.title}</td><td>${row.status}</td><td>${row.deadline}</td><td style="color:var(--accent-color)">${diff} Days</td></tr>`;
+    }).join('');
+}
+
+function execCmd(cmd) { document.execCommand(cmd, false, null); }
