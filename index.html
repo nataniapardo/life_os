@@ -21,10 +21,10 @@
                 </div>
             </div>
             <div class="auth-card glass-card">
-                <h2>Initialize Session</h2>
+                <h2>Initialize Identity</h2>
                 <input type="text" id="loginId" placeholder="Username or Email">
                 <input type="password" id="loginPass" placeholder="Password">
-                <button class="btn-glow" onclick="login()">Enter Workspace</button>
+                <button class="btn-glow" onclick="login()">Access Workspace</button>
             </div>
         </div>
     </section>
@@ -37,15 +37,13 @@
                 <span>OS</span>
             </div>
             
-            <div class="sidebar-scroll">
-                <ul class="nav-links">
-                    <li class="active" onclick="switchPage('nexus')"><i data-lucide="layout"></i> Nexus</li>
-                    <li onclick="switchPage('tasks')"><i data-lucide="columns"></i> Kanban Board</li>
-                    <li onclick="switchPage('database')"><i data-lucide="database"></i> Databases</li>
-                    <li onclick="switchPage('tools')"><i data-lucide="calculator"></i> System Tools</li>
-                    <li onclick="switchPage('vault')"><i data-lucide="edit-3"></i> Content Creation</li>
-                </ul>
-            </div>
+            <ul class="nav-links">
+                <li class="active" onclick="switchPage('nexus')"><i data-lucide="layout"></i> Nexus</li>
+                <li onclick="switchPage('tasks')"><i data-lucide="columns"></i> Kanban</li>
+                <li onclick="switchPage('tools')"><i data-lucide="calculator"></i> Tools</li>
+                <li onclick="switchPage('database')"><i data-lucide="database"></i> Records</li>
+                <li onclick="switchPage('vault')"><i data-lucide="edit-3"></i> Editor</li>
+            </ul>
         </nav>
 
         <main class="main-layout">
@@ -57,41 +55,77 @@
                         <div id="clockDisplay" class="time-text">00:00:00</div>
                     </div>
                     <div class="search-wrapper">
-                        <input type="text" id="globalSearch" placeholder="Search Life OS...">
+                        <input type="text" id="globalSearch" placeholder="Search system...">
                         <i data-lucide="search"></i>
                     </div>
                     <div class="profile-cluster">
-                        <i data-lucide="bell" class="icon-btn"></i>
                         <div class="profile-icon">JD</div>
                     </div>
                 </div>
             </header>
 
             <div id="contentSections">
+                <section id="nexus" class="view-section">
+                    <div class="welcome-header">
+                        <h1>Welcome back, <span class="accent-text">Director</span></h1>
+                        <p>System status is optimal. You have 3 pending extractions.</p>
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="glass-card">
+                            <h3>Quick Capture</h3>
+                            <textarea placeholder="Type a thought... AI will categorize it."></textarea>
+                            <button class="btn-glow">Extract Insight</button>
+                        </div>
+                    </div>
+                </section>
+
                 <section id="tasks" class="view-section hidden">
-                    <div class="section-header"><h1>Workflow</h1></div>
-                    <div class="kanban-container" id="kanbanBoard"></div>
+                    <h1>Project Kanban</h1>
+                    <div class="kanban-container">
+                        <div class="kanban-column"><h3>To-Do</h3><div id="todo-list" class="card-stack"></div></div>
+                        <div class="kanban-column"><h3>In Progress</h3><div id="ip-list" class="card-stack"></div></div>
+                        <div class="kanban-column"><h3>Done</h3><div id="done-list" class="card-stack"></div></div>
+                    </div>
+                </section>
+
+                <section id="tools" class="view-section hidden">
+                    <h1>System Tools</h1>
+                    <div class="tools-grid">
+                        <div class="glass-card">
+                            <h3>Pomodoro</h3>
+                            <div class="timer-val" id="timer">25:00</div>
+                            <button class="btn-glow" onclick="toggleTimer()">Start</button>
+                        </div>
+                        <div class="glass-card">
+                            <h3>Basic Calc</h3>
+                            <input type="text" id="calcDisplay" class="calc-input" readonly>
+                            <div class="calc-grid">
+                                <button onclick="calc('1')">1</button><button onclick="calc('2')">2</button><button onclick="calc('+')">+</button>
+                                <button onclick="clearCalc()" class="btn-secondary">C</button>
+                                <button onclick="solve()" class="btn-glow">=</button>
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
                 <section id="database" class="view-section hidden">
-                    <h1>Linked Databases</h1>
+                    <h1>Relational Records</h1>
                     <div class="glass-card">
                         <table class="db-table">
-                            <thead>
-                                <tr><th>Title</th><th>Status</th><th>Deadline</th><th>Formula</th></tr>
-                            </thead>
+                            <thead><tr><th>Entity</th><th>Status</th><th>Deadline</th><th>Formula</th></tr></thead>
                             <tbody id="db-body"></tbody>
                         </table>
                     </div>
                 </section>
 
                 <section id="vault" class="view-section hidden">
+                    <h1>Rich Text Editor</h1>
                     <div class="editor-container glass-card">
                         <div class="toolbar">
-                            <button onclick="execCmd('bold')">B</button>
-                            <button onclick="execCmd('italic')">I</button>
+                            <button onclick="exec('bold')">B</button>
+                            <button onclick="exec('italic')">I</button>
                         </div>
-                        <div id="editor" contenteditable="true" placeholder="Start typing..."></div>
+                        <div id="editor" contenteditable="true">Start a new life plan...</div>
                     </div>
                 </section>
             </div>
