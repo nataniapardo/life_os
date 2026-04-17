@@ -16,7 +16,9 @@
             <div class="auth-logo-large">
                 <div class="logo-area papyrus-font">
                     <span>LIFE</span>
-                    <div class="oval-spinner"></div>
+                    <div class="glowing-globe">
+                        <div class="globe-inner"></div>
+                    </div>
                     <span>OS</span>
                 </div>
             </div>
@@ -33,7 +35,9 @@
         <nav class="sidebar">
             <div class="logo-area-branding papyrus-font">
                 <span>LIFE</span>
-                <div class="oval-spinner small"></div>
+                <div class="glowing-globe small">
+                    <div class="globe-inner"></div>
+                </div>
                 <span>OS</span>
             </div>
             
@@ -81,28 +85,21 @@
                     <h1>System Settings</h1>
                     <div class="settings-grid">
                         <div class="glass-card">
-                            <h3>Workspace Customization</h3>
+                            <h3>Customization</h3>
                             <label>Interface Font</label>
                             <select id="fontSelector" onchange="changeGlobalFont()">
-                                <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans (Default)</option>
-                                <option value="'Inter', sans-serif">Inter Professional</option>
-                                <option value="'Roboto Mono', monospace">Terminal Mono</option>
-                                <option value="serif">Classic Serif</option>
+                                <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans</option>
                                 <option value="Papyrus, serif">Papyrus</option>
+                                <option value="'Inter', sans-serif">Inter</option>
                             </select>
-                            
-                            <label style="margin-top:20px; display:block;">Accent Color</label>
-                            <input type="color" id="accentPicker" value="#00f2ff" onchange="applyCustomTheme()">
                         </div>
                     </div>
                 </section>
-
-                <section id="nexus" class="view-section"><h1>Nexus</h1></section>
+                <section id="nexus" class="view-section"><h1>Nexus Dashboard</h1></section>
                 <section id="tasks" class="view-section hidden"><h1>Kanban</h1></section>
                 <section id="timer-page" class="view-section hidden"><h1>Timers</h1></section>
                 <section id="database" class="view-section hidden"><h1>Records</h1></section>
                 <section id="vault" class="view-section hidden"><h1>Editor</h1></section>
-                <section id="guide" class="view-section hidden"><h1>Guide</h1></section>
             </div>
         </main>
     </div>
