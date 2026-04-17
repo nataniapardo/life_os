@@ -5,7 +5,6 @@ const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// --- INITIALIZATION & AUTH ---
 function login() {
     const id = document.getElementById('loginId').value;
     if(id) {
@@ -13,29 +12,16 @@ function login() {
         document.getElementById('appContainer').classList.remove('hidden');
         lucide.createIcons();
         startClock();
-    } else {
-        alert("Please initialize identity.");
     }
 }
 
 function logout() {
-    if(confirm("Terminate session?")) {
+    // Changed "Terminate Session" to "End Session"
+    if(confirm("End session?")) {
         window.location.reload();
     }
 }
 
-// --- CUSTOMIZATION ---
-function changeGlobalFont() {
-    const selectedFont = document.getElementById('fontSelector').value;
-    document.documentElement.style.setProperty('--global-font', selectedFont);
-}
-
-function applyCustomTheme() {
-    const color = document.getElementById('accentPicker').value;
-    document.documentElement.style.setProperty('--accent-color', color);
-}
-
-// --- CORE UTILS ---
 function toggleProfileMenu() {
     document.getElementById('profileDropdown').classList.toggle('hidden');
 }
@@ -46,7 +32,6 @@ function switchPage(pageId) {
     document.getElementById('profileDropdown').classList.add('hidden');
     
     document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
-    if(event && event.currentTarget.tagName === 'LI') event.currentTarget.classList.add('active');
 }
 
 function startClock() {
