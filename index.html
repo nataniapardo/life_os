@@ -1,76 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Life OS</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life OS | Futuristic AI Workspace</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+<body class="logged-out">
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="logo-area" onclick="switchPage('home')">
+                <span class="logo-text">LIFE</span>
+                <div class="globe-container">
+                    <div class="globe-core"></div>
+                    <div class="globe-lines"></div>
+                </div>
+                <span class="logo-text">OS</span>
+            </div>
 
-<body>
+            <ul class="nav-links">
+                <li onclick="switchPage('home')" class="nav-item active" data-section="home">
+                    <i data-lucide="home"></i> <span>Home</span>
+                </li>
+                <li onclick="switchPage('dashboard')" class="nav-item" data-section="dashboard">
+                    <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+                </li>
+                <hr class="nav-divider">
+                <li onclick="switchPage('login')" class="nav-item auth-only">Login</li>
+                <li onclick="switchPage('signup')" class="nav-item auth-only">Sign Up</li>
+            </ul>
+        </nav>
 
-<header>
-  <h1 onclick="goHome()" class="logo">Life OS</h1>
-  <div id="clock"></div>
-</header>
+        <main class="content-area">
+            
+            <header class="top-bar">
+                <div class="header-right">
+                    <div class="search-wrapper">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" id="globalSearch" placeholder="Search system...">
+                    </div>
 
-<aside>
-  <h3>Navigation</h3>
-  <ul>
-    <li onclick="switchPage('home')">Home</li>
-    <li onclick="switchPage('dashboard')">Dashboard</li>
-    <li onclick="switchPage('login')">Login</li>
-    <li onclick="switchPage('signup')">Sign Up</li>
-  </ul>
-</aside>
+                    <div class="time-date-container">
+                        <div id="date" class="date-display"></div>
+                        <div id="clock" class="digital-clock">00:00:00</div>
+                    </div>
+                    
+                    <div class="profile-container">
+                        <div class="profile-icon-circle" onclick="toggleProfileMenu()">
+                            <div id="avatarPlaceholder" class="avatar-initials">JD</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
 
-<main>
+            <section id="home" class="page view-section hidden">
+                <div class="glass-card">
+                    <h1>Welcome to Life OS</h1>
+                    <p>Your all-in-one life productivity system.</p>
+                </div>
+            </section>
 
-<!-- HOME -->
-<section id="home" class="page active">
-  <div class="card">
-    <h2>Welcome to Life OS</h2>
-    <p>Your all-in-one life productivity system.</p>
-  </div>
-</section>
+            <section id="dashboard" class="page view-section hidden">
+                <div class="glass-card">
+                    <h2>Dashboard</h2>
+                    <p>Core system status: Operational.</p>
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        <input type="text" id="taskInput" placeholder="Add task...">
+                        <button class="btn-glow" onclick="addTask()">Add Task</button>
+                    </div>
+                    <ul id="taskList" style="margin-top:20px;"></ul>
+                </div>
+            </section>
 
-<!-- DASHBOARD -->
-<section id="dashboard" class="page">
-  <div class="card">
-    <h2>Dashboard</h2>
-    <p>This page is only visible after login.</p>
+            <section id="login" class="page view-section">
+                <div class="auth-page-container">
+                    <div class="auth-logo-large">
+                        <div class="logo-area">
+                            <span class="logo-text-massive">LIFE</span>
+                            <div class="globe-container">
+                                <div class="globe-core"></div>
+                                <div class="globe-lines"></div>
+                            </div>
+                            <span class="logo-text-massive">OS</span>
+                        </div>
+                    </div>
 
-    <input id="taskInput" placeholder="Add task">
-    <button onclick="addTask()">Add Task</button>
-    <ul id="taskList"></ul>
-  </div>
-</section>
+                    <div class="auth-card glass-card">
+                        <h2>Login</h2>
+                        <input id="loginUser" placeholder="Username">
+                        <input id="loginPass" type="password" placeholder="Password">
+                        <button class="btn-glow" onclick="login()">Enter OS</button>
+                    </div>
+                </div>
+            </section>
 
-<!-- LOGIN -->
-<section id="login" class="page">
-  <div class="card">
-    <h2>Login</h2>
+            <section id="signup" class="page view-section hidden">
+                <div class="auth-page-container">
+                    <div class="auth-card glass-card">
+                        <h2>Create Account</h2>
+                        <input id="signUser" placeholder="Username">
+                        <input id="signPass" type="password" placeholder="Password">
+                        <button class="btn-glow" onclick="signup()">Initialize Identity</button>
+                    </div>
+                </div>
+            </section>
 
-    <input id="loginUser" placeholder="Username">
-    <input id="loginPass" placeholder="Password" type="password">
+        </main>
+    </div>
 
-    <button onclick="login()">Login</button>
-  </div>
-</section>
-
-<!-- SIGN UP -->
-<section id="signup" class="page">
-  <div class="card">
-    <h2>Sign Up</h2>
-
-    <input id="signUser" placeholder="Username">
-    <input id="signPass" placeholder="Password" type="password">
-
-    <button onclick="signup()">Create Account</button>
-  </div>
-</section>
-
-</main>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
+    <script>lucide.createIcons();</script>
 </body>
 </html>
