@@ -1,57 +1,62 @@
 :root {
     --accent-color: #00f2ff;
     --bg-dark: #06070a;
-    --card-bg: rgba(255, 255, 255, 0.03);
-    --border-color: rgba(255, 255, 255, 0.1);
     --text-primary: #f1f5f9;
+    --global-font: 'Plus Jakarta Sans', sans-serif;
 }
 
-/* BRANDING: Papyrus */
-body, .logo-area-branding span, .logo-text-massive, h1, h2, h3 {
-    font-family: 'Papyrus', serif;
+body {
+    font-family: var(--global-font);
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    margin: 0;
 }
 
-body { background: var(--bg-dark); color: var(--text-primary); margin: 0; overflow: hidden; }
-
-/* SEARCH BAR FIX */
-.search-wrapper {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    padding: 8px 15px;
-    border-radius: 12px;
+/* LOGO: Papyrus & Oval Spinner */
+.papyrus-font {
+    font-family: 'Papyrus', serif !important;
+    color: var(--accent-color);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
+    letter-spacing: 4px;
 }
-.search-icon { width: 18px; color: var(--accent-color); }
-.search-wrapper input { background: transparent; border: none; color: white; outline: none; }
 
-/* PROFILE & DROPDOWN */
-.profile-area { position: relative; }
-.avatar-circle {
-    width: 40px; height: 40px;
-    background: var(--accent-color);
-    color: black;
+.oval-spinner {
+    width: 20px;
+    height: 40px;
+    border: 2px solid var(--accent-color);
     border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; cursor: pointer;
+    animation: rotateOval 2s linear infinite;
     box-shadow: 0 0 10px var(--accent-color);
-    background-size: cover; background-position: center;
 }
 
-.dropdown-menu {
-    position: absolute; top: 55px; right: 0;
-    width: 200px; z-index: 1000; padding: 10px;
+.oval-spinner.small {
+    width: 10px;
+    height: 20px;
 }
-.dropdown-menu ul { list-style: none; padding: 0; margin: 10px 0; }
-.dropdown-menu li {
-    padding: 10px; cursor: pointer; border-radius: 8px;
-    display: flex; align-items: center; gap: 10px; transition: 0.2s;
-}
-.dropdown-menu li:hover { background: rgba(255,255,255,0.05); color: var(--accent-color); }
-.logout-item { color: #ff4d4d; }
 
-/* UTILS */
-.app-container { display: grid; grid-template-columns: 260px 1fr; height: 100vh; }
+@keyframes rotateOval {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* SIDEBAR HOVER GLOW EFFECT */
+.nav-links li {
+    position: relative;
+    padding: 12px 20px;
+    transition: 0.3s ease;
+    cursor: pointer;
+    border-left: 0px solid transparent;
+}
+
+.nav-links li:hover {
+    color: var(--accent-color);
+    border-left: 4px solid var(--accent-color);
+    background: linear-gradient(90deg, rgba(0, 242, 255, 0.1) 0%, transparent 100%);
+    box-shadow: -10px 0 15px -5px var(--accent-color);
+}
+
 .hidden { display: none !important; }
-.btn-glow { background: var(--accent-color); border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+
+/* ... (Existing search, profile, and glass-card styles) ... */
