@@ -5,14 +5,42 @@ const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-function login() {
-    const id = document.getElementById('loginId').value;
-    if(id) {
-        document.getElementById('login').classList.add('hidden');
-        document.getElementById('appContainer').classList.remove('hidden');
-        lucide.createIcons();
-        startClock();
+// --- AUTH LOGIC ---
+function toggleAuthMode(mode) {
+    if (mode === 'signup') {
+        document.getElementById('loginCard').classList.add('hidden');
+        document.getElementById('signupCard').classList.remove('hidden');
+    } else {
+        document.getElementById('signupCard').classList.add('hidden');
+        document.getElementById('loginCard').classList.remove('hidden');
     }
+}
+
+function handleSignUp() {
+    const email = document.getElementById('regEmail').value;
+    const pass = document.getElementById('regPass').value;
+    const confirm = document.getElementById('regConfirm').value;
+
+    if (!email || !pass) {
+        alert("Credentials required.");
+        return;
+    }
+    if (pass !== confirm) {
+        alert("Passwords do not match.");
+        return;
+    }
+
+    // Example initialization logic
+    alert("Identity Created. Redirecting to workspace...");
+    login();
+}
+
+function login() {
+    // Basic entry logic for the UI demonstration
+    document.getElementById('login').classList.add('hidden');
+    document.getElementById('appContainer').classList.remove('hidden');
+    lucide.createIcons();
+    startClock();
 }
 
 function logout() {
@@ -21,34 +49,18 @@ function logout() {
     }
 }
 
-// --- CUSTOMIZATION & SAVE LOGIC ---
+// --- UTILS ---
 function saveCustomization() {
     const font = document.getElementById('fontSelector').value;
-    const color = document.getElementById('accentPicker').value;
-    const feedback = document.getElementById('saveFeedback');
-    const btn = document.getElementById('saveCustomBtn');
-
-    // Apply Changes
     document.documentElement.style.setProperty('--global-font', font);
-    document.documentElement.style.setProperty('--accent-color', color);
-
-    // Visual Feedback
-    feedback.classList.remove('hidden');
-    btn.innerText = "Saved!";
-    
-    setTimeout(() => {
-        feedback.classList.add('hidden');
-        btn.innerText = "Save Changes";
-    }, 2000);
+    alert("Changes Saved.");
 }
 
 function switchPage(pageId) {
     document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
     document.getElementById(pageId).classList.remove('hidden');
     document.getElementById('profileDropdown').classList.add('hidden');
-    
     document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
-    if(event && event.currentTarget.tagName === 'LI') event.currentTarget.classList.add('active');
 }
 
 function startClock() {
