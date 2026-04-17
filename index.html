@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | The Intelligence Workspace</title>
+    <title>Life OS | Enterprise Edition</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -15,132 +15,117 @@
             <div class="auth-logo-large">
                 <div class="logo-area">
                     <span class="logo-text-massive">LIFE</span>
-                    <div class="globe-container">
-                        <div class="globe-core"></div>
-                        <div class="globe-lines"></div>
-                    </div>
+                    <div class="globe-container"><div class="globe-core"></div></div>
                     <span class="logo-text-massive">OS</span>
                 </div>
             </div>
-
             <div class="auth-card glass-card">
-                <h2>Login to OS</h2>
+                <h2>Initialize Identity</h2>
                 <input type="text" id="loginId" placeholder="Username or Email">
                 <input type="password" id="loginPass" placeholder="Password">
-                <button class="btn-glow" onclick="login()">Initialize Session</button>
+                <button class="btn-glow" onclick="login()">Access Workspace</button>
             </div>
         </div>
     </section>
 
     <div id="appContainer" class="app-container hidden">
         <nav class="sidebar">
-            <div class="logo-area" style="font-family: 'Papyrus', serif;">
+            <div class="logo-area-branding">
                 <span>LIFE</span>
-                <div class="globe-container small">
-                    <div class="globe-core"></div>
-                </div>
+                <div class="globe-container small"><div class="globe-core"></div></div>
                 <span>OS</span>
             </div>
-            <ul class="nav-links">
-                <li class="active" onclick="switchPage('nexus')"><i data-lucide="layout-dashboard"></i> Nexus</li>
-                <li onclick="switchPage('tools')"><i data-lucide="calculator"></i> Tools</li>
-                <li onclick="switchPage('vault')"><i data-lucide="archive"></i> The Vault</li>
-                <li onclick="switchPage('intelligence')"><i data-lucide="users"></i> Intelligence</li>
-                <li onclick="switchPage('laboratory')"><i data-lucide="palette"></i> Laboratory</li>
-            </ul>
+            
+            <div class="sidebar-scroll">
+                <ul class="nav-links">
+                    <li class="active" onclick="switchPage('nexus')"><i data-lucide="layout"></i> Dashboard</li>
+                    <li onclick="switchPage('tasks')"><i data-lucide="trello"></i> Kanban Board</li>
+                    <li onclick="switchPage('database')"><i data-lucide="database"></i> Databases</li>
+                    <li onclick="switchPage('vault')"><i data-lucide="folder-tree"></i> Files & Hierarchy</li>
+                </ul>
+                <div class="nested-pages">
+                    <p class="section-label">Private Folders</p>
+                    <details>
+                        <summary><i data-lucide="chevron-right"></i> Work Project A</summary>
+                        <div class="sub-link">Subtask Sync</div>
+                        <div class="sub-link">Formulas</div>
+                    </details>
+                </div>
+            </div>
         </nav>
 
         <main class="main-layout">
             <header class="top-bar">
-                <div class="top-bar-left">
-                    <div id="aiStatus" class="ai-status">AI: Active</div>
+                <div class="header-left">
+                    <div class="breadcrumb">Workspace / Home</div>
                 </div>
                 
-                <div class="top-bar-right">
+                <div class="header-right">
                     <div class="datetime-block">
-                        <div id="dateDisplay" class="date-text">Friday, April 17, 2026</div>
+                        <div id="dateDisplay" class="date-text">--</div>
                         <div id="clockDisplay" class="time-text">00:00:00</div>
                     </div>
 
                     <div class="search-wrapper">
-                        <input type="text" id="globalSearch" placeholder="Search Life OS...">
+                        <input type="text" id="globalSearch" placeholder="Search Workspace (Alt+K)">
                         <i data-lucide="search"></i>
                     </div>
 
-                    <div class="profile-icon" onclick="toggleProfile()">
-                        <div class="avatar"></div>
+                    <div class="profile-cluster">
+                        <i data-lucide="bell" class="icon-btn"></i>
+                        <div class="profile-icon">JD</div>
                     </div>
                 </div>
             </header>
 
             <div id="contentSections">
-                <section id="tools" class="view-section hidden">
-                    <h1>System Tools</h1>
-                    <div class="tools-grid">
-                        <div class="glass-card">
-                            <h3>Basic Calculator</h3>
-                            <input type="text" id="calcDisplay" readonly class="calc-screen">
-                            <div class="calc-buttons">
-                                <button onclick="calcInput('7')">7</button><button onclick="calcInput('8')">8</button><button onclick="calcInput('9')">9</button><button onclick="calcOp('/')">/</button>
-                                <button onclick="calcInput('4')">4</button><button onclick="calcInput('5')">5</button><button onclick="calcInput('6')">6</button><button onclick="calcOp('*')">*</button>
-                                <button onclick="calcInput('1')">1</button><button onclick="calcInput('2')">2</button><button onclick="calcInput('3')">3</button><button onclick="calcOp('-')">-</button>
-                                <button onclick="calcInput('0')">0</button><button onclick="clearCalc()">C</button><button onclick="calculate()">=</button><button onclick="calcOp('+')">+</button>
-                            </div>
+                <section id="tasks" class="view-section hidden">
+                    <div class="board-header">
+                        <h1>Project Kanban</h1>
+                        <button class="btn-glow">+ New Card</button>
+                    </div>
+                    <div class="kanban-container">
+                        <div class="kanban-column" id="col-pending">
+                            <h3>Pending</h3>
+                            <div class="kanban-cards"></div>
                         </div>
-
-                        <div class="glass-card">
-                            <h3>Pomodoro Timer</h3>
-                            <div class="timer-display" id="timer">25:00</div>
-                            <div class="timer-controls">
-                                <button class="btn-glow" onclick="startTimer()">Start</button>
-                                <button class="btn-secondary" onclick="resetTimer()">Reset</button>
-                            </div>
+                        <div class="kanban-column" id="col-progress">
+                            <h3>In Progress</h3>
+                            <div class="kanban-cards"></div>
                         </div>
-
-                        <div class="glass-card">
-                            <h3>Currency Converter</h3>
-                            <input type="number" id="curAmount" placeholder="Amount">
-                            <select id="fromCur"><option>USD</option><option>EUR</option></select>
-                            <select id="toCur"><option>GBP</option><option>JPY</option></select>
-                            <button class="btn-glow" style="margin-top:10px; width:100%">Convert</button>
+                        <div class="kanban-column" id="col-done">
+                            <h3>Completed</h3>
+                            <div class="kanban-cards"></div>
                         </div>
                     </div>
                 </section>
 
-                <section id="laboratory" class="view-section hidden">
-                    <h1>The Laboratory</h1>
-                    <div class="settings-grid">
-                        <div class="glass-card">
-                            <h3>World Standards</h3>
-                            <label>Country</label>
-                            <select id="countrySelect">
-                                <option>United States</option>
-                                <option>United Kingdom</option>
-                                <option>Canada</option>
-                                <option>Germany</option>
-                            </select>
+                <section id="database" class="view-section hidden">
+                    <h1>Linked Database</h1>
+                    <div class="glass-card table-responsive">
+                        <table class="db-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Priority</th>
+                                    <th>Formula (Days Left)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="db-body">
+                                </tbody>
+                        </table>
+                    </div>
+                </section>
 
-                            <label>Language</label>
-                            <select id="langSelect">
-                                <option>English (US)</option>
-                                <option>Spanish</option>
-                                <option>French</option>
-                            </select>
-
-                            <label>Time Standard</label>
-                            <select id="timeStdSelect">
-                                <option>12-Hour (AM/PM)</option>
-                                <option>24-Hour (Military)</option>
-                                <option>UTC Offset</option>
-                            </select>
+                <section id="vault" class="view-section hidden">
+                    <div class="editor-container glass-card">
+                        <div class="toolbar">
+                            <button onclick="execCmd('bold')"><b>B</b></button>
+                            <button onclick="execCmd('italic')"><i>I</i></button>
+                            <button onclick="toggleCollapsible()">Toggle Section</button>
                         </div>
-
-                        <div class="glass-card">
-                            <h3>Aesthetic Control</h3>
-                            <label>Accent Hex Code</label>
-                            <input type="text" id="hexInput" placeholder="#00f2ff">
-                            <input type="color" id="colorWheel" style="width:100%; height:50px; margin-top:10px;">
-                        </div>
+                        <div id="editor" contenteditable="true" placeholder="Start writing or '/' for commands..."></div>
                     </div>
                 </section>
             </div>
