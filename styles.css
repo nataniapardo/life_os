@@ -1,54 +1,22 @@
-:root {
-    --accent-color: #00f2ff;
-    --bg-dark: #06070a;
-    --text-primary: #f1f5f9;
-    --global-font: 'Plus Jakarta Sans', sans-serif;
+/* AUTH TOGGLE HIGHLIGHT */
+.auth-toggle {
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: var(--text-dim);
 }
 
-body {
-    font-family: var(--global-font);
-    background: var(--bg-dark);
-    color: var(--text-primary);
-    margin: 0;
-    transition: font-family 0.2s ease;
-}
-
-/* NAVIGATION: Removed Bullets and Added Side-Glow */
-.nav-links {
-    list-style-type: none;
-    padding: 0;
-    margin: 30px 0;
-}
-
-.nav-links li {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 20px;
-    cursor: pointer;
-    transition: 0.3s;
-    border-left: 4px solid transparent;
-}
-
-.nav-links li:hover {
+.highlight-link {
     color: var(--accent-color);
-    border-left: 4px solid var(--accent-color);
-    background: linear-gradient(90deg, rgba(0, 242, 255, 0.1) 0%, transparent 100%);
-    box-shadow: -10px 0 15px -5px rgba(0, 242, 255, 0.3);
+    font-weight: 800;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: 0.3s;
 }
 
-/* CUSTOMIZATION INPUTS */
-select, input[type="color"] {
-    width: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    padding: 10px;
-    border-radius: 8px;
-    margin-top: 8px;
-    outline: none;
+.highlight-link:hover {
+    text-shadow: 0 0 10px var(--accent-color);
 }
 
-optgroup { background: #111; color: var(--accent-color); }
+.hidden { display: none !important; }
 
-/* ... (Logo, Globe, and Glass-card styles remain consistent) ... */
+/* ... (Existing Logo, Globe, Sidebar Glow, and Glass Card styles) ... */
