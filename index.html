@@ -3,115 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | Futuristic AI Workspace</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <title>Life OS | Executive Workspace</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
 </head>
-<body class="logged-out">
+<body>
     <div class="app-container">
         <nav class="sidebar">
-            <div class="logo-area" onclick="switchPage('home')">
-                <span class="logo-text">LIFE</span>
-                <div class="globe-container">
-                    <div class="globe-core"></div>
-                    <div class="globe-lines"></div>
-                </div>
-                <span class="logo-text">OS</span>
+            <div class="logo-area">
+                <div class="globe-icon"></div>
+                <span class="logo-text">LIFE OS</span>
             </div>
-
             <ul class="nav-links">
-                <li onclick="switchPage('home')" class="nav-item active" data-section="home">
-                    <i data-lucide="home"></i> <span>Home</span>
-                </li>
-                <li onclick="switchPage('dashboard')" class="nav-item" data-section="dashboard">
-                    <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
-                </li>
-                <hr class="nav-divider">
-                <li onclick="switchPage('login')" class="nav-item auth-only">Login</li>
-                <li onclick="switchPage('signup')" class="nav-item auth-only">Sign Up</li>
+                <li class="active" onclick="switchPage('nexus')">Nexus</li>
+                <li onclick="switchPage('vault')">The Vault</li>
+                <li onclick="switchPage('intelligence')">Intelligence</li>
+                <li onclick="switchPage('laboratory')">Laboratory</li>
             </ul>
         </nav>
 
-        <main class="content-area">
-            
+        <main class="main-layout">
             <header class="top-bar">
-                <div class="header-right">
-                    <div class="search-wrapper">
-                        <i data-lucide="search" class="search-icon"></i>
-                        <input type="text" id="globalSearch" placeholder="Search system...">
-                    </div>
-
-                    <div class="time-date-container">
-                        <div id="date" class="date-display"></div>
-                        <div id="clock" class="digital-clock">00:00:00</div>
-                    </div>
-                    
-                    <div class="profile-container">
-                        <div class="profile-icon-circle" onclick="toggleProfileMenu()">
-                            <div id="avatarPlaceholder" class="avatar-initials">JD</div>
-                        </div>
-                    </div>
+                <div class="search-container">
+                    <input type="text" id="smartSearch" placeholder="Search (e.g., 'Work', 'Meeting')...">
+                </div>
+                <div class="header-status">
+                    <div id="aiStatus" class="ai-status">AI: Ready</div>
+                    <div id="digitalClock" class="clock">00:00:00</div>
                 </div>
             </header>
 
-            <section id="home" class="page view-section hidden">
-                <div class="glass-card">
-                    <h1>Welcome to Life OS</h1>
-                    <p>Your all-in-one life productivity system.</p>
-                </div>
-            </section>
-
-            <section id="dashboard" class="page view-section hidden">
-                <div class="glass-card">
-                    <h2>Dashboard</h2>
-                    <p>Core system status: Operational.</p>
-                    <div style="display:flex; gap:10px; margin-top:20px;">
-                        <input type="text" id="taskInput" placeholder="Add task...">
-                        <button class="btn-glow" onclick="addTask()">Add Task</button>
-                    </div>
-                    <ul id="taskList" style="margin-top:20px;"></ul>
-                </div>
-            </section>
-
-            <section id="login" class="page view-section">
-                <div class="auth-page-container">
-                    <div class="auth-logo-large">
-                        <div class="logo-area">
-                            <span class="logo-text-massive">LIFE</span>
-                            <div class="globe-container">
-                                <div class="globe-core"></div>
-                                <div class="globe-lines"></div>
-                            </div>
-                            <span class="logo-text-massive">OS</span>
+            <div id="contentSections">
+                <section id="nexus" class="view-section active">
+                    <header>
+                        <h1>The Nexus</h1>
+                        <p>AI-Extracted Insights & Priority Deliverables</p>
+                    </header>
+                    <div class="dashboard-grid">
+                        <div class="glass-card" id="priorityTasks">
+                            <h3>Upcoming Deadlines</h3>
+                            <ul id="taskContainer"></ul>
                         </div>
                     </div>
+                </section>
 
-                    <div class="auth-card glass-card">
-                        <h2>Login</h2>
-                        <input id="loginUser" placeholder="Username">
-                        <input id="loginPass" type="password" placeholder="Password">
-                        <button class="btn-glow" onclick="login()">Enter OS</button>
+                <section id="vault" class="view-section">
+                    <header>
+                        <h1>The Vault</h1>
+                        <p>Upload documents for AI data extraction.</p>
+                    </header>
+                    <div class="drop-zone" id="dropZone">
+                        <p>Drag & Drop Life Plans or Contracts Here</p>
+                        <input type="file" id="fileInput" hidden>
+                        <button class="btn-glow" onclick="document.getElementById('fileInput').click()">Browse Files</button>
                     </div>
-                </div>
-            </section>
+                    <div id="extractionPreview" class="hidden"></div>
+                </section>
 
-            <section id="signup" class="page view-section hidden">
-                <div class="auth-page-container">
-                    <div class="auth-card glass-card">
-                        <h2>Create Account</h2>
-                        <input id="signUser" placeholder="Username">
-                        <input id="signPass" type="password" placeholder="Password">
-                        <button class="btn-glow" onclick="signup()">Initialize Identity</button>
+                <section id="laboratory" class="view-section">
+                    <header>
+                        <h1>The Laboratory</h1>
+                        <p>Customize your workspace aesthetic.</p>
+                    </header>
+                    <div class="settings-grid">
+                        <div class="glass-card">
+                            <h3>Global Accent</h3>
+                            <input type="color" id="colorPicker" value="#00f2ff">
+                            <input type="text" id="hexInput" placeholder="#00f2ff">
+                        </div>
                     </div>
-                </div>
-            </section>
-
+                </section>
+            </div>
         </main>
     </div>
 
+    <div id="aiModal" class="modal hidden">
+        <div class="modal-content glass-card">
+            <h2>AI Extraction Complete</h2>
+            <div id="modalData"></div>
+            <div class="modal-actions">
+                <button class="btn-glow" onclick="confirmExtraction()">Confirm Placement</button>
+                <button class="btn-secondary" onclick="closeModal()">Discard</button>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
-    <script>lucide.createIcons();</script>
 </body>
 </html>
