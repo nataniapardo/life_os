@@ -16,14 +16,30 @@ function login() {
 }
 
 function logout() {
-    // Changed "Terminate Session" to "End Session"
     if(confirm("End session?")) {
         window.location.reload();
     }
 }
 
-function toggleProfileMenu() {
-    document.getElementById('profileDropdown').classList.toggle('hidden');
+// --- CUSTOMIZATION & SAVE LOGIC ---
+function saveCustomization() {
+    const font = document.getElementById('fontSelector').value;
+    const color = document.getElementById('accentPicker').value;
+    const feedback = document.getElementById('saveFeedback');
+    const btn = document.getElementById('saveCustomBtn');
+
+    // Apply Changes
+    document.documentElement.style.setProperty('--global-font', font);
+    document.documentElement.style.setProperty('--accent-color', color);
+
+    // Visual Feedback
+    feedback.classList.remove('hidden');
+    btn.innerText = "Saved!";
+    
+    setTimeout(() => {
+        feedback.classList.add('hidden');
+        btn.innerText = "Save Changes";
+    }, 2000);
 }
 
 function switchPage(pageId) {
@@ -32,6 +48,7 @@ function switchPage(pageId) {
     document.getElementById('profileDropdown').classList.add('hidden');
     
     document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
+    if(event && event.currentTarget.tagName === 'LI') event.currentTarget.classList.add('active');
 }
 
 function startClock() {
@@ -40,6 +57,10 @@ function startClock() {
         document.getElementById('clockDisplay').innerText = now.toLocaleTimeString();
         document.getElementById('dateDisplay').innerText = now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
     }, 1000);
+}
+
+function toggleProfileMenu() {
+    document.getElementById('profileDropdown').classList.toggle('hidden');
 }
 
 window.onload = () => {
