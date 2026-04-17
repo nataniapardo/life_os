@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life OS | Enterprise Workspace</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Inter:wght@400;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Inter:wght@400;700&family=Roboto+Mono&family=Montserrat:wght@400;700&family=Playfair+Display:ital,wght@0,400;1,700&family=Open+Sans&family=Oswald&family=Ubuntu&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -85,21 +85,47 @@
                     <h1>System Settings</h1>
                     <div class="settings-grid">
                         <div class="glass-card">
-                            <h3>Customization</h3>
-                            <label>Interface Font</label>
-                            <select id="fontSelector" onchange="changeGlobalFont()">
-                                <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans</option>
-                                <option value="Papyrus, serif">Papyrus</option>
-                                <option value="'Inter', sans-serif">Inter</option>
+                            <h3>Workspace Customization</h3>
+                            
+                            <label>Interface Font Library</label>
+                            <select id="fontSelector">
+                                <optgroup label="Modern Sans-Serif">
+                                    <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans (Default)</option>
+                                    <option value="'Inter', sans-serif">Inter UI</option>
+                                    <option value="'Montserrat', sans-serif">Montserrat</option>
+                                    <option value="'Open Sans', sans-serif">Open Sans</option>
+                                    <option value="'Ubuntu', sans-serif">Ubuntu</option>
+                                </optgroup>
+                                <optgroup label="Professional Serif">
+                                    <option value="'Playfair Display', serif">Playfair Display</option>
+                                    <option value="Georgia, serif">Georgia</option>
+                                    <option value="'Times New Roman', serif">Classic Times</option>
+                                </optgroup>
+                                <optgroup label="Themed Fonts">
+                                    <option value="Papyrus, serif">Papyrus (Themed)</option>
+                                    <option value="'Roboto Mono', monospace">Terminal Mono</option>
+                                    <option value="'Oswald', sans-serif">Oswald Bold</option>
+                                    <option value="cursive">Script</option>
+                                </optgroup>
                             </select>
+                            
+                            <label style="margin-top:20px; display:block;">Accent Tint</label>
+                            <input type="color" id="accentPicker" value="#00f2ff">
+                            
+                            <div class="save-container" style="margin-top: 30px;">
+                                <button class="btn-glow" id="saveCustomBtn" onclick="saveCustomization()">Save Changes</button>
+                                <span id="saveFeedback" class="hidden" style="color: var(--accent-color); margin-left: 15px; font-size: 0.8rem;">Changes Locked.</span>
+                            </div>
                         </div>
                     </div>
                 </section>
+                
                 <section id="nexus" class="view-section"><h1>Nexus Dashboard</h1></section>
                 <section id="tasks" class="view-section hidden"><h1>Kanban</h1></section>
                 <section id="timer-page" class="view-section hidden"><h1>Timers</h1></section>
                 <section id="database" class="view-section hidden"><h1>Records</h1></section>
                 <section id="vault" class="view-section hidden"><h1>Editor</h1></section>
+                <section id="guide" class="view-section hidden"><h1>Guide</h1></section>
             </div>
         </main>
     </div>
