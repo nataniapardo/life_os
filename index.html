@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | The AI Workspace</title>
+    <title>Life OS | AI Productivity</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -23,7 +23,7 @@
 
     <div id="appContainer" class="app-container hidden">
         <nav class="sidebar">
-            <div class="logo-area-branding" onclick="switchPage('nexus')">
+            <div class="logo-area-branding" onclick="switchPage('home')">
                 <span>LIFE</span>
                 <div class="globe-wrap-small">
                     <div class="axis"></div>
@@ -32,11 +32,21 @@
                 <span>OS</span>
             </div>
             <ul class="nav-links">
-                <li class="active" onclick="switchPage('nexus')"><i data-lucide="home"></i><span>Home</span></li>
-                <li onclick="switchPage('productivity')"><i data-lucide="zap"></i><span>Productivity</span></li>
-                <li onclick="switchPage('timers')"><i data-lucide="timer"></i><span>Timers</span></li>
-                <li onclick="switchPage('tools')"><i data-lucide="globe"></i><span>World Tools</span></li>
-                <li onclick="switchPage('calendar')"><i data-lucide="calendar"></i><span>Calendar</span></li>
+                <li class="active" id="nav-home" onclick="switchPage('home')">
+                    <i data-lucide="home"></i><span>Home</span>
+                </li>
+                <li id="nav-productivity" onclick="switchPage('productivity')">
+                    <i data-lucide="zap"></i><span>Productivity</span>
+                </li>
+                <li id="nav-timers" onclick="switchPage('timers')">
+                    <i data-lucide="timer"></i><span>Timers</span>
+                </li>
+                <li id="nav-tools" onclick="switchPage('tools')">
+                    <i data-lucide="globe"></i><span>World Tools</span>
+                </li>
+                <li id="nav-calendar" onclick="switchPage('calendar')">
+                    <i data-lucide="calendar"></i><span>Calendar</span>
+                </li>
             </ul>
         </nav>
 
@@ -49,7 +59,7 @@
 
                 <div class="search-wrapper">
                     <div class="search-input-container">
-                        <i data-lucide="search" class="search-icon"></i>
+                        <i data-lucide="search" class="search-icon-inner"></i>
                         <input type="text" placeholder="Search Life OS...">
                     </div>
                 </div>
@@ -69,64 +79,54 @@
             </header>
 
             <div id="contentSections">
-                <section id="nexus" class="view-section">
+                <section id="home" class="view-section">
                     <div class="glass-card">
-                        <h2>Personal Workspace</h2>
-                        <p>Placements added from other sections will appear here.</p>
-                        <div id="homeWidgets" class="widget-grid">
-                            </div>
+                        <h2>Home Dashboard</h2>
+                        <p>Welcome to your central hub. Placements from other sections will appear here.</p>
+                        <div id="homeWidgets" class="widget-grid"></div>
                     </div>
                 </section>
 
                 <section id="productivity" class="view-section hidden">
                     <div class="glass-card">
-                        <div class="card-header">
+                        <div class="flex-between">
                             <h2>AI Productivity</h2>
-                            <button class="add-to-home" onclick="addToHome('productivity')">Add to Home</button>
+                            <button class="btn-small" onclick="addToHome('productivity')">Add to Home</button>
                         </div>
-                        <textarea id="aiRawInput" placeholder="Enter tasks..."></textarea>
-                        <button class="btn-glow" onclick="processAIInput()">Analyze</button>
+                        <textarea id="aiRawInput" placeholder="Write your tasks here... AI will sort them."></textarea>
+                        <button class="btn-glow" onclick="processAIInput()">Analyze Tasks</button>
                     </div>
                 </section>
 
                 <section id="settings" class="view-section hidden">
                     <div class="glass-card">
                         <h2>System Customization</h2>
-                        
-                        <div class="setting-group">
-                            <h3>Identity</h3>
-                            <input type="text" id="initialsInput" placeholder="Change Initials (e.g., JD)">
-                            <button onclick="updateProfile()">Save Identity</button>
+                        <div class="setting-item">
+                            <label>Change Initials</label>
+                            <input type="text" id="initialsInput" placeholder="JD">
+                            <button onclick="updateProfile()">Update Profile</button>
                         </div>
-
-                        <div class="setting-group">
-                            <h3>Global Style</h3>
-                            <label>Font Choice:</label>
-                            <select id="fontChoice" onchange="updateTheme()">
-                                <option value="Papyrus">Papyrus</option>
-                                <option value="Arial">Arial</option>
-                                <option value="Courier New">Terminal</option>
-                            </select>
-
-                            <label>System Color:</label>
+                        <div class="setting-item">
+                            <label>System Glow Color</label>
                             <input type="color" id="themePicker" onchange="updateTheme()">
                         </div>
-
-                        <div class="setting-group">
-                            <h3>Environment Stimulation</h3>
-                            <button onclick="changeStim('nature')">Nature</button>
-                            <button onclick="changeStim('futuristic')">Futuristic</button>
-                            <button onclick="changeStim('weather')">Weather</button>
+                        <div class="setting-item">
+                            <label>Select Font</label>
+                            <select id="fontChoice" onchange="updateTheme()">
+                                <option value="Papyrus">Papyrus</option>
+                                <option value="'Plus Jakarta Sans', sans-serif">Modern</option>
+                                <option value="monospace">Terminal</option>
+                            </select>
                         </div>
                     </div>
                 </section>
+
+                <section id="timers" class="view-section hidden"><h1>Timers</h1></section>
+                <section id="tools" class="view-section hidden"><h1>World Tools</h1></section>
+                <section id="calendar" class="view-section hidden"><h1>Calendar</h1></section>
             </div>
         </main>
     </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
 
     <script src="script.js"></script>
 </body>
