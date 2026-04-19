@@ -3,29 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | AI Ecosystem</title>
+    <title>Life OS | The AI Workspace</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
+<body class="theme-futuristic">
 
-    <div class="app-container">
+    <section id="loginPage" class="full-screen-center">
+        <div class="logo-branding-massive">
+            <span>LIFE</span>
+            <div class="globe-wrap-large">
+                <div class="axis"></div>
+                <div class="glow-sphere"></div>
+            </div>
+            <span>OS</span>
+        </div>
+        <button class="btn-glow" onclick="enterOS()">Initialize System</button>
+    </section>
+
+    <div id="appContainer" class="app-container hidden">
         <nav class="sidebar">
             <div class="logo-area-branding" onclick="switchPage('nexus')">
                 <span>LIFE</span>
-                <div class="globe-container">
-                    <div class="spinning-axis"></div>
-                    <div class="glowing-globe"></div>
+                <div class="globe-wrap-small">
+                    <div class="axis"></div>
+                    <div class="glow-sphere"></div>
                 </div>
                 <span>OS</span>
             </div>
             <ul class="nav-links">
-                <li class="active" onclick="switchPage('nexus')"><i data-lucide="layout"></i><span>Nexus</span></li>
+                <li class="active" onclick="switchPage('nexus')"><i data-lucide="home"></i><span>Home</span></li>
                 <li onclick="switchPage('productivity')"><i data-lucide="zap"></i><span>Productivity</span></li>
                 <li onclick="switchPage('timers')"><i data-lucide="timer"></i><span>Timers</span></li>
-                <li onclick="switchPage('tools')"><i data-lucide="tool"></i><span>World Tools</span></li>
+                <li onclick="switchPage('tools')"><i data-lucide="globe"></i><span>World Tools</span></li>
                 <li onclick="switchPage('calendar')"><i data-lucide="calendar"></i><span>Calendar</span></li>
             </ul>
         </nav>
@@ -45,15 +55,12 @@
                 </div>
 
                 <div class="header-right">
-                    <div class="datetime-block">
-                        <div id="dateDisplay">--</div>
-                        <div id="clockDisplay">00:00:00</div>
-                    </div>
+                    <div id="clockDisplay" class="time-text">00:00:00</div>
                     <div class="profile-area">
-                        <div class="avatar-circle" onclick="toggleProfileMenu()">JD</div>
+                        <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">JD</div>
                         <div id="profileDropdown" class="dropdown-menu glass-card hidden">
                             <div class="dropdown-item" onclick="switchPage('settings')"><i data-lucide="settings"></i> Settings</div>
-                            <div class="dropdown-item" onclick="switchPage('guide')"><i data-lucide="book-open"></i> Guide</div>
+                            <div class="dropdown-item"><i data-lucide="book-open"></i> Guide</div>
                             <div class="divider"></div>
                             <div class="dropdown-item logout" onclick="location.reload()"><i data-lucide="log-out"></i> Log Out</div>
                         </div>
@@ -62,51 +69,64 @@
             </header>
 
             <div id="contentSections">
+                <section id="nexus" class="view-section">
+                    <div class="glass-card">
+                        <h2>Personal Workspace</h2>
+                        <p>Placements added from other sections will appear here.</p>
+                        <div id="homeWidgets" class="widget-grid">
+                            </div>
+                    </div>
+                </section>
+
                 <section id="productivity" class="view-section hidden">
                     <div class="glass-card">
-                        <h2>AI Productivity Staging</h2>
-                        <p>Write your tasks, errands, and notes below. AI will organize them.</p>
-                        <textarea id="aiRawInput" placeholder="Ex: Buy milk at 4pm, Meeting with Bob tomorrow at 9, fix the sink..."></textarea>
-                        <button class="btn-glow" onclick="processAIInput()">Analyze & Sort</button>
-                        
-                        <div id="aiPreviewArea" class="hidden">
-                            <h3>AI Suggestions (Review)</h3>
-                            <ul id="suggestedList" class="todo-list"></ul>
-                            <button class="btn-glow success" onclick="applyToMainList()">Apply & Save 24/7</button>
+                        <div class="card-header">
+                            <h2>AI Productivity</h2>
+                            <button class="add-to-home" onclick="addToHome('productivity')">Add to Home</button>
                         </div>
-                    </div>
-                    
-                    <div class="glass-card" style="margin-top: 20px;">
-                        <h3>Your Official 24/7 List</h3>
-                        <ul id="finalTaskList" class="todo-list"></ul>
+                        <textarea id="aiRawInput" placeholder="Enter tasks..."></textarea>
+                        <button class="btn-glow" onclick="processAIInput()">Analyze</button>
                     </div>
                 </section>
 
-                <section id="calendar" class="view-section hidden">
+                <section id="settings" class="view-section hidden">
                     <div class="glass-card">
-                        <h2>Personal Calendar</h2>
-                        <div class="calendar-controls">
-                            <label>Tab Color:</label>
-                            <input type="color" id="calColorPicker" onchange="updateCalTheme()">
-                            <input type="text" id="calHexInput" placeholder="#FFFFFF" oninput="updateCalTheme()">
+                        <h2>System Customization</h2>
+                        
+                        <div class="setting-group">
+                            <h3>Identity</h3>
+                            <input type="text" id="initialsInput" placeholder="Change Initials (e.g., JD)">
+                            <button onclick="updateProfile()">Save Identity</button>
                         </div>
-                        <div id="calendarMock" class="calendar-grid">
-                            <div class="cal-day">Mon</div><div class="cal-day">Tue</div><div class="cal-day">Wed</div>
-                            <div class="cal-day">Thu</div><div class="cal-day">Fri</div><div class="cal-day">Sat</div>
-                            <div class="cal-day">Sun</div>
+
+                        <div class="setting-group">
+                            <h3>Global Style</h3>
+                            <label>Font Choice:</label>
+                            <select id="fontChoice" onchange="updateTheme()">
+                                <option value="Papyrus">Papyrus</option>
+                                <option value="Arial">Arial</option>
+                                <option value="Courier New">Terminal</option>
+                            </select>
+
+                            <label>System Color:</label>
+                            <input type="color" id="themePicker" onchange="updateTheme()">
+                        </div>
+
+                        <div class="setting-group">
+                            <h3>Environment Stimulation</h3>
+                            <button onclick="changeStim('nature')">Nature</button>
+                            <button onclick="changeStim('futuristic')">Futuristic</button>
+                            <button onclick="changeStim('weather')">Weather</button>
                         </div>
                     </div>
                 </section>
-
-                <section id="nexus" class="view-section">
-                    <div class="glass-card"><h2>Nexus Dashboard</h2><p>Select a section from the sidebar.</p></div>
-                </section>
-                
-                <section id="timers" class="view-section hidden"><h1>Timers & Pomodoro</h1></section>
-                <section id="tools" class="view-section hidden"><h1>World Tools & Converters</h1></section>
             </div>
         </main>
     </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
 
     <script src="script.js"></script>
 </body>
