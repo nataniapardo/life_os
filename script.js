@@ -13,173 +13,93 @@ const SUPABASE_KEY = "sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl";
 
 // CHANGED NAME: supabaseClient → db
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+]
+} catch (e) {
+    console.warn("Supabase not defined or failing to load. Check CDN link.");
+}
 
-// =========================
-// PAGE SYSTEM (ROUTER)
-// =========================
+document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+    updateGreeting();
+    setInterval(updateTime, 1000);
+});
+
+// DYNAMIC GREETING LOGIC
+function updateGreeting() {
+    const hours = new Date().getHours();
+    const greetingEl = document.getElementById('dynamicGreeting');
+    let msg = "";
+    
+    if (hours >= 5 && hours < 12) msg = "Good morning";
+    else if (hours >= 12 && hours < 17) msg = "Good afternoon";
+    else if (hours >= 17 && hours < 21) msg = "Good evening";
+    else msg = "Good night";
+    
+    greetingEl.innerText = `${msg}, User`;
+}
+
+function updateTime() {
+    const now = new Date();
+    document.getElementById('clockDisplay').innerText = now.toLocaleTimeString();
+    document.getElementById('dateDisplay').innerText = now.toDateString();
+}
+
+// PROFILE MENU TOGGLE FIX
+function toggleProfileMenu() {
+    const menu = document.getElementById('profileDropdown');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
+
+// NAVIGATION
 function switchPage(pageId) {
-  const isLoggedIn = localStorage.getItem("loggedIn");
-
-  if (pageId === "dashboard" && !isLoggedIn) {
-    alert("Please login first");
-    return;
-  }
-
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-
-  const page = document.getElementById(pageId);
-  if (page) page.classList.add("active");
-
-  localStorage.setItem("lastPage", pageId);
+    document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
+    const target = document.getElementById(pageId);
+    if (target) target.classList.remove('hidden');
+    
+    document.querySelectorAll('.nav-links li').forEach(li => {
+        li.classList.remove('active');
+        if (li.getAttribute('onclick').includes(pageId)) li.classList.add('active');
+    });
 }
 
-// HOME (LOGO CLICK)
-function goHome() {
-  switchPage("home");
+// PRODUCTIVITY AI SIMULATION
+function processAIInput() {
+    const input = document.getElementById('aiRawInput').value;
+    if (!input) return;
+
+    // Simulate AI sorting
+    const previewArea = document.getElementById('aiPreviewArea');
+    const suggestList = document.getElementById('suggestedList');
+    suggestList.innerHTML = "";
+
+    const fakeTasks = input.split(',').map(t => t.trim());
+    fakeTasks.forEach(task => {
+        const li = document.createElement('li');
+        li.innerHTML = `<label><input type="checkbox" checked> ${task} (AI Sorted)</label>`;
+        suggestList.appendChild(li);
+    });
+
+    previewArea.classList.remove('hidden');
 }
 
-// RESTORE LAST PAGE
-window.onload = () => {
-  const last = localStorage.getItem("lastPage") || "home";
-  switchPage(last);
-
-  renderTasks();
-};
-
-// =========================
-// CLOCK
-// =========================
-setInterval(() => {
-  const clock = document.getElementById("clock");
-  if (clock) {
-    clock.textContent = new Date().toLocaleTimeString();
-  }
-}, 1000);
-
-// =========================
-// CREATE ACCOUNT (SIGNUP + AUTO LOGIN)
-// =========================
-async function CreateAccount() {
-  const username = document.getElementById("signUser").value.trim();
-  const password = document.getElementById("signPass").value.trim();
-
-  if (!username || !password) {
-    alert("Please enter username and password");
-    return;
-  }
-
-  // CHECK IF USER EXISTS
-  const { data: existing, error: fetchError } = await db
-    .from("users")
-    .select("*")
-    .eq("username", username);
-
-  if (fetchError) {
-    console.error(fetchError);
-    alert("Error checking user");
-    return;
-  }
-
-  if (existing && existing.length > 0) {
-    alert("Username already exists");
-    return;
-  }
-
-  // CREATE USER
-  const { error: insertError } = await db
-    .from("users")
-    .insert([
-      {
-        username,
-        password
-      }
-    ]);
-
-  if (insertError) {
-    console.error(insertError);
-    alert("Error creating account");
-    return;
-  }
-
-  // AUTO LOGIN
-  localStorage.setItem("loggedIn", "true");
-  localStorage.setItem("currentUser", username);
-
-  alert("Account created and logged in!");
-
-  switchPage("dashboard");
+function applyToMainList() {
+    const suggested = document.getElementById('suggestedList').innerHTML;
+    document.getElementById('finalTaskList').innerHTML += suggested;
+    document.getElementById('aiPreviewArea').classList.add('hidden');
+    document.getElementById('aiRawInput').value = "";
+    alert("Tasks saved to 24/7 view!");
 }
 
-// =========================
-// LOGIN (OPTIONAL MANUAL LOGIN)
-// =========================
-async function login() {
-  const username = document.getElementById("loginUser").value.trim();
-  const password = document.getElementById("loginPass").value.trim();
+// CALENDAR CUSTOMIZATION
+function updateCalTheme() {
+    const color = document.getElementById('calColorPicker').value;
+    const hex = document.getElementById('calHexInput').value;
+    const finalColor = hex.startsWith('#') ? hex : color;
 
-  if (!username || !password) {
-    alert("Enter username and password");
-    return;
-  }
-
-  const { data, error } = await db
-    .from("users")
-    .select("*")
-    .eq("username", username)
-    .eq("password", password)
-    .single();
-
-  if (error || !data) {
-    alert("Invalid credentials");
-    return;
-  }
-
-  localStorage.setItem("loggedIn", "true");
-  localStorage.setItem("currentUser", username);
-
-  alert("Login successful");
-
-  switchPage("dashboard");
-}
-
-// =========================
-// LOGOUT
-// =========================
-function logout() {
-  localStorage.removeItem("loggedIn");
-  localStorage.removeItem("currentUser");
-
-  alert("Logged out");
-  switchPage("home");
-}
-
-// =========================
-// TASK SYSTEM
-// =========================
-function addTask() {
-  const input = document.getElementById("taskInput");
-  if (!input.value) return;
-
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  tasks.push(input.value);
-
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-
-  input.value = "";
-  renderTasks();
-}
-
-function renderTasks() {
-  const list = document.getElementById("taskList");
-  if (!list) return;
-
-  list.innerHTML = "";
-
-  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-
-  tasks.forEach(task => {
-    const li = document.createElement("li");
-    li.textContent = task;
-    list.appendChild(li);
-  });
+    document.querySelectorAll('.cal-day').forEach(day => {
+        day.style.borderColor = finalColor;
+        day.style.color = finalColor;
+    });
 }
