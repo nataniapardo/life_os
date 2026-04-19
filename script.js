@@ -5,57 +5,28 @@ const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// SUPABASE INITIALIZATION FIX
-let db;
-try {
-    const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-    const SUPABASE_KEY = 'YOUR_KEY';
-    if (typeof supabase !== 'undefined') {
-        db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    }
-} catch (e) {
-    console.warn("Supabase not defined or failing to load. Check CDN link.");
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
-    updateGreeting();
-    setInterval(updateTime, 1000);
+    setInterval(updateClock, 1000);
 });
 
-// DYNAMIC GREETING LOGIC
-function updateGreeting() {
-    const hours = new Date().getHours();
-    const greetingEl = document.getElementById('dynamicGreeting');
-    let msg = "";
-    
-    if (hours >= 5 && hours < 12) msg = "Good morning";
-    else if (hours >= 12 && hours < 17) msg = "Good afternoon";
-    else if (hours >= 17 && hours < 21) msg = "Good evening";
-    else msg = "Good night";
-    
-    greetingEl.innerText = `${msg}, User`;
+function enterOS() {
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('appContainer').classList.remove('hidden');
 }
 
-function updateTime() {
+function updateClock() {
     const now = new Date();
     document.getElementById('clockDisplay').innerText = now.toLocaleTimeString();
-    document.getElementById('dateDisplay').innerText = now.toDateString();
 }
 
-// PROFILE MENU TOGGLE FIX
 function toggleProfileMenu() {
-    const menu = document.getElementById('profileDropdown');
-    if (menu) {
-        menu.classList.toggle('hidden');
-    }
+    document.getElementById('profileDropdown').classList.toggle('hidden');
 }
 
-// NAVIGATION
 function switchPage(pageId) {
     document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
-    const target = document.getElementById(pageId);
-    if (target) target.classList.remove('hidden');
+    document.getElementById(pageId).classList.remove('hidden');
     
     document.querySelectorAll('.nav-links li').forEach(li => {
         li.classList.remove('active');
@@ -63,42 +34,30 @@ function switchPage(pageId) {
     });
 }
 
-// PRODUCTIVITY AI SIMULATION
-function processAIInput() {
-    const input = document.getElementById('aiRawInput').value;
-    if (!input) return;
-
-    // Simulate AI sorting
-    const previewArea = document.getElementById('aiPreviewArea');
-    const suggestList = document.getElementById('suggestedList');
-    suggestList.innerHTML = "";
-
-    const fakeTasks = input.split(',').map(t => t.trim());
-    fakeTasks.forEach(task => {
-        const li = document.createElement('li');
-        li.innerHTML = `<label><input type="checkbox" checked> ${task} (AI Sorted)</label>`;
-        suggestList.appendChild(li);
-    });
-
-    previewArea.classList.remove('hidden');
+// THEME & PROFILE ENGINE
+function updateTheme() {
+    const color = document.getElementById('themePicker').value;
+    const font = document.getElementById('fontChoice').value;
+    
+    document.documentElement.style.setProperty('--accent-color', color);
+    document.documentElement.style.setProperty('--user-font', font);
 }
 
-function applyToMainList() {
-    const suggested = document.getElementById('suggestedList').innerHTML;
-    document.getElementById('finalTaskList').innerHTML += suggested;
-    document.getElementById('aiPreviewArea').classList.add('hidden');
-    document.getElementById('aiRawInput').value = "";
-    alert("Tasks saved to 24/7 view!");
+function updateProfile() {
+    const initials = document.getElementById('initialsInput').value;
+    if(initials) document.getElementById('userAvatar').innerText = initials;
 }
 
-// CALENDAR CUSTOMIZATION
-function updateCalTheme() {
-    const color = document.getElementById('calColorPicker').value;
-    const hex = document.getElementById('calHexInput').value;
-    const finalColor = hex.startsWith('#') ? hex : color;
+// HOME PLACEMENT SYSTEM
+function addToHome(type) {
+    const widgetArea = document.getElementById('homeWidgets');
+    const widget = document.createElement('div');
+    widget.className = 'glass-card widget';
+    widget.innerHTML = `<h3>${type.toUpperCase()}</h3><p>Live widget tracking enabled.</p>`;
+    widgetArea.appendChild(widget);
+    alert(`${type} added to Home Dashboard!`);
+}
 
-    document.querySelectorAll('.cal-day').forEach(day => {
-        day.style.borderColor = finalColor;
-        day.style.color = finalColor;
-    });
+function changeStim(stim) {
+    document.body.className = `theme-${stim}`;
 }
