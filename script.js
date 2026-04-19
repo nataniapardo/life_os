@@ -7,6 +7,7 @@ const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
+    updateGreeting();
     setInterval(updateClock, 1000);
 });
 
@@ -20,44 +21,51 @@ function updateClock() {
     document.getElementById('clockDisplay').innerText = now.toLocaleTimeString();
 }
 
+function updateGreeting() {
+    const hours = new Date().getHours();
+    let msg = "Good evening";
+    if (hours < 12) msg = "Good morning";
+    else if (hours < 17) msg = "Good afternoon";
+    document.getElementById('dynamicGreeting').innerText = `${msg}, User`;
+}
+
+function switchPage(pageId) {
+    // Hide all
+    document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
+    document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
+    
+    // Show Target
+    const target = document.getElementById(pageId);
+    if (target) {
+        target.classList.remove('hidden');
+        document.getElementById(`nav-${pageId}`).classList.add('active');
+    }
+    
+    // Auto-close profile menu
+    document.getElementById('profileDropdown').classList.add('hidden');
+}
+
 function toggleProfileMenu() {
     document.getElementById('profileDropdown').classList.toggle('hidden');
 }
 
-function switchPage(pageId) {
-    document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
-    document.getElementById(pageId).classList.remove('hidden');
-    
-    document.querySelectorAll('.nav-links li').forEach(li => {
-        li.classList.remove('active');
-        if (li.getAttribute('onclick').includes(pageId)) li.classList.add('active');
-    });
-}
-
-// THEME & PROFILE ENGINE
 function updateTheme() {
     const color = document.getElementById('themePicker').value;
     const font = document.getElementById('fontChoice').value;
-    
     document.documentElement.style.setProperty('--accent-color', color);
-    document.documentElement.style.setProperty('--user-font', font);
+    document.body.style.fontFamily = font;
 }
 
 function updateProfile() {
-    const initials = document.getElementById('initialsInput').value;
-    if(initials) document.getElementById('userAvatar').innerText = initials;
+    const init = document.getElementById('initialsInput').value;
+    if (init) document.getElementById('userAvatar').innerText = init.toUpperCase();
 }
 
-// HOME PLACEMENT SYSTEM
-function addToHome(type) {
-    const widgetArea = document.getElementById('homeWidgets');
+function addToHome(sectionName) {
     const widget = document.createElement('div');
-    widget.className = 'glass-card widget';
-    widget.innerHTML = `<h3>${type.toUpperCase()}</h3><p>Live widget tracking enabled.</p>`;
-    widgetArea.appendChild(widget);
-    alert(`${type} added to Home Dashboard!`);
-}
-
-function changeStim(stim) {
-    document.body.className = `theme-${stim}`;
+    widget.className = 'glass-card';
+    widget.style.marginTop = '15px';
+    widget.innerHTML = `<h3>Pinned: ${sectionName}</h3><p>Live data for ${sectionName} will sync here.</p>`;
+    document.getElementById('homeWidgets').appendChild(widget);
+    alert(`${sectionName} pinned to Home!`);
 }
