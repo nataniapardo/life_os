@@ -3,60 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | AI Productivity Workspace</title>
+    <title>Life OS | AI Ecosystem</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body id="globalBody">
+<body>
 
-    <div id="appContainer" class="app-container">
+    <div class="app-container">
         <nav class="sidebar">
-            <div class="logo-area-branding" id="sideLogo" onclick="goToHome()">
+            <div class="logo-area-branding" onclick="switchPage('nexus')">
                 <span>LIFE</span>
-                <div class="earth-globe-small">
-                    <div class="earth-surface"></div>
+                <div class="globe-container">
+                    <div class="spinning-axis"></div>
+                    <div class="glowing-globe"></div>
                 </div>
                 <span>OS</span>
             </div>
             <ul class="nav-links">
-                <li class="active" onclick="switchPage('nexus')"><i data-lucide="layout"></i> <span>Nexus</span></li>
-                <li onclick="switchPage('tasks')"><i data-lucide="columns"></i> <span>Kanban</span></li>
-                <li onclick="switchPage('timer-page')"><i data-lucide="timer"></i> <span>Timers</span></li>
-                <li onclick="switchPage('database')"><i data-lucide="database"></i> <span>Records</span></li>
-                <li onclick="switchPage('vault')"><i data-lucide="edit-3"></i> <span>Editor</span></li>
+                <li class="active" onclick="switchPage('nexus')"><i data-lucide="layout"></i><span>Nexus</span></li>
+                <li onclick="switchPage('productivity')"><i data-lucide="zap"></i><span>Productivity</span></li>
+                <li onclick="switchPage('timers')"><i data-lucide="timer"></i><span>Timers</span></li>
+                <li onclick="switchPage('tools')"><i data-lucide="tool"></i><span>World Tools</span></li>
+                <li onclick="switchPage('calendar')"><i data-lucide="calendar"></i><span>Calendar</span></li>
             </ul>
         </nav>
 
         <main class="main-layout">
             <header class="top-bar">
                 <div class="header-left">
-                    <div id="aiStatus" class="ai-status">AI: Operational</div>
-                    <h1 class="welcome-text">Welcome back</h1>
+                    <div class="ai-status">AI: Operational</div>
+                    <h1 id="dynamicGreeting">Good morning, User</h1>
                 </div>
 
                 <div class="search-wrapper">
                     <div class="search-input-container">
                         <i data-lucide="search" class="search-icon"></i>
-                        <input type="text" id="globalSearch" placeholder="Search Life OS...">
+                        <input type="text" placeholder="Search Life OS...">
                     </div>
                 </div>
 
                 <div class="header-right">
                     <div class="datetime-block">
-                        <div id="dateDisplay" class="date-text">Tue, May 19</div>
-                        <div id="clockDisplay" class="time-text">12:47:06</div>
+                        <div id="dateDisplay">--</div>
+                        <div id="clockDisplay">00:00:00</div>
                     </div>
-                    <button class="btn-glow" id="openQuickAction">+ QUICK ADD</button>
                     <div class="profile-area">
                         <div class="avatar-circle" onclick="toggleProfileMenu()">JD</div>
+                        <div id="profileDropdown" class="dropdown-menu glass-card hidden">
+                            <div class="dropdown-item" onclick="switchPage('settings')"><i data-lucide="settings"></i> Settings</div>
+                            <div class="dropdown-item" onclick="switchPage('guide')"><i data-lucide="book-open"></i> Guide</div>
+                            <div class="divider"></div>
+                            <div class="dropdown-item logout" onclick="location.reload()"><i data-lucide="log-out"></i> Log Out</div>
+                        </div>
                     </div>
                 </div>
             </header>
 
             <div id="contentSections">
+                <section id="productivity" class="view-section hidden">
+                    <div class="glass-card">
+                        <h2>AI Productivity Staging</h2>
+                        <p>Write your tasks, errands, and notes below. AI will organize them.</p>
+                        <textarea id="aiRawInput" placeholder="Ex: Buy milk at 4pm, Meeting with Bob tomorrow at 9, fix the sink..."></textarea>
+                        <button class="btn-glow" onclick="processAIInput()">Analyze & Sort</button>
+                        
+                        <div id="aiPreviewArea" class="hidden">
+                            <h3>AI Suggestions (Review)</h3>
+                            <ul id="suggestedList" class="todo-list"></ul>
+                            <button class="btn-glow success" onclick="applyToMainList()">Apply & Save 24/7</button>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card" style="margin-top: 20px;">
+                        <h3>Your Official 24/7 List</h3>
+                        <ul id="finalTaskList" class="todo-list"></ul>
+                    </div>
+                </section>
+
+                <section id="calendar" class="view-section hidden">
+                    <div class="glass-card">
+                        <h2>Personal Calendar</h2>
+                        <div class="calendar-controls">
+                            <label>Tab Color:</label>
+                            <input type="color" id="calColorPicker" onchange="updateCalTheme()">
+                            <input type="text" id="calHexInput" placeholder="#FFFFFF" oninput="updateCalTheme()">
+                        </div>
+                        <div id="calendarMock" class="calendar-grid">
+                            <div class="cal-day">Mon</div><div class="cal-day">Tue</div><div class="cal-day">Wed</div>
+                            <div class="cal-day">Thu</div><div class="cal-day">Fri</div><div class="cal-day">Sat</div>
+                            <div class="cal-day">Sun</div>
+                        </div>
+                    </div>
+                </section>
+
                 <section id="nexus" class="view-section">
-                    </section>
+                    <div class="glass-card"><h2>Nexus Dashboard</h2><p>Select a section from the sidebar.</p></div>
+                </section>
+                
+                <section id="timers" class="view-section hidden"><h1>Timers & Pomodoro</h1></section>
+                <section id="tools" class="view-section hidden"><h1>World Tools & Converters</h1></section>
             </div>
         </main>
     </div>
