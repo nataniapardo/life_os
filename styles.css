@@ -1,151 +1,144 @@
 :root {
     --accent-color: #00f2ff;
     --bg-dark: #06070a;
-    --text-primary: #f1f5f9;
-    --global-font: 'Plus Jakarta Sans', sans-serif;
+    --glass: rgba(255, 255, 255, 0.03);
+    --border: rgba(255, 255, 255, 0.1);
 }
 
-/* RESET & BASE */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
 body {
     background-color: var(--bg-dark);
-    color: var(--text-primary);
-    font-family: var(--global-font);
-    margin: 0;
-    overflow-x: hidden;
-    transition: background 0.5s ease, font-family 0.3s ease;
+    color: white;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow: hidden;
 }
 
-/* --- LOGO & GLOBE STIMULATION --- */
-
-/* Massive Logo Typography */
-.logo-text-massive {
-    font-size: 2.5rem;
-    font-weight: 800;
-    letter-spacing: 5px;
-    color: var(--text-primary);
-    text-transform: uppercase;
+/* MAIN LAYOUT STRUCTURE */
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
 }
 
-/* Globe Core Stimulation (Main Logo Version) */
-.globe-container {
-    width: 60px;
-    height: 60px;
-    position: relative;
+/* SIDEBAR ALIGNMENT */
+.sidebar {
+    width: 240px;
+    background: rgba(0, 0, 0, 0.4);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.logo-area-branding {
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin: 0 15px;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    cursor: pointer;
 }
 
-.globe-core {
-    width: 30px;
-    height: 30px;
-    background: var(--accent-color);
-    border-radius: 50%;
-    box-shadow: 0 0 30px var(--accent-color);
-    animation: core-pulse 2s infinite ease-in-out;
+.nav-links { list-style: none; }
+
+.nav-links li {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #94a3b8;
+    transition: 0.2s;
 }
 
-.globe-lines {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    border-top: 2px solid var(--accent-color);
-    animation: rotate 4s linear infinite;
+.nav-links li.active, .nav-links li:hover {
+    background: var(--glass);
+    color: white;
 }
 
-/* Small Sidebar Version */
-.glowing-globe.small {
-    width: 20px;
-    height: 20px;
-    background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
-    border-radius: 50%;
-    position: relative;
-    box-shadow: 0 0 10px var(--accent-color);
-    margin: 0 10px;
-}
+/* TOP BAR ALIGNMENT */
+.main-layout { flex: 1; display: flex; flex-direction: column; }
 
-.globe-inner {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-top: 1px solid var(--accent-color);
-    border-radius: 50%;
-    animation: rotate 3s linear infinite;
-}
-
-/* ANIMATIONS */
-@keyframes core-pulse {
-    0%, 100% { 
-        transform: scale(1); 
-        opacity: 0.8; 
-    }
-    50% { 
-        transform: scale(1.2); 
-        opacity: 1; 
-        filter: brightness(1.5); 
-    }
-}
-
-@keyframes rotate { 
-    from { transform: rotate(0deg); } 
-    to { transform: rotate(360deg); } 
-}
-
-/* --- UI COMPONENTS --- */
-
-/* Glass Cards */
-.glass-card {
-    background: rgba(255, 255, 255, 0.03);
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(6, 7, 10, 0.5);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 2rem;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
-/* Buttons */
+.header-left .ai-status {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 5px;
+}
+
+.welcome-text { font-size: 1.8rem; font-weight: 700; }
+
+/* SEARCH BAR POSITIONING */
+.search-wrapper { flex: 1; display: flex; justify-content: center; }
+
+.search-input-container {
+    position: relative;
+    width: 300px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    opacity: 0.5;
+}
+
+#globalSearch {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: white;
+    outline: none;
+}
+
+/* RIGHT SECTION ALIGNMENT */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.datetime-block { text-align: right; }
+.date-text { font-size: 0.85rem; color: #94a3b8; }
+.time-text { font-size: 1.1rem; font-weight: 600; }
+
 .btn-glow {
     background: var(--accent-color);
-    color: #000;
+    color: black;
     border: none;
-    padding: 12px 24px;
+    padding: 10px 20px;
     border-radius: 8px;
     font-weight: 800;
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
     cursor: pointer;
-    box-shadow: 0 0 15px var(--accent-color);
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
-.btn-glow:hover {
-    box-shadow: 0 0 30px var(--accent-color);
-    transform: translateY(-2px);
-    filter: brightness(1.1);
-}
-
-.btn-glow:active {
-    transform: translateY(0);
-}
-
-/* Utilities */
-.hidden {
-    display: none !important;
-}
-
-.papyrus-font {
-    font-family: 'Papyrus', serif; /* Specifically for themed logo sections */
-}
-
-/* Layout for the logo area */
-.logo-area {
+.avatar-circle {
+    width: 38px;
+    height: 38px;
+    background: #1e293b;
+    border: 1px solid var(--border);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    cursor: pointer;
 }
