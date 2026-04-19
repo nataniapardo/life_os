@@ -5,60 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life OS | AI Productivity Workspace</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Inter:wght@400;700&family=Roboto+Mono&family=Montserrat:wght@400;700&family=Playfair+Display:ital,wght@0,400;1,700&family=Open+Sans&family=Oswald&family=Ubuntu&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="logged-out" id="globalBody">
+<body id="globalBody">
 
-    <section id="login" class="page view-section">
-        <div class="auth-page-container">
-            <div class="auth-logo-large">
-                <div class="logo-area">
-                    <span class="logo-text-massive">LIFE</span>
-                    <div class="earth-globe-large">
-                        <div class="earth-surface"></div>
-                        <div class="earth-atmosphere"></div>
-                    </div>
-                    <span class="logo-text-massive">OS</span>
-                </div>
-            </div>
-
-            <div id="loginCard" class="auth-card glass-card">
-                <h2>Login</h2>
-                <input id="loginUser" type="text" placeholder="Username">
-                <input id="loginPass" type="password" placeholder="Password">
-                <button class="btn-glow" onclick="login()">Enter OS</button>
-                <p class="auth-toggle">
-                    New User? <span class="highlight-link" onclick="toggleAuthMode('signup')">Create Account</span>
-                </p>
-            </div>
-            
-            <div id="signupCard" class="auth-card glass-card hidden">
-                <h2>Initialize Identity</h2>
-                <input id="regEmail" type="email" placeholder="Email Address">
-                <input id="regPass" type="password" placeholder="New Password">
-                <button class="btn-glow" onclick="login()">Create Account</button>
-                <p class="auth-toggle">
-                    Existing User? <span class="highlight-link" onclick="toggleAuthMode('login')">Login</span>
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <div id="appContainer" class="app-container hidden">
+    <div id="appContainer" class="app-container">
         <nav class="sidebar">
-            <div class="logo-area-branding" id="sideLogo">
+            <div class="logo-area-branding" id="sideLogo" onclick="goToHome()">
                 <span>LIFE</span>
-                <div class="glowing-globe small"><div class="globe-inner"></div></div>
+                <div class="earth-globe-small">
+                    <div class="earth-surface"></div>
+                </div>
                 <span>OS</span>
             </div>
             <ul class="nav-links">
-                <li class="active" onclick="switchPage('nexus')"><i data-lucide="layout"></i> Nexus</li>
-                <li onclick="switchPage('tasks')"><i data-lucide="columns"></i> Kanban</li>
-                <li onclick="switchPage('timer-page')"><i data-lucide="timer"></i> Timers</li>
-                <li onclick="switchPage('database')"><i data-lucide="database"></i> Records</li>
-                <li onclick="switchPage('vault')"><i data-lucide="edit-3"></i> Editor</li>
+                <li class="active" onclick="switchPage('nexus')"><i data-lucide="layout"></i> <span>Nexus</span></li>
+                <li onclick="switchPage('tasks')"><i data-lucide="columns"></i> <span>Kanban</span></li>
+                <li onclick="switchPage('timer-page')"><i data-lucide="timer"></i> <span>Timers</span></li>
+                <li onclick="switchPage('database')"><i data-lucide="database"></i> <span>Records</span></li>
+                <li onclick="switchPage('vault')"><i data-lucide="edit-3"></i> <span>Editor</span></li>
             </ul>
         </nav>
 
@@ -70,126 +36,29 @@
                 </div>
 
                 <div class="search-wrapper">
-                    <i data-lucide="search" class="search-icon"></i>
-                    <input type="text" id="globalSearch" placeholder="Search Life OS...">
+                    <div class="search-input-container">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" id="globalSearch" placeholder="Search Life OS...">
+                    </div>
                 </div>
 
                 <div class="header-right">
                     <div class="datetime-block">
-                        <div id="dateDisplay" class="date-text">--</div>
-                        <div id="clockDisplay" class="time-text">00:00:00</div>
+                        <div id="dateDisplay" class="date-text">Tue, May 19</div>
+                        <div id="clockDisplay" class="time-text">12:47:06</div>
                     </div>
-                    <button class="btn-glow small-btn" id="openQuickAction">+ Quick Add</button>
+                    <button class="btn-glow" id="openQuickAction">+ QUICK ADD</button>
                     <div class="profile-area">
                         <div class="avatar-circle" onclick="toggleProfileMenu()">JD</div>
-                        <div id="profileDropdown" class="dropdown-menu glass-card hidden">
-                            <ul>
-                                <li onclick="switchPage('settings')"><i data-lucide="settings"></i> Settings</li>
-                                <li onclick="logout()" class="logout-item"><i data-lucide="log-out"></i> Log Out</li>
-                            </ul>
-                        </div>
                     </div>
                 </div>
             </header>
 
             <div id="contentSections">
                 <section id="nexus" class="view-section">
-                    <div class="stats-grid">
-                        <div class="glass-card stat-box">
-                            <h3>Goals in Progress</h3>
-                            <p class="stat-number">5</p>
-                        </div>
-                        <div class="glass-card stat-box">
-                            <h3>Tasks Due Today</h3>
-                            <p class="stat-number accent">3</p>
-                        </div>
-                        <div class="glass-card stat-box">
-                            <h3>Habits Completed</h3>
-                            <p class="stat-number">2/4</p>
-                        </div>
-                        <div class="glass-card stat-box">
-                            <h3>Opportunities</h3>
-                            <p class="stat-number">4</p>
-                        </div>
-                    </div>
-
-                    <div class="dashboard-grid">
-                        <div class="glass-card large-span">
-                            <h2>AI Coach Summary</h2>
-                            <p class="coach-paragraph">
-                                Focus: <strong>career momentum</strong>. Prioritize top 3 actions, 
-                                follow up on networking, and maintain routine consistency.
-                            </p>
-                            <div class="pill-container">
-                                <span class="pill">Priority: Growth</span>
-                                <span class="pill">Theme: Focus</span>
-                            </div>
-                        </div>
-
-                        <div class="glass-card">
-                            <h2>Daily Priorities</h2>
-                            <ul class="todo-list">
-                                <li><label><input type="checkbox"> Mentorship follow-up</label></li>
-                                <li><label><input type="checkbox"> Application update</label></li>
-                                <li><label><input type="checkbox"> Learning block</label></li>
-                            </ul>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="settings" class="view-section hidden">
-                    <h1>System Settings</h1>
-                    <div class="settings-container glass-card">
-                        <h3>Customization & Stimulation</h3>
-                        
-                        <div class="setting-item">
-                            <label>Global Typography</label>
-                            <select id="fontSelector">
-                                <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans</option>
-                                <option value="'Inter', sans-serif">Inter UI</option>
-                                <option value="'Montserrat', sans-serif">Montserrat</option>
-                                <option value="'Roboto Mono', monospace">Terminal Mono</option>
-                                <option value="'Playfair Display', serif">Playfair</option>
-                                <option value="Papyrus, serif">Themed Papyrus</option>
-                            </select>
-                        </div>
-
-                        <div class="setting-item">
-                            <label>Accent Stimulation Color</label>
-                            <input type="color" id="accentPicker" value="#00f2ff">
-                        </div>
-
-                        <div class="setting-item">
-                            <label>Theme Presets</label>
-                            <div class="theme-grid">
-                                <button class="theme-btn" onclick="applyTheme('cyber')">Cyberpunk</button>
-                                <button class="theme-btn" onclick="applyTheme('forest')">Forest</button>
-                                <button class="theme-btn" onclick="applyTheme('nova')">Nova</button>
-                                <button class="theme-btn" onclick="applyTheme('mono')">Mono</button>
-                            </div>
-                        </div>
-
-                        <button class="btn-glow" id="saveCustomBtn" onclick="saveCustomization()">Update OS</button>
-                    </div>
-                </section>
-                
-                <section id="tasks" class="view-section hidden"><h1>Kanban</h1></section>
-                <section id="timer-page" class="view-section hidden"><h1>Timers</h1></section>
-                <section id="database" class="view-section hidden"><h1>Records</h1></section>
-                <section id="vault" class="view-section hidden"><h1>Editor</h1></section>
+                    </section>
             </div>
         </main>
-    </div>
-
-    <div id="quickModal" class="modal-overlay hidden">
-        <div class="glass-card modal-content">
-            <h2>Quick Add</h2>
-            <input type="text" placeholder="Entry name...">
-            <div class="modal-actions">
-                <button onclick="document.getElementById('quickModal').classList.add('hidden')">Cancel</button>
-                <button class="btn-glow">Save</button>
-            </div>
-        </div>
     </div>
 
     <script src="script.js"></script>
