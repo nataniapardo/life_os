@@ -10,15 +10,13 @@
     <link rel="stylesheet" href="styles.css">
     
     <script src="https://unpkg.com/lucide@latest"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <script src="script.js" defer></script>
 </head>
 <body class="theme-futuristic">
 
     <section id="authPage" class="full-screen-center">
-        <div class="logo-area-branding massive-logo">
+        <div class="logo-area-branding massive-logo" onclick="location.reload()">
             <span class="brand-text">Life</span>
             <div class="globe-wrap-small">
                 <div class="earth-sphere"></div>
@@ -42,7 +40,7 @@
                     <button class="btn-glow" onclick="handleAuth('login')">Log In</button>
                     <button class="btn-outline" onclick="toggleAuthMode()">Sign Up</button>
                 </div>
-                <p style="margin-top:15px; font-size:0.8rem;">New user? <span class="accent-text" onclick="toggleAuthMode()">Create Account</span></p>
+                <p style="margin-top:15px; font-size:0.8rem;">New user? <span class="accent-text" onclick="toggleAuthMode()" style="cursor:pointer; color:var(--accent-glow);">Create Account</span></p>
             </div>
 
             <div id="signupForm" class="hidden">
@@ -77,6 +75,7 @@
                 </div>
                 <span class="brand-text">OS</span>
             </div>
+            
             <ul class="nav-links">
                 <li class="active" id="nav-home" onclick="switchPage('home')">
                     <i data-lucide="home"></i><span>Home</span>
@@ -138,7 +137,9 @@
                 <section id="home" class="view-section">
                     <div class="glass-card">
                         <h2>Home Dashboard</h2>
-                        <div id="homeWidgets" class="widget-grid"></div>
+                        <div id="homeWidgets" class="widget-grid">
+                            <p>Welcome to your central command. Access your neural tools from the sidebar.</p>
+                        </div>
                     </div>
                 </section>
 
@@ -146,16 +147,15 @@
                     <div class="glass-card">
                         <div class="card-header">
                             <h2>AI Neural Processor</h2>
-                            <div class="ai-badge">Deep Learning Active</div>
+                            <div class="ai-badge">Persistence Active</div>
                         </div>
-                        <textarea id="aiJotter" placeholder="Example: Meeting with Sarah tomorrow at 2pm..."></textarea>
-                        <div class="button-group">
+                        <textarea id="aiJotter" placeholder="Type your thoughts here... Life OS will remember them even if you leave this page."></textarea>
+                        <div class="button-group" style="margin-top: 15px; display: flex; gap: 10px;">
                             <button class="btn-glow" onclick="runAIProcessor()">Process & Distribute</button>
                             <button class="btn-outline" onclick="clearJotter()">Clear Space</button>
                         </div>
-                        <div id="aiReviewPanel" class="hidden review-box">
+                        <div id="aiReviewPanel" class="hidden review-box" style="margin-top: 20px;">
                             <div id="distributionList"></div>
-                            <button class="btn-glow success" onclick="applyAIDistribution()">Confirm & Apply</button>
                         </div>
                     </div>
                 </section>
@@ -163,7 +163,6 @@
                 <section id="settings" class="view-section hidden">
                     <div class="glass-card">
                         <h2>System Customization</h2>
-                        
                         <div class="setting-item">
                             <label for="settingsNameInput">Display Name</label>
                             <div class="flex-row">
@@ -171,47 +170,46 @@
                                 <button class="btn-glow" onclick="personalizeAccount(document.getElementById('settingsNameInput').value)">Update</button>
                             </div>
                         </div>
-
                         <div class="setting-item">
                             <label for="themePicker">Accent Color & Font</label>
                             <div class="flex-row">
                                 <input type="color" id="themePicker" onchange="updateTheme()">
-                                <select id="fontChoice" onchange="updateTheme()">
-                                    </select>
+                                <select id="fontChoice" onchange="updateTheme()"></select>
                             </div>
                         </div>
-
-                        <div class="setting-item">
-                            <button class="btn-outline" onclick="toggleTheme()">Toggle Manual Dark/Light</button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card">
-                        <h3><i data-lucide="clock"></i> Auto-Theme Schedule</h3>
-                        <div class="flex-row">
-                            <label for="lightTime">Light Mode Start:</label>
-                            <input type="time" id="lightTime" value="07:00">
-                        </div>
-                        <div class="flex-row">
-                            <label for="darkTime">Dark Mode Start:</label>
-                            <input type="time" id="darkTime" value="19:00">
-                        </div>
-                        <button class="btn-glow" onclick="saveThemeSchedule()">Set Schedule</button>
-                    </div>
-
-                    <div class="glass-card">
-                        <h3><i data-lucide="brain"></i> Environment Stimulations</h3>
-                        <div class="stim-grid" id="stimList">
-                            </div>
                     </div>
                 </section>
 
-                <section id="timers" class="view-section hidden"><h1>Timers & Focus</h1></section>
-                <section id="tools" class="view-section hidden"><h1>World Tools</h1></section>
-                <section id="calendar" class="view-section hidden"><h1>Calendar</h1></section>
+                <section id="timers" class="view-section hidden"><div class="glass-card"><h1>Timers & Focus</h1></div></section>
+                <section id="tools" class="view-section hidden"><div class="glass-card"><h1>World Tools</h1></div></section>
+                <section id="calendar" class="view-section hidden"><div class="glass-card"><h1>Calendar</h1></div></section>
             </div>
         </main>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const jotter = document.getElementById('aiJotter');
+            
+            // Load existing data from memory
+            const savedData = localStorage.getItem('lifeOS_jotter_draft');
+            if (savedData) jotter.value = savedData;
+
+            // Auto-save on every keystroke
+            jotter.addEventListener('input', () => {
+                localStorage.setItem('lifeOS_jotter_draft', jotter.value);
+            });
+        });
+
+        // Global Navigation Fix for Logo
+        function switchPage(pageId) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(pageId).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-links li').forEach(l => l.classList.remove('active'));
+            const activeNav = document.getElementById(`nav-${pageId}`);
+            if (activeNav) activeNav.classList.add('active');
+        }
+    </script>
 </body>
 </html>
