@@ -16,7 +16,11 @@ body {
 
 .hidden { display: none !important; }
 
-/* SEARCH BAR WITH MAGNIFYING GLASS */
+/* SEARCH SYSTEM */
+.search-wrapper { 
+    position: relative; 
+}
+
 .search-input-container {
     position: relative;
     width: 350px;
@@ -43,7 +47,41 @@ body {
     font-family: inherit;
 }
 
-/* SIDEBAR HOVER LIGHT-UP (ROUNDED LEFT SIDE) */
+/* SEARCH RESULTS DROPDOWN */
+.search-results-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 10px;
+    z-index: 1000;
+    border: 1px solid var(--accent-color);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    background: var(--bg-dark); /* Ensures visibility over blurred glass */
+}
+
+.search-result-item {
+    padding: 12px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: 0.2s;
+    border-bottom: 1px solid var(--border);
+}
+
+.search-result-item:hover {
+    background: rgba(0, 242, 255, 0.1);
+    color: var(--accent-color);
+}
+
+.search-result-item i {
+    width: 16px;
+}
+
+/* SIDEBAR HOVER LIGHT-UP */
 .nav-links li {
     position: relative;
     padding: 15px 25px;
@@ -61,12 +99,12 @@ body {
     top: 50%;
     transform: translateY(-50%);
     width: 5px;
-    height: 70%; /* Not full height for a cleaner look */
+    height: 70%; 
     background: var(--accent-color);
     box-shadow: 0 0 15px var(--accent-color);
     opacity: 0;
     transition: 0.3s;
-    border-top-right-radius: 10px; /* Rounded on the inner side */
+    border-top-right-radius: 10px; 
     border-bottom-right-radius: 10px;
 }
 
@@ -147,10 +185,6 @@ body {
     border-bottom: 1px solid var(--border);
     font-size: 0.9rem;
 }
-
-.tag-calendar { color: #ff7675; }
-.tag-tasks { color: #55efc4; }
-.tag-tools { color: #a29bfe; }
 
 .success { 
     background: #00b894 !important; 
