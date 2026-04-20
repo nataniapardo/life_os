@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | AI Productivity</title>
+    <title>Life OS | Zen Chic AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono&family=Montserrat:wght@300;500&family=Orbitron:wght@400;700&family=Playfair+Display&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="theme-futuristic">
 
     <section id="authPage" class="full-screen-center">
-        <div class="logo-branding-massive">
-            <span>LIFE</span>
-            <div class="globe-wrap-large">
-                <div class="axis"></div>
-                <div class="glow-sphere"></div>
+        <div class="logo-area-branding massive-logo">
+            <span class="brand-text">Life</span>
+            <div class="globe-wrap-small">
+                <div class="earth-sphere"></div>
+                <div class="orbit"></div>
             </div>
-            <span>OS</span>
+            <span class="brand-text">OS</span>
         </div>
 
         <div class="auth-container glass-card">
@@ -47,12 +48,12 @@
     <div id="appContainer" class="app-container hidden">
         <nav class="sidebar">
             <div class="logo-area-branding" onclick="switchPage('home')">
-                <span>LIFE</span>
+                <span class="brand-text">Life</span>
                 <div class="globe-wrap-small">
-                    <div class="axis"></div>
-                    <div class="glow-sphere"></div>
+                    <div class="earth-sphere"></div>
+                    <div class="orbit"></div>
                 </div>
-                <span>OS</span>
+                <span class="brand-text">OS</span>
             </div>
             <ul class="nav-links">
                 <li class="active" id="nav-home" onclick="switchPage('home')">
@@ -69,6 +70,9 @@
                 </li>
                 <li id="nav-calendar" onclick="switchPage('calendar')">
                     <i data-lucide="calendar"></i><span>Calendar</span>
+                </li>
+                <li class="logout-item" onclick="location.reload()">
+                    <i data-lucide="log-out"></i><span>Log Out</span>
                 </li>
             </ul>
         </nav>
@@ -106,7 +110,6 @@
                 <section id="home" class="view-section">
                     <div class="glass-card">
                         <h2>Home Dashboard</h2>
-                        <p>Welcome to your central hub. Placements from other sections will appear here.</p>
                         <div id="homeWidgets" class="widget-grid"></div>
                     </div>
                 </section>
@@ -117,17 +120,14 @@
                             <h2>AI Neural Processor</h2>
                             <div class="ai-badge">Deep Learning Active</div>
                         </div>
-                        <p class="instruction-text">Jot down everything (tasks, dates, files, errands). AI will sort them for you.</p>
                         <textarea id="aiJotter" placeholder="Example: Meeting with Sarah tomorrow at 2pm..."></textarea>
                         <div class="button-group">
                             <button class="btn-glow" onclick="runAIProcessor()">Process & Distribute</button>
                             <button class="btn-outline" onclick="clearJotter()">Clear Space</button>
                         </div>
-
                         <div id="aiReviewPanel" class="hidden review-box">
-                            <h3>Distribution Preview</h3>
                             <div id="distributionList"></div>
-                            <button class="btn-glow success" onclick="applyAIDistribution()">Confirm & Apply to OS</button>
+                            <button class="btn-glow success" onclick="applyAIDistribution()">Confirm & Apply</button>
                         </div>
                     </div>
                 </section>
@@ -138,33 +138,43 @@
                         
                         <div class="setting-item">
                             <label>Display Name</label>
-                            <input type="text" id="settingsNameInput" placeholder="Enter your name...">
-                            <button class="btn-glow" onclick="personalizeAccount(document.getElementById('settingsNameInput').value)">
-                                Update Name
-                            </button>
-                        </div>
-
-                        <div class="setting-item">
-                            <label>Change Initials</label>
                             <div class="flex-row">
-                                <input type="text" id="initialsInput" placeholder="JD">
-                                <button class="btn-outline" onclick="updateProfile()">Update Profile</button>
+                                <input type="text" id="settingsNameInput" placeholder="Enter your name...">
+                                <button class="btn-glow" onclick="personalizeAccount(document.getElementById('settingsNameInput').value)">Update</button>
                             </div>
                         </div>
 
                         <div class="setting-item">
-                            <label>System Glow Color</label>
-                            <input type="color" id="themePicker" onchange="updateTheme()">
+                            <label>System Accent & Font</label>
+                            <div class="flex-row">
+                                <input type="color" id="themePicker" onchange="updateTheme()">
+                                <select id="fontChoice" onchange="updateTheme()">
+                                    </select>
+                            </div>
                         </div>
 
                         <div class="setting-item">
-                            <label>Select Font</label>
-                            <select id="fontChoice" onchange="updateTheme()">
-                                <option value="Papyrus">Papyrus</option>
-                                <option value="'Plus Jakarta Sans', sans-serif">Modern</option>
-                                <option value="monospace">Terminal</option>
-                            </select>
+                            <button class="btn-outline" onclick="toggleTheme()">Manual Dark/Light Toggle</button>
                         </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3><i data-lucide="clock"></i> Auto-Theme Schedule</h3>
+                        <div class="flex-row">
+                            <label>Light Mode Start:</label>
+                            <input type="time" id="lightTime" value="07:00">
+                        </div>
+                        <div class="flex-row">
+                            <label>Dark Mode Start:</label>
+                            <input type="time" id="darkTime" value="19:00">
+                        </div>
+                        <button class="btn-glow" onclick="saveThemeSchedule()">Set Schedule</button>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3><i data-lucide="brain"></i> Environment Stimulations</h3>
+                        <div class="stim-grid" id="stimList">
+                            </div>
                     </div>
                 </section>
 
