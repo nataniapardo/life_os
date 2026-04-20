@@ -12,47 +12,78 @@ let themeSchedule = { light: "07:00", dark: "19:00", active: false };
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
     updateClock();
+    
+    // Check for saved user name
+    const savedName = localStorage.getItem('os_user_name');
+    if (savedName) personalizeAccount(savedName);
+
     setInterval(updateClock, 1000);
     setInterval(checkThemeSchedule, 60000); // Check auto-theme every minute
 });
 
 // =========================
-// 2. AUTHENTICATION LOGIC
+// 2. AUTHENTICATION & PERSONALIZATION
 // =========================
 function toggleAuthMode() {
     document.getElementById('loginForm').classList.toggle('hidden');
     document.getElementById('signupForm').classList.toggle('hidden');
 }
 
-async function handleAuth(type) {
-    // In a real app, you'd use db.auth.signInWithPassword here.
-    const nameInput = type === 'signup' ? document.getElementById('newNameInput') : document.getElementById('emailInput');
-    const name = nameInput && nameInput.value ? nameInput.value.split('@')[0] : "User";
-    
-    if(!nameInput.value) { alert("Please enter your details."); return; }
+/**
+ * Updates the dashboard greeting with a personalized name and saves to localStorage
+ */
+function personalizeAccount(name) {
+    const greetingEl = document.getElementById('dynamicGreeting');
+    if (!greetingEl) return;
 
-    // Hide auth screens and show app
+    // 1. Determine time of day
+    const hours = new Date().getHours();
+    let timeMsg = "Good night";
+    if (hours >= 5 && hours < 12) timeMsg = "Good morning";
+    else if (hours >= 12 && hours < 17) timeMsg = "Good afternoon";
+    else if (hours >= 17 && hours < 21) timeMsg = "Good evening";
+
+    // 2. Clean the name
+    const displayName = name.trim() || "User";
+
+    // 3. Update the HTML
+    greetingEl.innerText = `${timeMsg}, ${displayName}`;
+    
+    // 4. Update the Avatar icon
+    const avatarEl = document.getElementById('userAvatar');
+    if (avatarEl) {
+        avatarEl.innerText = displayName.charAt(0).toUpperCase();
+    }
+
+    // 5. Persistence
+    localStorage.setItem('os_user_name', displayName);
+}
+
+async function handleAuth(type) {
+    // Get the name from the input field
+    const inputId = type === 'signup' ? 'newNameInput' : 'emailInput';
+    const inputEl = document.getElementById(inputId);
+    
+    if(!inputEl || !inputEl.value) { 
+        alert("Please enter your details."); 
+        return; 
+    }
+
+    const rawValue = inputEl.value;
+    
+    // Extract name (if email, take part before @)
+    const name = rawValue.includes('@') ? rawValue.split('@')[0] : rawValue;
+
+    // Trigger personalization
+    personalizeAccount(name);
+
+    // Transition UI
     const authPage = document.getElementById('authPage');
     const loginPage = document.getElementById('loginPage');
     if(authPage) authPage.classList.add('hidden');
     if(loginPage) loginPage.classList.add('hidden');
     
     document.getElementById('appContainer').classList.remove('hidden');
-    
-    // Initialize OS features with the user's name
-    enterOS(name);
-}
-
-function enterOS(userName) {
-    const hours = new Date().getHours();
-    let msg = hours < 12 ? "Good morning" : hours < 17 ? "Good afternoon" : "Good evening";
-    
-    const greetingEl = document.getElementById('dynamicGreeting');
-    const avatarEl = document.getElementById('userAvatar');
-    
-    if(greetingEl) greetingEl.innerText = `${msg}, ${userName}`;
-    if(avatarEl) avatarEl.innerText = userName.charAt(0).toUpperCase();
-    
     lucide.createIcons();
 }
 
@@ -212,7 +243,10 @@ function updateTheme() {
 
 function updateProfile() {
     const init = document.getElementById('initialsInput').value;
-    if (init) document.getElementById('userAvatar').innerText = init.toUpperCase();
+    if (init) {
+        document.getElementById('userAvatar').innerText = init.toUpperCase();
+        localStorage.setItem('os_user_name', init); // Update name record
+    }
 }
 
 function runAIProcessor() {
