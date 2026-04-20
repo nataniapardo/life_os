@@ -78,7 +78,85 @@ function toggleProfileMenu() {
 }
 
 // =========================
-// 4. CUSTOMIZATION & PINNING
+// 4. GLOBAL SEARCH & NAVIGATION
+// =========================
+
+// 1. Define the searchable map of the OS
+const siteMap = [
+    { name: "Home Dashboard", keyword: "home", target: "home", icon: "home" },
+    { name: "AI Productivity", keyword: "productivity", target: "productivity", icon: "zap" },
+    { name: "Timers & Focus", keyword: "timers", target: "timers", icon: "timer" },
+    { name: "World Tools", keyword: "tools", target: "tools", icon: "globe" },
+    { name: "Calendar", keyword: "calendar", target: "calendar", icon: "calendar" },
+    { name: "System Settings", keyword: "settings", target: "settings", icon: "settings" },
+    { name: "User Profile", keyword: "profile", target: "settings", icon: "user" },
+    { name: "Help Guide", keyword: "guide", target: "home", icon: "book-open" }
+];
+
+function handleSearch(event) {
+    const query = event.target.value.toLowerCase();
+    const dropdown = document.getElementById('searchDropdown');
+    
+    if (!query) {
+        dropdown.classList.add('hidden');
+        return;
+    }
+
+    const matches = siteMap.filter(item => 
+        item.name.toLowerCase().includes(query) || 
+        item.keyword.toLowerCase().includes(query)
+    );
+
+    renderSearchResults(matches);
+}
+
+function renderSearchResults(matches) {
+    const dropdown = document.getElementById('searchDropdown');
+    dropdown.innerHTML = "";
+
+    if (matches.length === 0) {
+        dropdown.innerHTML = `<div class="search-result-item">No results found</div>`;
+    } else {
+        matches.forEach(match => {
+            const div = document.createElement('div');
+            div.className = "search-result-item";
+            div.innerHTML = `
+                <i data-lucide="${match.icon}"></i>
+                <span>${match.name}</span>
+            `;
+            div.onclick = () => {
+                executeNavigation(match.target);
+                clearSearch();
+            };
+            dropdown.appendChild(div);
+        });
+    }
+
+    dropdown.classList.remove('hidden');
+    lucide.createIcons(); 
+}
+
+function executeNavigation(targetId) {
+    switchPage(targetId);
+    console.log(`Navigating to: ${targetId}`);
+}
+
+function clearSearch() {
+    const searchInput = document.getElementById('globalSearch');
+    if(searchInput) searchInput.value = "";
+    document.getElementById('searchDropdown').classList.add('hidden');
+}
+
+// Close search if clicking outside
+document.addEventListener('click', (e) => {
+    const searchWrapper = document.querySelector('.search-wrapper');
+    if (searchWrapper && !searchWrapper.contains(e.target)) {
+        document.getElementById('searchDropdown').classList.add('hidden');
+    }
+});
+
+// =========================
+// 5. CUSTOMIZATION & PINNING
 // =========================
 function updateTheme() {
     const color = document.getElementById('themePicker').value;
@@ -102,21 +180,13 @@ function addToHome(sectionName) {
 }
 
 // =========================
-// 5. AI NEURAL PROCESSOR LOGIC
+// 6. AI NEURAL PROCESSOR LOGIC
 // =========================
 
-/**
- * 1. The main processing function
- * Parses raw text and sorts it by intent
- */
 function runAIProcessor() {
-    console.log("AI Processor Triggered..."); // Debug check
-    
+    console.log("AI Processor Triggered..."); 
     const jotter = document.getElementById('aiJotter');
-    if (!jotter) {
-        console.error("Could not find the textarea with ID 'aiJotter'");
-        return;
-    }
+    if (!jotter) return;
 
     const rawText = jotter.value;
     if (!rawText.trim()) {
@@ -124,7 +194,6 @@ function runAIProcessor() {
         return;
     }
 
-    // Split text into individual lines or thoughts
     const lines = rawText.split(/[.,\n]/); 
     tempDistribution = [];
     
@@ -132,11 +201,10 @@ function runAIProcessor() {
         const text = line.trim();
         if (text.length < 3) return;
 
-        let destination = "Tasks"; // Default
+        let destination = "Tasks";
         let icon = "check-circle";
         const lowerText = text.toLowerCase();
         
-        // AI Logic: Keyword Routing
         if (lowerText.includes("at") || lowerText.includes("pm") || lowerText.includes("am") || lowerText.includes("tomorrow") || lowerText.includes("monday")) {
             destination = "Calendar";
             icon = "calendar";
@@ -154,21 +222,12 @@ function runAIProcessor() {
     renderReview();
 }
 
-/**
- * 2. The rendering function
- * Displays the AI's suggestions in the preview panel
- */
 function renderReview() {
     const list = document.getElementById('distributionList');
     const panel = document.getElementById('aiReviewPanel');
-    
-    if(!list || !panel) {
-        console.error("Missing UI elements: distributionList or aiReviewPanel");
-        return;
-    }
+    if(!list || !panel) return;
 
     list.innerHTML = "";
-    
     tempDistribution.forEach((item, index) => {
         const div = document.createElement('div');
         div.className = "dist-item";
@@ -178,14 +237,9 @@ function renderReview() {
         `;
         list.appendChild(div);
     });
-
     panel.classList.remove('hidden');
 }
 
-/**
- * 3. Distribution & Confirmation
- * Sends confirmed data to the Home Dashboard
- */
 function applyAIDistribution() {
     tempDistribution.forEach(item => {
         const homeWidget = document.getElementById('homeWidgets');
@@ -205,10 +259,6 @@ function applyAIDistribution() {
     tempDistribution = [];
 }
 
-/**
- * 4. Helpers
- * Handles deletions and clearing the workspace
- */
 function clearJotter() {
     const jotter = document.getElementById('aiJotter');
     const panel = document.getElementById('aiReviewPanel');
