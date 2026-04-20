@@ -9,7 +9,7 @@
 </head>
 <body class="theme-futuristic">
 
-    <section id="loginPage" class="full-screen-center">
+    <section id="authPage" class="full-screen-center">
         <div class="logo-branding-massive">
             <span>LIFE</span>
             <div class="globe-wrap-large">
@@ -18,7 +18,30 @@
             </div>
             <span>OS</span>
         </div>
-        <button class="btn-glow" onclick="enterOS()">Enter OS</button>
+
+        <div class="auth-container glass-card">
+            <div id="loginForm">
+                <h2>Welcome Back</h2>
+                <input type="email" id="emailInput" placeholder="Email Address">
+                <input type="password" id="passInput" placeholder="Password">
+                <div class="flex-row">
+                    <button class="btn-glow" onclick="handleAuth('login')">Log In</button>
+                    <button class="btn-outline" onclick="toggleAuthMode()">Sign Up</button>
+                </div>
+                <p style="margin-top:15px; font-size:0.8rem;">New user? <span class="accent-text" onclick="toggleAuthMode()">Create Account</span></p>
+            </div>
+
+            <div id="signupForm" class="hidden">
+                <h2>Initialize Account</h2>
+                <input type="text" id="newNameInput" placeholder="Your Name">
+                <input type="email" id="newEmailInput" placeholder="Email Address">
+                <input type="password" id="newPassInput" placeholder="Password">
+                <div class="flex-row">
+                    <button class="btn-glow" onclick="handleAuth('signup')">Create Account</button>
+                    <button class="btn-outline" onclick="toggleAuthMode()">Back to Login</button>
+                </div>
+            </div>
+        </div>
     </section>
 
     <div id="appContainer" class="app-container hidden">
@@ -68,7 +91,7 @@
                 <div class="header-right">
                     <div id="clockDisplay" class="time-text">00:00:00</div>
                     <div class="profile-area">
-                        <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">JD</div>
+                        <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">U</div>
                         <div id="profileDropdown" class="dropdown-menu glass-card hidden">
                             <div class="dropdown-item" onclick="switchPage('settings')"><i data-lucide="settings"></i> Settings</div>
                             <div class="dropdown-item"><i data-lucide="book-open"></i> Guide</div>
@@ -94,11 +117,8 @@
                             <h2>AI Neural Processor</h2>
                             <div class="ai-badge">Deep Learning Active</div>
                         </div>
-                        
                         <p class="instruction-text">Jot down everything (tasks, dates, files, errands). AI will sort them for you.</p>
-                        
-                        <textarea id="aiJotter" placeholder="Example: Meeting with Sarah tomorrow at 2pm. Buy groceries tonight. Submit report by Friday. Translate 'Hello' to Spanish..."></textarea>
-                        
+                        <textarea id="aiJotter" placeholder="Example: Meeting with Sarah tomorrow at 2pm..."></textarea>
                         <div class="button-group">
                             <button class="btn-glow" onclick="runAIProcessor()">Process & Distribute</button>
                             <button class="btn-outline" onclick="clearJotter()">Clear Space</button>
@@ -115,15 +135,28 @@
                 <section id="settings" class="view-section hidden">
                     <div class="glass-card">
                         <h2>System Customization</h2>
+                        
+                        <div class="setting-item">
+                            <label>Display Name</label>
+                            <input type="text" id="settingsNameInput" placeholder="Enter your name...">
+                            <button class="btn-glow" onclick="personalizeAccount(document.getElementById('settingsNameInput').value)">
+                                Update Name
+                            </button>
+                        </div>
+
                         <div class="setting-item">
                             <label>Change Initials</label>
-                            <input type="text" id="initialsInput" placeholder="JD">
-                            <button onclick="updateProfile()">Update Profile</button>
+                            <div class="flex-row">
+                                <input type="text" id="initialsInput" placeholder="JD">
+                                <button class="btn-outline" onclick="updateProfile()">Update Profile</button>
+                            </div>
                         </div>
+
                         <div class="setting-item">
                             <label>System Glow Color</label>
                             <input type="color" id="themePicker" onchange="updateTheme()">
                         </div>
+
                         <div class="setting-item">
                             <label>Select Font</label>
                             <select id="fontChoice" onchange="updateTheme()">
@@ -135,7 +168,7 @@
                     </div>
                 </section>
 
-                <section id="timers" class="view-section hidden"><h1>Timers</h1></section>
+                <section id="timers" class="view-section hidden"><h1>Timers & Focus</h1></section>
                 <section id="tools" class="view-section hidden"><h1>World Tools</h1></section>
                 <section id="calendar" class="view-section hidden"><h1>Calendar</h1></section>
             </div>
