@@ -18,7 +18,7 @@
             </div>
             <span>OS</span>
         </div>
-        <button class="btn-glow" onclick="enterOS()">Initialize System</button>
+        <button class="btn-glow" onclick="enterOS()">Enter OS</button>
     </section>
 
     <div id="appContainer" class="app-container hidden">
@@ -89,12 +89,25 @@
 
                 <section id="productivity" class="view-section hidden">
                     <div class="glass-card">
-                        <div class="flex-between">
-                            <h2>AI Productivity</h2>
-                            <button class="btn-small" onclick="addToHome('productivity')">Add to Home</button>
+                        <div class="card-header">
+                            <h2>AI Neural Processor</h2>
+                            <div class="ai-badge">Deep Learning Active</div>
                         </div>
-                        <textarea id="aiRawInput" placeholder="Write your tasks here... AI will sort them."></textarea>
-                        <button class="btn-glow" onclick="processAIInput()">Analyze Tasks</button>
+                        
+                        <p class="instruction-text">Jot down everything (tasks, dates, files, errands). AI will sort them for you.</p>
+                        
+                        <textarea id="aiJotter" placeholder="Example: Meeting with Sarah tomorrow at 2pm. Buy groceries tonight. Submit report by Friday. Translate 'Hello' to Spanish..."></textarea>
+                        
+                        <div class="button-group">
+                            <button class="btn-glow" onclick="runAIProcessor()">Process & Distribute</button>
+                            <button class="btn-outline" onclick="clearJotter()">Clear Space</button>
+                        </div>
+
+                        <div id="aiReviewPanel" class="hidden review-box">
+                            <h3>Distribution Preview</h3>
+                            <div id="distributionList"></div>
+                            <button class="btn-glow success" onclick="applyAIDistribution()">Confirm & Apply to OS</button>
+                        </div>
                     </div>
                 </section>
 
