@@ -5,18 +5,73 @@
     --border: rgba(255, 255, 255, 0.1);
 }
 
+/* =========================
+   LIGHT MODE OVERRIDES 
+   ========================= */
+body.light-mode {
+    --bg-dark: #f0f2f5;
+    --glass: rgba(0, 0, 0, 0.05);
+    --border: rgba(0, 0, 0, 0.1);
+    color: #1a1a1b;
+}
+
+body.light-mode .glass-card {
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+body.light-mode input, 
+body.light-mode textarea {
+    background: #ffffff !important;
+    color: #1a1a1b !important;
+    border: 1px solid #ddd !important;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
     background-color: var(--bg-dark);
-    color: white;
+    color: inherit; /* Inherits from body or light-mode override */
     font-family: 'Papyrus', serif;
     overflow: hidden;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .hidden { display: none !important; }
 
-/* SEARCH SYSTEM */
+/* =========================
+   AUTHENTICATION STYLING 
+   ========================= */
+.auth-container {
+    width: 400px;
+    text-align: center;
+    padding: 40px;
+}
+
+.auth-container input {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    color: white;
+}
+
+/* Ensure auth text remains white if not in light mode */
+.theme-futuristic .auth-container input {
+    color: white;
+}
+
+.accent-text {
+    color: var(--accent-color);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* =========================
+   SEARCH SYSTEM 
+   ========================= */
 .search-wrapper { 
     position: relative; 
 }
@@ -42,7 +97,7 @@ body {
     background: var(--glass);
     border: 1px solid var(--border);
     border-radius: 20px;
-    color: white;
+    color: inherit;
     outline: none;
     font-family: inherit;
 }
@@ -59,7 +114,7 @@ body {
     z-index: 1000;
     border: 1px solid var(--accent-color);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    background: var(--bg-dark); /* Ensures visibility over blurred glass */
+    background: var(--bg-dark);
 }
 
 .search-result-item {
@@ -77,11 +132,9 @@ body {
     color: var(--accent-color);
 }
 
-.search-result-item i {
-    width: 16px;
-}
-
-/* SIDEBAR HOVER LIGHT-UP */
+/* =========================
+   SIDEBAR & NAVIGATION 
+   ========================= */
 .nav-links li {
     position: relative;
     padding: 15px 25px;
@@ -114,7 +167,9 @@ body {
 
 .nav-links li:hover { background: rgba(255,255,255,0.05); }
 
-/* GLOBE LOGO */
+/* =========================
+   GLOBE LOGO & ANIMATION 
+   ========================= */
 .globe-wrap-small, .globe-wrap-large {
     position: relative;
     display: flex;
@@ -143,7 +198,9 @@ body {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* LAYOUT */
+/* =========================
+   LAYOUT & COMPONENTS 
+   ========================= */
 .app-container { display: flex; height: 100vh; }
 .sidebar { width: 260px; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
 .logo-area-branding { display: flex; align-items: center; padding: 25px; gap: 10px; cursor: pointer; }
@@ -154,7 +211,17 @@ body {
 .glass-card { background: var(--glass); border: 1px solid var(--border); padding: 25px; border-radius: 15px; backdrop-filter: blur(10px); }
 .btn-glow { background: var(--accent-color); color: black; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
 
-/* AI PROCESSOR STYLES */
+/* UTILITIES */
+.flex-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+/* =========================
+   AI PROCESSOR STYLES 
+   ========================= */
 #aiJotter {
     width: 100%;
     height: 150px;
@@ -195,7 +262,7 @@ body {
 .btn-outline {
     background: transparent;
     border: 1px solid var(--border);
-    color: white;
+    color: inherit;
     padding: 12px 25px;
     border-radius: 8px;
     cursor: pointer;
@@ -208,4 +275,12 @@ body {
 .btn-outline:hover {
     background: var(--glass);
     border-color: var(--accent-color);
+}
+
+.full-screen-center {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
