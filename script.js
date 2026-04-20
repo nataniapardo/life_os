@@ -7,39 +7,99 @@ const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Global State
 let tempDistribution = [];
+let themeSchedule = { light: "07:00", dark: "19:00", active: false };
 
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
-    updateGreeting();
+    updateClock();
     setInterval(updateClock, 1000);
+    setInterval(checkThemeSchedule, 60000); // Check auto-theme every minute
 });
 
 // =========================
-// 2. AUTHENTICATION & OS ENTRANCE
+// 2. AUTHENTICATION LOGIC
 // =========================
-function enterOS() {
-    const nameInput = document.getElementById('userNameInput');
-    const name = (nameInput && nameInput.value) ? nameInput.value : "User";
-    
-    const hours = new Date().getHours();
-    let msg = "Good night";
-    if (hours >= 5 && hours < 12) msg = "Good morning";
-    else if (hours >= 12 && hours < 17) msg = "Good afternoon";
-    else if (hours >= 17 && hours < 21) msg = "Good evening";
-    
-    document.getElementById('dynamicGreeting').innerText = `${msg}, ${name}`;
-    document.getElementById('userAvatar').innerText = name.charAt(0).toUpperCase();
+function toggleAuthMode() {
+    document.getElementById('loginForm').classList.toggle('hidden');
+    document.getElementById('signupForm').classList.toggle('hidden');
+}
 
-    document.getElementById('loginPage').classList.add('hidden');
+async function handleAuth(type) {
+    // In a real app, you'd use db.auth.signInWithPassword here.
+    const nameInput = type === 'signup' ? document.getElementById('newNameInput') : document.getElementById('emailInput');
+    const name = nameInput && nameInput.value ? nameInput.value.split('@')[0] : "User";
+    
+    if(!nameInput.value) { alert("Please enter your details."); return; }
+
+    // Hide auth screens and show app
     const authPage = document.getElementById('authPage');
+    const loginPage = document.getElementById('loginPage');
     if(authPage) authPage.classList.add('hidden');
+    if(loginPage) loginPage.classList.add('hidden');
     
     document.getElementById('appContainer').classList.remove('hidden');
+    
+    // Initialize OS features with the user's name
+    enterOS(name);
+}
+
+function enterOS(userName) {
+    const hours = new Date().getHours();
+    let msg = hours < 12 ? "Good morning" : hours < 17 ? "Good afternoon" : "Good evening";
+    
+    const greetingEl = document.getElementById('dynamicGreeting');
+    const avatarEl = document.getElementById('userAvatar');
+    
+    if(greetingEl) greetingEl.innerText = `${msg}, ${userName}`;
+    if(avatarEl) avatarEl.innerText = userName.charAt(0).toUpperCase();
+    
     lucide.createIcons();
 }
 
 // =========================
-// 3. CORE UI LOGIC
+// 3. THEME & SCHEDULER LOGIC
+// =========================
+function toggleTheme() {
+    const body = document.body;
+    if (body.classList.contains('light-mode')) {
+        body.classList.remove('light-mode');
+        body.classList.add('theme-futuristic'); 
+    } else {
+        body.classList.add('light-mode');
+        body.classList.remove('theme-futuristic');
+    }
+}
+
+function saveThemeSchedule() {
+    const lightInput = document.getElementById('lightTime');
+    const darkInput = document.getElementById('darkTime');
+    
+    if(lightInput && darkInput) {
+        themeSchedule.light = lightInput.value;
+        themeSchedule.dark = darkInput.value;
+        themeSchedule.active = true;
+        alert(`Schedule Saved: Light at ${themeSchedule.light}, Dark at ${themeSchedule.dark}`);
+    }
+}
+
+function checkThemeSchedule() {
+    if (!themeSchedule.active) return;
+
+    const now = new Date();
+    const currentTime = now.getHours().toString().padStart(2, '0') + ":" + 
+                        now.getMinutes().toString().padStart(2, '0');
+
+    if (currentTime === themeSchedule.light) {
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('theme-futuristic');
+    } else if (currentTime === themeSchedule.dark) {
+        document.body.classList.remove('light-mode');
+        document.body.classList.add('theme-futuristic');
+    }
+}
+
+// =========================
+// 4. CORE UI LOGIC
 // =========================
 function updateClock() {
     const clockEl = document.getElementById('clockDisplay');
@@ -47,14 +107,6 @@ function updateClock() {
         const now = new Date();
         clockEl.innerText = now.toLocaleTimeString();
     }
-}
-
-function updateGreeting() {
-    const hours = new Date().getHours();
-    let msg = "Good evening";
-    if (hours < 12) msg = "Good morning";
-    else if (hours < 17) msg = "Good afternoon";
-    document.getElementById('dynamicGreeting').innerText = `${msg}, User`;
 }
 
 function switchPage(pageId) {
@@ -68,7 +120,8 @@ function switchPage(pageId) {
         if (navItem) navItem.classList.add('active');
     }
     
-    document.getElementById('profileDropdown').classList.add('hidden');
+    const profileDropdown = document.getElementById('profileDropdown');
+    if(profileDropdown) profileDropdown.classList.add('hidden');
     lucide.createIcons();
 }
 
@@ -78,10 +131,8 @@ function toggleProfileMenu() {
 }
 
 // =========================
-// 4. GLOBAL SEARCH & NAVIGATION
+// 5. GLOBAL SEARCH & NAVIGATION
 // =========================
-
-// 1. Define the searchable map of the OS
 const siteMap = [
     { name: "Home Dashboard", keyword: "home", target: "home", icon: "home" },
     { name: "AI Productivity", keyword: "productivity", target: "productivity", icon: "zap" },
@@ -125,7 +176,7 @@ function renderSearchResults(matches) {
                 <span>${match.name}</span>
             `;
             div.onclick = () => {
-                executeNavigation(match.target);
+                switchPage(match.target);
                 clearSearch();
             };
             dropdown.appendChild(div);
@@ -136,18 +187,12 @@ function renderSearchResults(matches) {
     lucide.createIcons(); 
 }
 
-function executeNavigation(targetId) {
-    switchPage(targetId);
-    console.log(`Navigating to: ${targetId}`);
-}
-
 function clearSearch() {
     const searchInput = document.getElementById('globalSearch');
     if(searchInput) searchInput.value = "";
     document.getElementById('searchDropdown').classList.add('hidden');
 }
 
-// Close search if clicking outside
 document.addEventListener('click', (e) => {
     const searchWrapper = document.querySelector('.search-wrapper');
     if (searchWrapper && !searchWrapper.contains(e.target)) {
@@ -156,7 +201,7 @@ document.addEventListener('click', (e) => {
 });
 
 // =========================
-// 5. CUSTOMIZATION & PINNING
+// 6. CUSTOMIZATION & AI LOGIC
 // =========================
 function updateTheme() {
     const color = document.getElementById('themePicker').value;
@@ -170,31 +215,11 @@ function updateProfile() {
     if (init) document.getElementById('userAvatar').innerText = init.toUpperCase();
 }
 
-function addToHome(sectionName) {
-    const widget = document.createElement('div');
-    widget.className = 'glass-card';
-    widget.style.marginTop = '15px';
-    widget.innerHTML = `<h3>Pinned: ${sectionName}</h3><p>Live data for ${sectionName} will sync here.</p>`;
-    document.getElementById('homeWidgets').appendChild(widget);
-    alert(`${sectionName} pinned to Home!`);
-}
-
-// =========================
-// 6. AI NEURAL PROCESSOR LOGIC
-// =========================
-
 function runAIProcessor() {
-    console.log("AI Processor Triggered..."); 
     const jotter = document.getElementById('aiJotter');
-    if (!jotter) return;
+    if (!jotter || !jotter.value.trim()) return;
 
-    const rawText = jotter.value;
-    if (!rawText.trim()) {
-        alert("Please jot something down first!");
-        return;
-    }
-
-    const lines = rawText.split(/[.,\n]/); 
+    const lines = jotter.value.split(/[.,\n]/); 
     tempDistribution = [];
     
     lines.forEach(line => {
@@ -202,21 +227,13 @@ function runAIProcessor() {
         if (text.length < 3) return;
 
         let destination = "Tasks";
-        let icon = "check-circle";
         const lowerText = text.toLowerCase();
         
-        if (lowerText.includes("at") || lowerText.includes("pm") || lowerText.includes("am") || lowerText.includes("tomorrow") || lowerText.includes("monday")) {
-            destination = "Calendar";
-            icon = "calendar";
-        } else if (lowerText.includes("translate") || lowerText.includes("convert") || lowerText.includes("weather")) {
-            destination = "World Tools";
-            icon = "globe";
-        } else if (lowerText.includes("timer") || lowerText.includes("minutes")) {
-            destination = "Timers";
-            icon = "clock";
-        }
+        if (lowerText.match(/at|pm|am|tomorrow|monday/)) destination = "Calendar";
+        else if (lowerText.match(/translate|convert|weather/)) destination = "World Tools";
+        else if (lowerText.match(/timer|minutes/)) destination = "Timers";
 
-        tempDistribution.push({ text, destination, icon });
+        tempDistribution.push({ text, destination });
     });
 
     renderReview();
@@ -253,17 +270,14 @@ function applyAIDistribution() {
         }
     });
 
-    alert("AI has distributed your tasks to the Home Dashboard.");
-    document.getElementById('aiReviewPanel').classList.add('hidden');
-    document.getElementById('aiJotter').value = "";
-    tempDistribution = [];
+    alert("AI has distributed your tasks.");
+    clearJotter();
 }
 
 function clearJotter() {
     const jotter = document.getElementById('aiJotter');
-    const panel = document.getElementById('aiReviewPanel');
     if (jotter) jotter.value = '';
-    if (panel) panel.classList.add('hidden');
+    document.getElementById('aiReviewPanel').classList.add('hidden');
     tempDistribution = [];
 }
 
