@@ -5,19 +5,63 @@
     --border: rgba(255, 255, 255, 0.1);
 }
 
+/* =========================================
+   1. CORE THEME & CONTRAST (FIXES THE VOID)
+   ========================================= */
+
+/* Default Futuristic Dark Theme */
+.theme-futuristic {
+    background-color: #0a0a0b; 
+    color: #ffffff;            
+}
+
+/* Force high visibility for all text in Dark Mode */
+.theme-futuristic p, 
+.theme-futuristic h1, 
+.theme-futuristic h2, 
+.theme-futuristic h3,
+.theme-futuristic span,
+.theme-futuristic label,
+.theme-futuristic div {
+    color: #e0e0e0; 
+}
+
+/* Ensure glass cards have readable text */
+.glass-card { 
+    background: var(--glass); 
+    border: 1px solid var(--border); 
+    padding: 25px; 
+    border-radius: 15px; 
+    backdrop-filter: blur(10px); 
+    color: white; 
+}
+
 /* =========================
-   LIGHT MODE OVERRIDES 
+   2. LIGHT MODE OVERRIDES 
    ========================= */
 body.light-mode {
+    background-color: #f5f7fa !important;
     --bg-dark: #f0f2f5;
     --glass: rgba(0, 0, 0, 0.05);
     --border: rgba(0, 0, 0, 0.1);
-    color: #1a1a1b;
+    color: #1a1a1b !important;
+}
+
+/* Force dark text for Light Mode visibility */
+body.light-mode p, 
+body.light-mode h1, 
+body.light-mode h2, 
+body.light-mode h3,
+body.light-mode span,
+body.light-mode label,
+body.light-mode div:not(.btn-glow) {
+    color: #1a1a1b !important;
 }
 
 body.light-mode .glass-card {
     background: white;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    color: #1a1a1b;
 }
 
 body.light-mode input, 
@@ -27,11 +71,13 @@ body.light-mode textarea {
     border: 1px solid #ddd !important;
 }
 
+/* =========================
+   3. GLOBAL STYLES
+   ========================= */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
     background-color: var(--bg-dark);
-    color: inherit; /* Inherits from body or light-mode override */
     font-family: 'Papyrus', serif;
     overflow: hidden;
     transition: background-color 0.3s, color 0.3s;
@@ -40,7 +86,7 @@ body {
 .hidden { display: none !important; }
 
 /* =========================
-   AUTHENTICATION STYLING 
+   4. AUTHENTICATION STYLING 
    ========================= */
 .auth-container {
     width: 400px;
@@ -53,13 +99,8 @@ body {
     margin-bottom: 15px;
     padding: 12px;
     border-radius: 8px;
-    background: var(--glass);
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border);
-    color: white;
-}
-
-/* Ensure auth text remains white if not in light mode */
-.theme-futuristic .auth-container input {
     color: white;
 }
 
@@ -70,16 +111,10 @@ body {
 }
 
 /* =========================
-   SEARCH SYSTEM 
+   5. SEARCH SYSTEM 
    ========================= */
-.search-wrapper { 
-    position: relative; 
-}
-
-.search-input-container {
-    position: relative;
-    width: 350px;
-}
+.search-wrapper { position: relative; }
+.search-input-container { position: relative; width: 350px; }
 
 .search-icon-inner {
     position: absolute;
@@ -102,7 +137,6 @@ body {
     font-family: inherit;
 }
 
-/* SEARCH RESULTS DROPDOWN */
 .search-results-dropdown {
     position: absolute;
     top: 100%;
@@ -133,7 +167,7 @@ body {
 }
 
 /* =========================
-   SIDEBAR & NAVIGATION 
+   6. SIDEBAR & NAVIGATION 
    ========================= */
 .nav-links li {
     position: relative;
@@ -161,14 +195,11 @@ body {
     border-bottom-right-radius: 10px;
 }
 
-.nav-links li:hover::before, .nav-links li.active::before {
-    opacity: 1;
-}
-
+.nav-links li:hover::before, .nav-links li.active::before { opacity: 1; }
 .nav-links li:hover { background: rgba(255,255,255,0.05); }
 
 /* =========================
-   GLOBE LOGO & ANIMATION 
+   7. GLOBE LOGO & ANIMATION 
    ========================= */
 .globe-wrap-small, .globe-wrap-large {
     position: relative;
@@ -199,7 +230,7 @@ body {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* =========================
-   LAYOUT & COMPONENTS 
+   8. LAYOUT & COMPONENTS 
    ========================= */
 .app-container { display: flex; height: 100vh; }
 .sidebar { width: 260px; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
@@ -208,19 +239,13 @@ body {
 .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 15px 40px; border-bottom: 1px solid var(--border); }
 .view-section { padding: 40px; flex: 1; overflow-y: auto; }
 
-.glass-card { background: var(--glass); border: 1px solid var(--border); padding: 25px; border-radius: 15px; backdrop-filter: blur(10px); }
-.btn-glow { background: var(--accent-color); color: black; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+.btn-glow { background: var(--accent-color); color: black !important; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
 
 /* UTILITIES */
-.flex-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 10px 0;
-}
+.flex-row { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
 
 /* =========================
-   AI PROCESSOR STYLES 
+   9. AI PROCESSOR STYLES 
    ========================= */
 #aiJotter {
     width: 100%;
@@ -230,7 +255,7 @@ body {
     border-radius: 12px;
     padding: 15px;
     color: white;
-    font-family: 'Papyrus', serif;
+    font-family: inherit;
     font-size: 1.1rem;
     margin: 15px 0;
     resize: none;
@@ -253,11 +278,7 @@ body {
     font-size: 0.9rem;
 }
 
-.success { 
-    background: #00b894 !important; 
-    color: white !important; 
-    box-shadow: 0 0 10px rgba(0, 184, 148, 0.4);
-}
+.success { background: #00b894 !important; color: white !important; }
 
 .btn-outline {
     background: transparent;
@@ -268,13 +289,6 @@ body {
     cursor: pointer;
     font-family: inherit;
     margin-top: 10px;
-    margin-left: 10px;
-    transition: 0.3s;
-}
-
-.btn-outline:hover {
-    background: var(--glass);
-    border-color: var(--accent-color);
 }
 
 .full-screen-center {
