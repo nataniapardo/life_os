@@ -1,18 +1,9 @@
 // =========================
-// 1. SYSTEM INITIALIZATION & DB
+// SUPABASE SETUP
 // =========================
 const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
-let db;
-
-// Safety check for Supabase library
-try {
-    if (typeof supabase !== 'undefined') {
-        db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    }
-} catch (e) {
-    console.warn("Supabase initialization delayed or failed.");
-}
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
