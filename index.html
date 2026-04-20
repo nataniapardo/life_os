@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | AI Productivity</title>
+    <title>Life OS | Zen Chic AI</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono&family=Montserrat:wght@300;500&family=Orbitron:wght@400;700&family=Playfair+Display&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="styles.css">
+    
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script src="script.js" defer></script>
 </head>
 <body class="theme-futuristic">
@@ -24,11 +30,11 @@
         <div class="auth-container glass-card">
             <div id="loginForm">
                 <h2>Welcome Back</h2>
-                <div class="setting-item">
+                <div class="input-group">
                     <label for="emailInput">Email Address</label>
-                    <input type="email" id="emailInput" placeholder="email@example.com">
+                    <input type="email" id="emailInput" placeholder="Enter your email">
                 </div>
-                <div class="setting-item">
+                <div class="input-group">
                     <label for="passInput">Password</label>
                     <input type="password" id="passInput" placeholder="••••••••">
                 </div>
@@ -36,17 +42,25 @@
                     <button class="btn-glow" onclick="handleAuth('login')">Log In</button>
                     <button class="btn-outline" onclick="toggleAuthMode()">Sign Up</button>
                 </div>
-                <p style="margin-top:15px; font-size:0.8rem;">New user? <span class="accent-text" onclick="toggleAuthMode()">Create Account</span></p>
             </div>
 
             <div id="signupForm" class="hidden">
-                <h2>Sign Up</h2>
-                <input type="text" id="newNameInput" placeholder="Your Name">
-                <input type="email" id="newEmailInput" placeholder="Email Address">
-                <input type="password" id="newPassInput" placeholder="Password">
+                <h2>Initialize Account</h2>
+                <div class="input-group">
+                    <label for="newNameInput">Full Name</label>
+                    <input type="text" id="newNameInput" placeholder="Your Name">
+                </div>
+                <div class="input-group">
+                    <label for="newEmailInput">Email Address</label>
+                    <input type="email" id="newEmailInput" placeholder="email@example.com">
+                </div>
+                <div class="input-group">
+                    <label for="newPassInput">Password</label>
+                    <input type="password" id="newPassInput" placeholder="Create Password">
+                </div>
                 <div class="flex-row">
                     <button class="btn-glow" onclick="handleAuth('signup')">Create Account</button>
-                    <button class="btn-outline" onclick="toggleAuthMode()">Back to Login</button>
+                    <button class="btn-outline" onclick="toggleAuthMode()">Back</button>
                 </div>
             </div>
         </div>
@@ -104,9 +118,16 @@
                     <div class="profile-area">
                         <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">U</div>
                         <div id="profileDropdown" class="dropdown-menu glass-card hidden">
-                            <div class="dropdown-item" onclick="switchPage('settings')"><i data-lucide="settings"></i> Settings</div>
+                            <div class="dropdown-item" onclick="switchPage('settings')">
+                                <i data-lucide="settings"></i> Settings
+                            </div>
+                            <div class="dropdown-item">
+                                <i data-lucide="book-open"></i> Guide
+                            </div>
                             <div class="divider"></div>
-                            <div class="dropdown-item logout" onclick="location.reload()"><i data-lucide="log-out"></i> Log Out</div>
+                            <div class="dropdown-item logout" onclick="location.reload()">
+                                <i data-lucide="log-out"></i> Log Out
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -124,16 +145,16 @@
                     <div class="glass-card">
                         <div class="card-header">
                             <h2>AI Neural Processor</h2>
-                            <div class="ai-badge">Deep Learning Active</div>
+                            <div class="ai-badge">Active</div>
                         </div>
-                        <textarea id="aiJotter" placeholder="Example: Meeting tomorrow at 2pm..."></textarea>
+                        <textarea id="aiJotter" placeholder="Type tasks, dates, or notes..."></textarea>
                         <div class="button-group">
-                            <button class="btn-glow" onclick="runAIProcessor()">Process</button>
+                            <button class="btn-glow" onclick="runAIProcessor()">Process & Distribute</button>
                             <button class="btn-outline" onclick="clearJotter()">Clear</button>
                         </div>
                         <div id="aiReviewPanel" class="hidden review-box">
                             <div id="distributionList"></div>
-                            <button class="btn-glow success" onclick="applyAIDistribution()">Apply</button>
+                            <button class="btn-glow success" onclick="applyAIDistribution()">Confirm & Apply</button>
                         </div>
                     </div>
                 </section>
@@ -145,13 +166,13 @@
                         <div class="setting-item">
                             <label for="settingsNameInput">Display Name</label>
                             <div class="flex-row">
-                                <input type="text" id="settingsNameInput" placeholder="Enter name...">
-                                <button class="btn-glow" onclick="personalizeAccount(document.getElementById('settingsNameInput').value)">Update</button>
+                                <input type="text" id="settingsNameInput" placeholder="Update name...">
+                                <button class="btn-glow" onclick="personalizeAccount(document.getElementById('settingsNameInput').value)">Save</button>
                             </div>
                         </div>
 
                         <div class="setting-item">
-                            <label for="themePicker">System Accent Color</label>
+                            <label for="themePicker">Accent Color & Font</label>
                             <div class="flex-row">
                                 <input type="color" id="themePicker" onchange="updateTheme()">
                                 <select id="fontChoice" onchange="updateTheme()">
@@ -159,9 +180,7 @@
                             </div>
                         </div>
 
-                        <div class="setting-item">
-                            <button class="btn-outline" onclick="toggleTheme()">Manual Dark/Light Toggle</button>
-                        </div>
+                        <button class="btn-outline" onclick="toggleTheme()">Manual Dark/Light Toggle</button>
                     </div>
 
                     <div class="glass-card">
@@ -190,6 +209,5 @@
         </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body>
 </html>
