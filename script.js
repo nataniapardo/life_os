@@ -13,9 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
     updateClock();
     
-    // Check for saved user name
+    // Check for saved user name on refresh
     const savedName = localStorage.getItem('os_user_name');
-    if (savedName) personalizeAccount(savedName);
+    if (savedName) {
+        personalizeAccount(savedName);
+    }
 
     setInterval(updateClock, 1000);
     setInterval(checkThemeSchedule, 60000); // Check auto-theme every minute
@@ -24,16 +26,19 @@ document.addEventListener('DOMContentLoaded', () => {
 // =========================
 // 2. AUTHENTICATION & PERSONALIZATION
 // =========================
+
 function toggleAuthMode() {
     document.getElementById('loginForm').classList.toggle('hidden');
     document.getElementById('signupForm').classList.toggle('hidden');
 }
 
 /**
- * Updates the dashboard greeting with a personalized name and saves to localStorage
+ * Updates the dashboard greeting and saves to localStorage
  */
 function personalizeAccount(name) {
     const greetingEl = document.getElementById('dynamicGreeting');
+    const avatarEl = document.getElementById('userAvatar');
+    
     if (!greetingEl) return;
 
     // 1. Determine time of day
@@ -48,19 +53,18 @@ function personalizeAccount(name) {
 
     // 3. Update the HTML
     greetingEl.innerText = `${timeMsg}, ${displayName}`;
-    
-    // 4. Update the Avatar icon
-    const avatarEl = document.getElementById('userAvatar');
     if (avatarEl) {
         avatarEl.innerText = displayName.charAt(0).toUpperCase();
     }
 
-    // 5. Persistence
+    // 4. Persistence
     localStorage.setItem('os_user_name', displayName);
 }
 
+/**
+ * Main entrance logic (Handles both Login and Signup)
+ */
 async function handleAuth(type) {
-    // Get the name from the input field
     const inputId = type === 'signup' ? 'newNameInput' : 'emailInput';
     const inputEl = document.getElementById(inputId);
     
@@ -71,7 +75,7 @@ async function handleAuth(type) {
 
     const rawValue = inputEl.value;
     
-    // Extract name (if email, take part before @)
+    // Extract name (if email is used, take part before @)
     const name = rawValue.includes('@') ? rawValue.split('@')[0] : rawValue;
 
     // Trigger personalization
@@ -79,26 +83,27 @@ async function handleAuth(type) {
 
     // Transition UI
     const authPage = document.getElementById('authPage');
-    const loginPage = document.getElementById('loginPage');
     if(authPage) authPage.classList.add('hidden');
-    if(loginPage) loginPage.classList.add('hidden');
     
     document.getElementById('appContainer').classList.remove('hidden');
     lucide.createIcons();
 }
 
+/**
+ * Fallback for old code references to prevent ReferenceErrors
+ */
+function enterOS() {
+    handleAuth('login');
+}
+
 // =========================
 // 3. THEME & SCHEDULER LOGIC
 // =========================
+
 function toggleTheme() {
     const body = document.body;
-    if (body.classList.contains('light-mode')) {
-        body.classList.remove('light-mode');
-        body.classList.add('theme-futuristic'); 
-    } else {
-        body.classList.add('light-mode');
-        body.classList.remove('theme-futuristic');
-    }
+    body.classList.toggle('light-mode');
+    body.classList.toggle('theme-futuristic');
 }
 
 function saveThemeSchedule() {
@@ -132,6 +137,7 @@ function checkThemeSchedule() {
 // =========================
 // 4. CORE UI LOGIC
 // =========================
+
 function updateClock() {
     const clockEl = document.getElementById('clockDisplay');
     if (clockEl) {
@@ -164,6 +170,7 @@ function toggleProfileMenu() {
 // =========================
 // 5. GLOBAL SEARCH & NAVIGATION
 // =========================
+
 const siteMap = [
     { name: "Home Dashboard", keyword: "home", target: "home", icon: "home" },
     { name: "AI Productivity", keyword: "productivity", target: "productivity", icon: "zap" },
@@ -224,16 +231,10 @@ function clearSearch() {
     document.getElementById('searchDropdown').classList.add('hidden');
 }
 
-document.addEventListener('click', (e) => {
-    const searchWrapper = document.querySelector('.search-wrapper');
-    if (searchWrapper && !searchWrapper.contains(e.target)) {
-        document.getElementById('searchDropdown').classList.add('hidden');
-    }
-});
-
 // =========================
 // 6. CUSTOMIZATION & AI LOGIC
 // =========================
+
 function updateTheme() {
     const color = document.getElementById('themePicker').value;
     const font = document.getElementById('fontChoice').value;
@@ -245,7 +246,7 @@ function updateProfile() {
     const init = document.getElementById('initialsInput').value;
     if (init) {
         document.getElementById('userAvatar').innerText = init.toUpperCase();
-        localStorage.setItem('os_user_name', init); // Update name record
+        localStorage.setItem('os_user_name', init);
     }
 }
 
@@ -319,3 +320,11 @@ function removeItem(index) {
     tempDistribution.splice(index, 1);
     renderReview();
 }
+
+// Global click listener for dropdowns
+document.addEventListener('click', (e) => {
+    const searchWrapper = document.querySelector('.search-wrapper');
+    if (searchWrapper && !searchWrapper.contains(e.target)) {
+        document.getElementById('searchDropdown').classList.add('hidden');
+    }
+});
