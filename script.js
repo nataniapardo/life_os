@@ -5,281 +5,173 @@ const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Global State
-let tempDistribution = [];
-let themeSchedule = { light: "07:00", dark: "19:00", active: false };
+// 1. SYSTEM INITIALIZATION & STATE
+const OS_VERSION = "2.0.4";
+let currentUser = null;
 
-// Expanded Font List for Settings
-const expandedFonts = [
-    { name: "Papyrus", value: "'Papyrus', serif" },
-    { name: "Inter (Modern)", value: "'Inter', sans-serif" },
-    { name: "Playfair (Elegant)", value: "'Playfair Display', serif" },
-    { name: "JetBrains (Tech)", value: "'JetBrains Mono', monospace" },
-    { name: "Orbitron (Futuristic)", value: "'Orbitron', sans-serif" },
-    { name: "Montserrat (Clean)", value: "'Montserrat', sans-serif" }
-];
-
+// Initialize Lucide Icons
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
-    updateClock();
-    populateSettings(); // Initialize fonts and stimulations
-    
-    const savedName = localStorage.getItem('os_user_name');
-    if (savedName) personalizeAccount(savedName);
-
-    setInterval(updateClock, 1000);
-    setInterval(checkThemeSchedule, 60000); // Check auto-theme every minute
+    initThemeEngine();
+    startTimeEngine();
+    populateFontList();
 });
 
-// =========================
-// 2. AUTHENTICATION & PERSONALIZATION
-// =========================
+// 2. NAVIGATION & UI CONTROL
+function switchPage(pageId) {
+    // Update View Sections
+    document.querySelectorAll('.view-section').forEach(section => {
+        section.classList.add('hidden');
+    });
+    document.getElementById(pageId).classList.remove('hidden');
+
+    // Update Sidebar Active State
+    document.querySelectorAll('.nav-links li').forEach(li => {
+        li.classList.remove('active');
+    });
+    const activeNav = document.getElementById(`nav-${pageId}`);
+    if (activeNav) activeNav.classList.add('active');
+}
 
 function toggleAuthMode() {
     document.getElementById('loginForm').classList.toggle('hidden');
     document.getElementById('signupForm').classList.toggle('hidden');
 }
 
-function personalizeAccount(name) {
-    const greetingEl = document.getElementById('dynamicGreeting');
-    const avatarEl = document.getElementById('userAvatar');
-    if (!greetingEl) return;
-
-    const hours = new Date().getHours();
-    let timeMsg = "Good night";
-    if (hours >= 5 && hours < 12) timeMsg = "Good morning";
-    else if (hours >= 12 && hours < 17) timeMsg = "Good afternoon";
-    else if (hours >= 17 && hours < 21) timeMsg = "Good evening";
-
-    const displayName = name.trim() || "User";
-    greetingEl.innerText = `${timeMsg}, ${displayName}`;
-    if (avatarEl) avatarEl.innerText = displayName.charAt(0).toUpperCase();
-
-    localStorage.setItem('os_user_name', displayName);
-}
-
-async function handleAuth(type) {
-    const inputId = type === 'signup' ? 'newNameInput' : 'emailInput';
-    const inputEl = document.getElementById(inputId);
-    if(!inputEl || !inputEl.value) { alert("Please enter your details."); return; }
-
-    const name = inputEl.value.includes('@') ? inputEl.value.split('@')[0] : inputEl.value;
-    personalizeAccount(name);
-
-    document.getElementById('authPage').classList.add('hidden');
-    document.getElementById('appContainer').classList.remove('hidden');
-    lucide.createIcons();
-}
-
-// =========================
-// 3. THEME, SCHEDULER & SETTINGS populate
-// =========================
-
-function populateSettings() {
-    // Populate expanded font dropdown
-    const fontSelect = document.getElementById('fontChoice');
-    if (fontSelect) {
-        fontSelect.innerHTML = expandedFonts.map(f => `<option value="${f.value}">${f.name}</option>`).join('');
-    }
-
-    // Populate Stimulation Grid
-    const stims = [
-        { cat: "Nature", items: ["Rainforest", "Deep Ocean"] },
-        { cat: "Futuristic", items: ["Cyber City", "Mars Colony"] },
-        { cat: "Shape", items: ["Fractals", "Minimal Cubes"] },
-        { cat: "Food", items: ["Zen Tea Garden", "Neon Diner"] },
-        { cat: "Travel", items: ["Tokyo Night", "Swiss Alps"] }
-    ];
-    
-    const stimContainer = document.getElementById('stimList');
-    if (stimContainer) {
-        stimContainer.innerHTML = stims.flatMap(s => 
-            s.items.map(item => `<div class="stim-item" onclick="alert('Entering ${item} stimulation...')">${item}</div>`)
-        ).join('');
-    }
-}
-
-function toggleTheme() {
-    const body = document.body;
-    if (body.classList.contains('light-mode')) {
-        body.classList.remove('light-mode');
-        body.classList.add('theme-futuristic'); 
-    } else {
-        body.classList.add('light-mode');
-        body.classList.remove('theme-futuristic');
-    }
-}
-
-function saveThemeSchedule() {
-    const lightInput = document.getElementById('lightTime');
-    const darkInput = document.getElementById('darkTime');
-    
-    if(lightInput && darkInput) {
-        themeSchedule.light = lightInput.value;
-        themeSchedule.dark = darkInput.value;
-        themeSchedule.active = true;
-        alert(`Schedule Active: Light mode at ${themeSchedule.light}, Dark mode at ${themeSchedule.dark}`);
-        checkThemeSchedule(); // Run immediate check
-    }
-}
-
-function checkThemeSchedule() {
-    if (!themeSchedule.active) return;
-
-    const now = new Date();
-    const currentTime = now.getHours().toString().padStart(2, '0') + ":" + 
-                        now.getMinutes().toString().padStart(2, '0');
-
-    if (currentTime === themeSchedule.light) {
-        document.body.classList.add('light-mode');
-        document.body.classList.remove('theme-futuristic');
-    } else if (currentTime === themeSchedule.dark) {
-        document.body.classList.remove('light-mode');
-        document.body.classList.add('theme-futuristic');
-    }
-}
-
-// =========================
-// 4. CORE UI LOGIC
-// =========================
-
-function updateClock() {
-    const clockEl = document.getElementById('clockDisplay');
-    if (clockEl) clockEl.innerText = new Date().toLocaleTimeString();
-}
-
-function switchPage(pageId) {
-    document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
-    document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
-    
-    const target = document.getElementById(pageId);
-    if (target) {
-        target.classList.remove('hidden');
-        const navItem = document.getElementById(`nav-${pageId}`);
-        if (navItem) navItem.classList.add('active');
-    }
-    document.getElementById('profileDropdown')?.classList.add('hidden');
-    lucide.createIcons();
-}
-
 function toggleProfileMenu() {
-    document.getElementById('profileDropdown')?.classList.toggle('hidden');
+    document.getElementById('profileDropdown').classList.toggle('hidden');
 }
 
-// =========================
-// 5. GLOBAL SEARCH
-// =========================
-
-const siteMap = [
-    { name: "Home Dashboard", keyword: "home", target: "home", icon: "home" },
-    { name: "AI Productivity", keyword: "productivity", target: "productivity", icon: "zap" },
-    { name: "Timers & Focus", keyword: "timers", target: "timers", icon: "timer" },
-    { name: "World Tools", keyword: "tools", target: "tools", icon: "globe" },
-    { name: "Calendar", keyword: "calendar", target: "calendar", icon: "calendar" },
-    { name: "System Settings", keyword: "settings", target: "settings", icon: "settings" }
+// 3. THEME & FONT ENGINE (Zen Chic Updates)
+const fonts = [
+    { name: 'Modern Sans', value: "'Inter', sans-serif" },
+    { name: 'Futuristic', value: "'Orbitron', sans-serif" },
+    { name: 'Elegant Serif', value: "'Playfair Display', serif" },
+    { name: 'Coding Mono', value: "'JetBrains Mono', monospace" },
+    { name: 'Clean Montserrat', value: "'Montserrat', sans-serif" }
 ];
 
-function handleSearch(event) {
-    const query = event.target.value.toLowerCase();
-    const dropdown = document.getElementById('searchDropdown');
-    if (!query) { dropdown.classList.add('hidden'); return; }
-
-    const matches = siteMap.filter(item => 
-        item.name.toLowerCase().includes(query) || item.keyword.toLowerCase().includes(query)
-    );
-
-    dropdown.innerHTML = matches.length ? matches.map(match => `
-        <div class="search-result-item" onclick="switchPage('${match.target}'); clearSearch();">
-            <i data-lucide="${match.icon}"></i><span>${match.name}</span>
-        </div>
-    `).join('') : '<div class="search-result-item">No results found</div>';
-
-    dropdown.classList.remove('hidden');
-    lucide.createIcons(); 
+function populateFontList() {
+    const selector = document.getElementById('fontChoice');
+    if (!selector) return;
+    fonts.forEach(f => {
+        let opt = document.createElement('option');
+        opt.value = f.value;
+        opt.textContent = f.name;
+        selector.appendChild(opt);
+    });
 }
-
-function clearSearch() {
-    document.getElementById('globalSearch').value = "";
-    document.getElementById('searchDropdown').classList.add('hidden');
-}
-
-// =========================
-// 6. CUSTOMIZATION & AI LOGIC
-// =========================
 
 function updateTheme() {
     const color = document.getElementById('themePicker').value;
     const font = document.getElementById('fontChoice').value;
-    document.documentElement.style.setProperty('--accent-color', color);
-    document.body.style.fontFamily = font;
+    
+    document.documentElement.style.setProperty('--accent-glow', color);
+    document.body.style.setProperty('font-family', font);
+    
+    // Save to LocalStorage for persistence
+    localStorage.setItem('lifeOS_themeColor', color);
+    localStorage.setItem('lifeOS_font', font);
 }
 
-function updateProfile() {
-    const init = document.getElementById('initialsInput').value;
-    if (init) {
-        document.getElementById('userAvatar').innerText = init.toUpperCase();
-        localStorage.setItem('os_user_name', init);
+function initThemeEngine() {
+    // Load saved settings
+    const savedColor = localStorage.getItem('lifeOS_themeColor');
+    const savedFont = localStorage.getItem('lifeOS_font');
+    
+    if (savedColor) {
+        document.getElementById('themePicker').value = savedColor;
+        document.documentElement.style.setProperty('--accent-glow', savedColor);
+    }
+    if (savedFont) {
+        document.getElementById('fontChoice').value = savedFont;
+        document.body.style.setProperty('font-family', savedFont);
+    }
+    
+    // Run Auto-Theme Check every minute
+    setInterval(checkAutoTheme, 60000);
+    checkAutoTheme();
+}
+
+function checkAutoTheme() {
+    const now = new Date();
+    const hour = now.getHours();
+    const lightTime = parseInt(document.getElementById('lightTime')?.value || 7);
+    const darkTime = parseInt(document.getElementById('darkTime')?.value || 19);
+
+    if (hour >= lightTime && hour < darkTime) {
+        document.body.classList.remove('dark-mode');
+        document.body.classList.add('light-mode');
+    } else {
+        document.body.classList.remove('light-mode');
+        document.body.classList.add('dark-mode');
     }
 }
 
+// 4. AI NEURAL PROCESSOR (Mock Logic)
 function runAIProcessor() {
-    const jotter = document.getElementById('aiJotter');
-    if (!jotter?.value.trim()) return;
+    const input = document.getElementById('aiJotter').value;
+    if (!input.trim()) return;
 
-    const lines = jotter.value.split(/[.,\n]/); 
-    tempDistribution = lines.filter(l => l.trim().length > 3).map(text => {
-        let destination = "Tasks";
-        const lower = text.toLowerCase();
-        if (lower.match(/at|pm|am|tomorrow|monday/)) destination = "Calendar";
-        else if (lower.match(/translate|convert|weather/)) destination = "World Tools";
-        else if (lower.match(/timer|minutes/)) destination = "Timers";
-        return { text: text.trim(), destination };
-    });
-
-    renderReview();
-}
-
-function renderReview() {
+    const panel = document.getElementById('aiReviewPanel');
     const list = document.getElementById('distributionList');
-    if(!list) return;
-    list.innerHTML = tempDistribution.map((item, index) => `
-        <div class="dist-item">
-            <span><strong>[${item.destination}]</strong> ${item.text}</span>
-            <span onclick="removeItem(${index})" style="cursor:pointer; color:red; font-weight:bold;">✕</span>
-        </div>
-    `).join('');
-    document.getElementById('aiReviewPanel').classList.remove('hidden');
-}
+    
+    panel.classList.remove('hidden');
+    list.innerHTML = `<div class="loading-pulse">Analyzing Neural Input...</div>`;
 
-function applyAIDistribution() {
-    const homeWidget = document.getElementById('homeWidgets');
-    tempDistribution.forEach(item => {
-        if (homeWidget) {
-            const widget = document.createElement('div');
-            widget.className = "glass-card";
-            widget.style.fontSize = "0.8rem";
-            widget.style.marginTop = "10px";
-            widget.innerHTML = `<strong>${item.destination}:</strong> ${item.text}`;
-            homeWidget.appendChild(widget);
-        }
-    });
-    alert("AI has distributed your tasks.");
-    clearJotter();
+    // Simulated AI Distribution Logic
+    setTimeout(() => {
+        list.innerHTML = `
+            <div class="ai-item"><strong>Task detected:</strong> "${input.substring(0, 30)}..." -> Moved to To-Do</div>
+            <div class="ai-item"><strong>Schedule:</strong> Extracted potential date/time context.</div>
+        `;
+    }, 1200);
 }
 
 function clearJotter() {
     document.getElementById('aiJotter').value = '';
     document.getElementById('aiReviewPanel').classList.add('hidden');
-    tempDistribution = [];
 }
 
-function removeItem(index) {
-    tempDistribution.splice(index, 1);
-    renderReview();
+// 5. CLOCK & GREETING ENGINE
+function startTimeEngine() {
+    setInterval(() => {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour12: false });
+        document.getElementById('clockDisplay').textContent = timeStr;
+        
+        // Dynamic Greeting
+        const hrs = now.getHours();
+        let greet = "Good night";
+        if (hrs < 12) greet = "Good morning";
+        else if (hrs < 17) greet = "Good afternoon";
+        else greet = "Good evening";
+        
+        document.getElementById('dynamicGreeting').textContent = `${greet}, ${currentUser || 'User'}`;
+    }, 1000);
 }
 
-document.addEventListener('click', (e) => {
-    if (!document.querySelector('.search-wrapper')?.contains(e.target)) {
-        document.getElementById('searchDropdown')?.classList.add('hidden');
+// 6. GLOBAL SEARCH LOGIC
+function handleSearch(e) {
+    const query = e.target.value.toLowerCase();
+    const dropdown = document.getElementById('searchDropdown');
+    
+    if (query.length < 2) {
+        dropdown.classList.add('hidden');
+        return;
     }
-});
+
+    const searchableItems = ['Home', 'Productivity', 'Timers', 'World Tools', 'Calendar', 'Settings'];
+    const results = searchableItems.filter(i => i.toLowerCase().includes(query));
+
+    if (results.length > 0) {
+        dropdown.classList.remove('hidden');
+        dropdown.innerHTML = results.map(r => `
+            <div class="search-result-item" onclick="switchPage('${r.toLowerCase().replace(' ', '')}')">
+                ${r}
+            </div>
+        `).join('');
+    } else {
+        dropdown.classList.add('hidden');
+    }
+}
