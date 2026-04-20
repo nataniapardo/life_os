@@ -4,9 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life OS | AI Productivity</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@300;500&family=Orbitron:wght@400;700&family=Playfair+Display&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="styles.css">
+    
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script src="script.js" defer></script>
 </head>
 <body class="theme-futuristic">
@@ -40,10 +46,19 @@
             </div>
 
             <div id="signupForm" class="hidden">
-                <h2>Sign Up</h2>
-                <input type="text" id="newNameInput" placeholder="Your Name">
-                <input type="email" id="newEmailInput" placeholder="Email Address">
-                <input type="password" id="newPassInput" placeholder="Password">
+                <h2>Initialize Account</h2>
+                <div class="setting-item">
+                    <label for="newNameInput">Full Name</label>
+                    <input type="text" id="newNameInput" placeholder="Your Name">
+                </div>
+                <div class="setting-item">
+                    <label for="newEmailInput">Email Address</label>
+                    <input type="email" id="newEmailInput" placeholder="Email Address">
+                </div>
+                <div class="setting-item">
+                    <label for="newPassInput">Password</label>
+                    <input type="password" id="newPassInput" placeholder="Password">
+                </div>
                 <div class="flex-row">
                     <button class="btn-glow" onclick="handleAuth('signup')">Create Account</button>
                     <button class="btn-outline" onclick="toggleAuthMode()">Back to Login</button>
@@ -104,10 +119,16 @@
                     <div class="profile-area">
                         <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">U</div>
                         <div id="profileDropdown" class="dropdown-menu glass-card hidden">
-                            <div class="dropdown-item" onclick="switchPage('settings')"><i data-lucide="settings"></i> Settings</div>
-                            <div class="dropdown-item"><i data-lucide="book-open"></i> Guide</div>
+                            <div class="dropdown-item" onclick="switchPage('settings')">
+                                <i data-lucide="settings"></i> Settings
+                            </div>
+                            <div class="dropdown-item">
+                                <i data-lucide="book-open"></i> Guide
+                            </div>
                             <div class="divider"></div>
-                            <div class="dropdown-item logout" onclick="location.reload()"><i data-lucide="log-out"></i> Log Out</div>
+                            <div class="dropdown-item logout" onclick="location.reload()">
+                                <i data-lucide="log-out"></i> Log Out
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -192,7 +213,5 @@
         </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js"></script>
 </body>
 </html>
