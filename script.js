@@ -5,32 +5,50 @@ const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// 1. SYSTEM INITIALIZATION & STATE
 const OS_VERSION = "2.0.4";
 let currentUser = null;
 
-// Initialize Lucide Icons
+// =========================
+// 2. SYSTEM INITIALIZATION
+// =========================
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
     initThemeEngine();
     startTimeEngine();
     populateFontList();
+    initPersistenceEngine(); // New: Loads saved drafts
 });
 
-// 2. NAVIGATION & UI CONTROL
+// =========================
+// 3. NAVIGATION & UI CONTROL
+// =========================
+
+/**
+ * Enhanced Switch Page Function
+ * Handles visibility, sidebar states, and UI cleanup
+ */
 function switchPage(pageId) {
-    // Update View Sections
+    // Hide all sections
     document.querySelectorAll('.view-section').forEach(section => {
         section.classList.add('hidden');
     });
-    document.getElementById(pageId).classList.remove('hidden');
+    
+    // Show the target section
+    const target = document.getElementById(pageId);
+    if (target) {
+        target.classList.remove('hidden');
+    }
 
-    // Update Sidebar Active State
+    // Update Sidebar visual active state
     document.querySelectorAll('.nav-links li').forEach(li => {
         li.classList.remove('active');
     });
     const activeNav = document.getElementById(`nav-${pageId}`);
     if (activeNav) activeNav.classList.add('active');
+
+    // Auto-close profile dropdown when navigating
+    const profileDropdown = document.getElementById('profileDropdown');
+    if (profileDropdown) profileDropdown.classList.add('hidden');
 }
 
 function toggleAuthMode() {
@@ -42,7 +60,68 @@ function toggleProfileMenu() {
     document.getElementById('profileDropdown').classList.toggle('hidden');
 }
 
-// 3. THEME & FONT ENGINE (Zen Chic Updates)
+function handleAuth(mode) {
+    // Mock Auth logic to unlock the OS
+    currentUser = document.getElementById(mode === 'login' ? 'emailInput' : 'newEmailInput').value || "User";
+    document.getElementById('authPage').classList.add('hidden');
+    document.getElementById('appContainer').classList.remove('hidden');
+    lucide.createIcons();
+}
+
+// =========================
+// 4. PERSISTENCE ENGINE (Auto-Save)
+// =========================
+function initPersistenceEngine() {
+    const aiJotter = document.getElementById('aiJotter');
+    if (!aiJotter) return;
+
+    // Load unsaved text from a previous session
+    const draft = localStorage.getItem('jotter_draft');
+    if (draft) {
+        aiJotter.value = draft;
+    }
+
+    // Every time the user types, save progress instantly
+    aiJotter.addEventListener('input', () => {
+        localStorage.setItem('jotter_draft', aiJotter.value);
+    });
+}
+
+// =========================
+// 5. AI NEURAL PROCESSOR
+// =========================
+function runAIProcessor() {
+    const input = document.getElementById('aiJotter').value;
+    if (!input.trim()) return;
+
+    const panel = document.getElementById('aiReviewPanel');
+    const list = document.getElementById('distributionList');
+    
+    panel.classList.remove('hidden');
+    list.innerHTML = `<div class="loading-pulse">Analyzing Neural Input...</div>`;
+
+    setTimeout(() => {
+        list.innerHTML = `
+            <div class="ai-item"><strong>Task detected:</strong> "${input.substring(0, 30)}..." -> Moved to To-Do</div>
+            <div class="ai-item"><strong>Schedule:</strong> Extracted potential date/time context.</div>
+        `;
+    }, 1200);
+}
+
+/**
+ * Clear function - now wipes physical memory
+ */
+function clearJotter() {
+    if (confirm("Clear your workspace? This cannot be undone.")) {
+        document.getElementById('aiJotter').value = '';
+        localStorage.removeItem('jotter_draft'); // Wipe the auto-save backup
+        document.getElementById('aiReviewPanel').classList.add('hidden');
+    }
+}
+
+// =========================
+// 6. THEME & CUSTOMIZATION
+// =========================
 const fonts = [
     { name: 'Modern Sans', value: "'Inter', sans-serif" },
     { name: 'Futuristic', value: "'Orbitron', sans-serif" },
@@ -69,13 +148,11 @@ function updateTheme() {
     document.documentElement.style.setProperty('--accent-glow', color);
     document.body.style.setProperty('font-family', font);
     
-    // Save to LocalStorage for persistence
     localStorage.setItem('lifeOS_themeColor', color);
     localStorage.setItem('lifeOS_font', font);
 }
 
 function initThemeEngine() {
-    // Load saved settings
     const savedColor = localStorage.getItem('lifeOS_themeColor');
     const savedFont = localStorage.getItem('lifeOS_font');
     
@@ -84,11 +161,11 @@ function initThemeEngine() {
         document.documentElement.style.setProperty('--accent-glow', savedColor);
     }
     if (savedFont) {
-        document.getElementById('fontChoice').value = savedFont;
+        const fontSelector = document.getElementById('fontChoice');
+        if (fontSelector) fontSelector.value = savedFont;
         document.body.style.setProperty('font-family', savedFont);
     }
     
-    // Run Auto-Theme Check every minute
     setInterval(checkAutoTheme, 60000);
     checkAutoTheme();
 }
@@ -108,50 +185,21 @@ function checkAutoTheme() {
     }
 }
 
-// 4. AI NEURAL PROCESSOR (Mock Logic)
-function runAIProcessor() {
-    const input = document.getElementById('aiJotter').value;
-    if (!input.trim()) return;
-
-    const panel = document.getElementById('aiReviewPanel');
-    const list = document.getElementById('distributionList');
-    
-    panel.classList.remove('hidden');
-    list.innerHTML = `<div class="loading-pulse">Analyzing Neural Input...</div>`;
-
-    // Simulated AI Distribution Logic
-    setTimeout(() => {
-        list.innerHTML = `
-            <div class="ai-item"><strong>Task detected:</strong> "${input.substring(0, 30)}..." -> Moved to To-Do</div>
-            <div class="ai-item"><strong>Schedule:</strong> Extracted potential date/time context.</div>
-        `;
-    }, 1200);
-}
-
-function clearJotter() {
-    document.getElementById('aiJotter').value = '';
-    document.getElementById('aiReviewPanel').classList.add('hidden');
-}
-
-// 5. CLOCK & GREETING ENGINE
+// =========================
+// 7. UTILITIES: CLOCK & SEARCH
+// =========================
 function startTimeEngine() {
     setInterval(() => {
         const now = new Date();
-        const timeStr = now.toLocaleTimeString([], { hour12: false });
+        const timeStr = now.toLocaleTimeString([], { hour: 12, hour12: false });
         document.getElementById('clockDisplay').textContent = timeStr;
         
-        // Dynamic Greeting
         const hrs = now.getHours();
-        let greet = "Good night";
-        if (hrs < 12) greet = "Good morning";
-        else if (hrs < 17) greet = "Good afternoon";
-        else greet = "Good evening";
-        
+        let greet = (hrs < 12) ? "Good morning" : (hrs < 17) ? "Good afternoon" : "Good evening";
         document.getElementById('dynamicGreeting').textContent = `${greet}, ${currentUser || 'User'}`;
     }, 1000);
 }
 
-// 6. GLOBAL SEARCH LOGIC
 function handleSearch(e) {
     const query = e.target.value.toLowerCase();
     const dropdown = document.getElementById('searchDropdown');
