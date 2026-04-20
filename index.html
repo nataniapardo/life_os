@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | AI Productivity</title>
+    <title>Life OS | AI Productivity Command Center</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@300;500&family=Orbitron:wght@400;700&family=Playfair+Display&family=JetBrains+Mono&display=swap" rel="stylesheet">
     
@@ -84,16 +84,13 @@
                     <i data-lucide="zap"></i><span>Productivity</span>
                 </li>
                 <li id="nav-timers" onclick="switchPage('timers')">
-                    <i data-lucide="timer"></i><span>Timers</span>
+                    <i data-lucide="timer"></i><span>Timer</span>
                 </li>
                 <li id="nav-tools" onclick="switchPage('tools')">
                     <i data-lucide="globe"></i><span>World Tools</span>
                 </li>
                 <li id="nav-calendar" onclick="switchPage('calendar')">
                     <i data-lucide="calendar"></i><span>Calendar</span>
-                </li>
-                <li class="logout-item" onclick="location.reload()">
-                    <i data-lucide="log-out"></i><span>Log Out</span>
                 </li>
             </ul>
         </nav>
@@ -105,24 +102,16 @@
                     <h1 id="dynamicGreeting">Good morning, User</h1>
                 </div>
 
-                <div class="search-wrapper">
-                    <div class="search-input-container">
-                        <i data-lucide="search" class="search-icon-inner"></i>
-                        <input type="text" id="globalSearch" placeholder="Search Life OS..." onkeyup="handleSearch(event)">
-                        <div id="searchDropdown" class="search-results-dropdown hidden glass-card"></div>
-                    </div>
-                </div>
-
                 <div class="header-right">
-                    <div id="clockDisplay" class="time-text">00:00:00</div>
+                    <div class="time-container">
+                        <div id="dateDisplay" class="date-text">Monday, April 20, 2026</div>
+                        <div id="clockDisplay" class="time-text">00:00:00</div>
+                    </div>
                     <div class="profile-area">
                         <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">U</div>
                         <div id="profileDropdown" class="dropdown-menu glass-card hidden">
                             <div class="dropdown-item" onclick="switchPage('settings')">
                                 <i data-lucide="settings"></i> Settings
-                            </div>
-                            <div class="dropdown-item">
-                                <i data-lucide="book-open"></i> Guide
                             </div>
                             <div class="divider"></div>
                             <div class="dropdown-item logout" onclick="location.reload()">
@@ -149,7 +138,7 @@
                             <h2>AI Neural Processor</h2>
                             <div class="ai-badge">Persistence Active</div>
                         </div>
-                        <textarea id="aiJotter" placeholder="Type your thoughts here... Life OS will remember them even if you leave this page."></textarea>
+                        <textarea id="aiJotter" placeholder="Type your thoughts here... Life OS will remember them."></textarea>
                         <div class="button-group" style="margin-top: 15px; display: flex; gap: 10px;">
                             <button class="btn-glow" onclick="runAIProcessor()">Process & Distribute</button>
                             <button class="btn-outline" onclick="clearJotter()">Clear Space</button>
@@ -163,13 +152,26 @@
                 <section id="settings" class="view-section hidden">
                     <div class="glass-card">
                         <h2>System Customization</h2>
+                        
                         <div class="setting-item">
-                            <label for="settingsNameInput">Display Name</label>
+                            <h3>Appearance Mode</h3>
                             <div class="flex-row">
-                                <input type="text" id="settingsNameInput" placeholder="Enter your name...">
-                                <button class="btn-glow" onclick="personalizeAccount(document.getElementById('settingsNameInput').value)">Update</button>
+                                <button class="btn-outline" onclick="setManualTheme('light')">Light</button>
+                                <button class="btn-outline" onclick="setManualTheme('dark')">Dark</button>
+                            </div>
+                            <div class="schedule-inputs">
+                                <label>Light Mode Starts: <input type="time" id="lightTime" value="07:00"></label>
+                                <label>Dark Mode Starts: <input type="time" id="darkTime" value="19:00"></label>
+                                <button class="btn-glow" onclick="saveThemeSchedule()" style="margin-top:10px">Apply Schedule</button>
                             </div>
                         </div>
+
+                        <div class="setting-item">
+                            <h3>Environment Stimulations</h3>
+                            <div class="stim-grid" id="stimList">
+                                </div>
+                        </div>
+
                         <div class="setting-item">
                             <label for="themePicker">Accent Color & Font</label>
                             <div class="flex-row">
@@ -180,7 +182,7 @@
                     </div>
                 </section>
 
-                <section id="timers" class="view-section hidden"><div class="glass-card"><h1>Timers & Focus</h1></div></section>
+                <section id="timers" class="view-section hidden"><div class="glass-card"><h2>Timer</h2></div></section>
                 <section id="tools" class="view-section hidden"><div class="glass-card"><h1>World Tools</h1></div></section>
                 <section id="calendar" class="view-section hidden"><div class="glass-card"><h1>Calendar</h1></div></section>
             </div>
@@ -189,27 +191,15 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Load persistent Jotter data
             const jotter = document.getElementById('aiJotter');
-            
-            // Load existing data from memory
             const savedData = localStorage.getItem('lifeOS_jotter_draft');
             if (savedData) jotter.value = savedData;
 
-            // Auto-save on every keystroke
             jotter.addEventListener('input', () => {
                 localStorage.setItem('lifeOS_jotter_draft', jotter.value);
             });
         });
-
-        // Global Navigation Fix for Logo
-        function switchPage(pageId) {
-            document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(pageId).classList.remove('hidden');
-            
-            document.querySelectorAll('.nav-links li').forEach(l => l.classList.remove('active'));
-            const activeNav = document.getElementById(`nav-${pageId}`);
-            if (activeNav) activeNav.classList.add('active');
-        }
     </script>
 </body>
 </html>
