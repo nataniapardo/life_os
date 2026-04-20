@@ -60,7 +60,8 @@
                 <div class="search-wrapper">
                     <div class="search-input-container">
                         <i data-lucide="search" class="search-icon-inner"></i>
-                        <input type="text" placeholder="Search Life OS...">
+                        <input type="text" id="globalSearch" placeholder="Search pages or commands..." onkeyup="handleSearch(event)">
+                        <div id="searchDropdown" class="search-results-dropdown hidden glass-card"></div>
                     </div>
                 </div>
 
