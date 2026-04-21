@@ -92,6 +92,9 @@
                 <li id="nav-calendar" onclick="switchPage('calendar')">
                     <i data-lucide="calendar"></i><span>Calendar</span>
                 </li>
+                <li id="nav-guide" onclick="switchPage('guide')">
+                    <i data-lucide="book-open"></i><span>User Guide</span>
+                </li>
             </ul>
         </nav>
 
@@ -127,7 +130,7 @@
                     <div class="glass-card">
                         <h2>Home Dashboard</h2>
                         <div id="homeWidgets" class="widget-grid">
-                            <p>Welcome to your central command. Access your neural tools from the sidebar.</p>
+                            <p>Welcome to your central command. Access your neural tools from the sidebar or type a thought in Productivity to begin.</p>
                         </div>
                     </div>
                 </section>
@@ -136,9 +139,9 @@
                     <div class="glass-card">
                         <div class="card-header">
                             <h2>AI Neural Processor</h2>
-                            <div class="ai-badge">Persistence Active</div>
+                            <div class="ai-badge">Auto-Categorization Active</div>
                         </div>
-                        <textarea id="aiJotter" placeholder="Type your thoughts here... Life OS will remember them."></textarea>
+                        <textarea id="aiJotter" placeholder="Example: 'Meeting with Sam tomorrow' or 'Buy milk'"></textarea>
                         <div class="button-group" style="margin-top: 15px; display: flex; gap: 10px;">
                             <button class="btn-glow" onclick="runAIProcessor()">Process & Distribute</button>
                             <button class="btn-outline" onclick="clearJotter()">Clear Space</button>
@@ -149,27 +152,72 @@
                     </div>
                 </section>
 
+                <section id="timers" class="view-section hidden">
+                    <div class="glass-card">
+                        <h2 style="text-align: center; letter-spacing: 3px;">Neural Focus Timer</h2>
+                        
+                        <div class="timer-display-container" style="text-align: center; padding: 40px 0;">
+                            <div id="timerStatus" style="font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 10px;">READY</div>
+                            <div id="timerCountdown" style="font-size: 5rem; font-weight: bold; color: var(--accent-glow); text-shadow: 0 0 20px var(--accent-glow);">25:00</div>
+                        </div>
+
+                        <div class="timer-controls" style="display: flex; flex-direction: column; gap: 20px; align-items: center;">
+                            <div class="flex-row">
+                                <div class="input-group">
+                                    <label style="font-size: 0.7rem; display: block;">Work (min)</label>
+                                    <input type="number" id="workDuration" value="25" style="width: 80px; text-align: center;">
+                                </div>
+                                <div class="input-group">
+                                    <label style="font-size: 0.7rem; display: block;">Break (min)</label>
+                                    <input type="number" id="breakDuration" value="5" style="width: 80px; text-align: center;">
+                                </div>
+                                <button class="btn-outline" onclick="setupTimer()" style="margin-top: 18px;">Set</button>
+                            </div>
+
+                            <div class="flex-row">
+                                <button class="btn-glow" onclick="startPomodoro()">Start Session</button>
+                                <button class="btn-outline" onclick="resetTimer()">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="guide" class="view-section hidden">
+                    <div class="glass-card">
+                        <h2>Life OS: System Manual</h2>
+                        <div style="margin-top: 20px;">
+                            <h3>1. Neural Distribution</h3>
+                            <p>Type tasks in <strong>Productivity</strong>. Keywords trigger destinations:</p>
+                            <ul>
+                                <li>'Meeting' / 'Schedule' -> Calendar</li>
+                                <li>'Buy' / 'Grocery' -> Grocery List</li>
+                                <li>'Study' / 'Focus' -> Timers</li>
+                            </ul>
+                            <h3 style="margin-top: 15px;">2. Focus Engine</h3>
+                            <p>Use the <strong>Timer</strong> for Pomodoro sessions. It automatically cycles through work and break periods with audio alerts.</p>
+                        </div>
+                    </div>
+                </section>
+
                 <section id="settings" class="view-section hidden">
                     <div class="glass-card">
                         <h2>System Customization</h2>
                         
                         <div class="setting-item">
-                            <h3>Appearance Mode</h3>
+                            <h3>Time Format</h3>
                             <div class="flex-row">
-                                <button class="btn-outline" onclick="setManualTheme('light')">Light</button>
-                                <button class="btn-outline" onclick="setManualTheme('dark')">Dark</button>
-                            </div>
-                            <div class="schedule-inputs">
-                                <label>Light Mode Starts: <input type="time" id="lightTime" value="07:00"></label>
-                                <label>Dark Mode Starts: <input type="time" id="darkTime" value="19:00"></label>
-                                <button class="btn-glow" onclick="saveThemeSchedule()" style="margin-top:10px">Apply Schedule</button>
+                                <button class="btn-outline" onclick="setTimeFormat(false)">Standard (12h)</button>
+                                <button class="btn-outline" onclick="setTimeFormat(true)">Military (24h)</button>
                             </div>
                         </div>
 
                         <div class="setting-item">
-                            <h3>Environment Stimulations</h3>
-                            <div class="stim-grid" id="stimList">
-                                </div>
+                            <h3>Appearance Schedule</h3>
+                            <div class="schedule-inputs">
+                                <label>Light Mode: <input type="time" id="lightTime" value="07:00"></label>
+                                <label>Dark Mode: <input type="time" id="darkTime" value="19:00"></label>
+                                <button class="btn-glow" onclick="saveThemeSchedule()" style="margin-top:10px">Apply Schedule</button>
+                            </div>
                         </div>
 
                         <div class="setting-item">
@@ -182,23 +230,24 @@
                     </div>
                 </section>
 
-                <section id="timers" class="view-section hidden"><div class="glass-card"><h2>Timer</h2></div></section>
-                <section id="tools" class="view-section hidden"><div class="glass-card"><h1>World Tools</h1></div></section>
-                <section id="calendar" class="view-section hidden"><div class="glass-card"><h1>Calendar</h1></div></section>
+                <section id="tools" class="view-section hidden"><div class="glass-card"><h2>World Tools</h2></div></section>
+                <section id="calendar" class="view-section hidden"><div class="glass-card"><h2>Calendar & Grocery</h2></div></section>
             </div>
         </main>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Load persistent Jotter data
+            // Persistence for the Jotter
             const jotter = document.getElementById('aiJotter');
-            const savedData = localStorage.getItem('lifeOS_jotter_draft');
-            if (savedData) jotter.value = savedData;
+            if (jotter) {
+                const savedData = localStorage.getItem('lifeOS_jotter_draft');
+                if (savedData) jotter.value = savedData;
 
-            jotter.addEventListener('input', () => {
-                localStorage.setItem('lifeOS_jotter_draft', jotter.value);
-            });
+                jotter.addEventListener('input', () => {
+                    localStorage.setItem('lifeOS_jotter_draft', jotter.value);
+                });
+            }
         });
     </script>
 </body>
