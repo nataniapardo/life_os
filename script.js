@@ -3,7 +3,7 @@
 // ==========================================
 const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const db = (typeof supabase !== 'undefined') ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
 const OS_VERSION = "2.0.4";
 let currentUser = null;
@@ -18,30 +18,58 @@ const fonts = [
     { name: 'Futuristic', value: "'Orbitron', sans-serif" },
     { name: 'Elegant Serif', value: "'Playfair Display', serif" },
     { name: 'Coding Mono', value: "'JetBrains Mono', monospace" },
-    { name: 'Clean Montserrat', value: "'Montserrat', sans-serif" }
+    { name: 'Clean Montserrat', value: "'Montserrat', sans-serif" },
+    { name: 'Papyrus (Legacy)', value: "'Papyrus', fantasy" }
 ];
 
 // Timer State
-let timerInterval;
-let timeLeft;
+let timerInterval = null;
+let timeLeft = 0;
 let isBreak = false;
+let isMilitary = false;
 
 // ==========================================
 // 2. SYSTEM INITIALIZATION
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    lucide.createIcons();
+    // Initialize Lucide Icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+    
     initThemeEngine();
     startTimeEngine();
     populateFontList();
     populateStimulations();
     initPersistenceEngine();
-    setupTimer(); // Initialize Pomodoro display
+    setupTimer(); 
 });
 
 // ==========================================
-// 3. NAVIGATION & UI CONTROL
+// 3. AUTHENTICATION & UI CONTROL
 // ==========================================
+function handleAuth(mode) {
+    const emailInput = (mode === 'login') ? 
+        document.getElementById('emailInput') : 
+        document.getElementById('newEmailInput');
+    
+    currentUser = emailInput.value || "User";
+    
+    // UI Transition
+    document.getElementById('authPage').classList.add('hidden');
+    document.getElementById('appContainer').classList.remove('hidden');
+    
+    // Refresh icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+}
+
+function toggleAuthMode() {
+    document.getElementById('loginForm').classList.toggle('hidden');
+    document.getElementById('signupForm').classList.toggle('hidden');
+}
+
 function switchPage(pageId) {
     document.querySelectorAll('.view-section').forEach(section => {
         section.classList.add('hidden');
@@ -54,7 +82,7 @@ function switchPage(pageId) {
         li.classList.remove('active');
     });
     
-    const navId = pageId === 'timers' ? 'nav-timers' : `nav-${pageId}`;
+    const navId = (pageId === 'timers') ? 'nav-timers' : `nav-${pageId}`;
     const activeNav = document.getElementById(navId);
     if (activeNav) activeNav.classList.add('active');
 
@@ -62,11 +90,9 @@ function switchPage(pageId) {
     if (profileDropdown) profileDropdown.classList.add('hidden');
 }
 
-function handleAuth(mode) {
-    currentUser = document.getElementById(mode === 'login' ? 'emailInput' : 'newEmailInput').value || "User";
-    document.getElementById('authPage').classList.add('hidden');
-    document.getElementById('appContainer').classList.remove('hidden');
-    lucide.createIcons();
+function toggleProfileMenu() {
+    const menu = document.getElementById('profileDropdown');
+    if (menu) menu.classList.toggle('hidden');
 }
 
 // ==========================================
@@ -77,13 +103,11 @@ function initThemeEngine() {
     const savedFont = localStorage.getItem('lifeOS_font');
     
     if (savedColor) {
-        document.getElementById('themePicker').value = savedColor;
+        if (document.getElementById('themePicker')) document.getElementById('themePicker').value = savedColor;
         document.documentElement.style.setProperty('--accent-glow', savedColor);
     }
     if (savedFont) {
-        const fontSelector = document.getElementById('fontChoice');
-        if (fontSelector) fontSelector.value = savedFont;
-        document.body.style.setProperty('font-family', savedFont);
+        document.body.style.fontFamily = savedFont;
     }
     
     setInterval(checkAutoTheme, 30000);
@@ -110,6 +134,17 @@ function checkAutoTheme() {
     }
 }
 
+function updateTheme() {
+    const color = document.getElementById('themePicker').value;
+    const font = document.getElementById('fontChoice').value;
+    
+    document.documentElement.style.setProperty('--accent-glow', color);
+    document.body.style.fontFamily = font;
+    
+    localStorage.setItem('lifeOS_themeColor', color);
+    localStorage.setItem('lifeOS_font', font);
+}
+
 // ==========================================
 // 5. NEURAL DISTRIBUTION ENGINE
 // ==========================================
@@ -129,11 +164,124 @@ function runAIProcessor() {
 
         tasks.forEach(task => {
             const lowerTask = task.toLowerCase();
-            let destination = "";
-            let icon = "";
+            let dest = "General To-Do";
+            let icon = "check-square";
 
-            // Advanced Keyword Logic
             if (lowerTask.includes('meeting') || lowerTask.includes('appointment') || lowerTask.includes('schedule')) {
-                destination = "Calendar";
-                icon = "calendar";
-            } else if (lowerTask.includes('buy') || lowerTask.includes('groceries') || lowerTask.includes('
+                dest = "Calendar"; icon = "calendar";
+            } else if (lowerTask.includes('buy') || lowerTask.includes('groceries') || lowerTask.includes('shopping')) {
+                dest = "Grocery List"; icon = "shopping-cart";
+            } else if (lowerTask.includes('study') || lowerTask.includes('focus') || lowerTask.includes('work')) {
+                dest = "Timers"; icon = "timer";
+            }
+
+            resultsHTML += `
+                <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+                    <i data-lucide="${icon}" style="width:14px;"></i>
+                    <strong>${task}</strong> -> <em style="color:var(--accent-glow)">${dest}</em>
+                </div>`;
+        });
+
+        list.innerHTML = resultsHTML;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }, 800);
+}
+
+function clearJotter() {
+    document.getElementById('aiJotter').value = '';
+    document.getElementById('aiReviewPanel').classList.add('hidden');
+    localStorage.removeItem('jotter_draft');
+}
+
+// ==========================================
+// 6. POMODORO TIMER
+// ==========================================
+function setupTimer() {
+    const workMins = parseInt(document.getElementById('workDuration').value) || 25;
+    timeLeft = workMins * 60;
+    updateTimerDisplay();
+}
+
+function startPomodoro() {
+    if (timerInterval) return;
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            alert(isBreak ? "Break over!" : "Work session complete!");
+            isBreak = !isBreak;
+            
+            const nextDuration = isBreak ? 
+                (document.getElementById('breakDuration').value || 5) : 
+                (document.getElementById('workDuration').value || 25);
+            
+            timeLeft = nextDuration * 60;
+            updateTimerDisplay();
+        }
+    }, 1000);
+}
+
+function resetTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    isBreak = false;
+    setupTimer();
+}
+
+function updateTimerDisplay() {
+    const mins = Math.floor(timeLeft / 60);
+    const secs = timeLeft % 60;
+    const display = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    const timerEl = document.getElementById('timerCountdown');
+    const statusEl = document.getElementById('timerStatus');
+    
+    if (timerEl) timerEl.textContent = display;
+    if (statusEl) statusEl.textContent = isBreak ? "BREAK" : "FOCUSING";
+}
+
+// ==========================================
+// 7. ENGINES & HELPERS
+// ==========================================
+function startTimeEngine() {
+    setInterval(() => {
+        const now = new Date();
+        const clock = document.getElementById('clockDisplay');
+        if (clock) {
+            clock.textContent = now.toLocaleTimeString([], { hour12: !isMilitary });
+        }
+    }, 1000);
+}
+
+function populateFontList() {
+    const selector = document.getElementById('fontChoice');
+    if (!selector) return;
+    selector.innerHTML = '';
+    fonts.forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f.value;
+        opt.textContent = f.name;
+        selector.appendChild(opt);
+    });
+}
+
+function populateStimulations() {
+    const container = document.getElementById('homeWidgets');
+    if (!container) return;
+    // You can add logic here to display the stimulation categories
+}
+
+function initPersistenceEngine() {
+    const jotter = document.getElementById('aiJotter');
+    if (jotter) {
+        jotter.value = localStorage.getItem('jotter_draft') || "";
+        jotter.addEventListener('input', () => {
+            localStorage.setItem('jotter_draft', jotter.value);
+        });
+    }
+}
+
+function setTimeFormat(military) {
+    isMilitary = military;
+}
