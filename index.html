@@ -11,6 +11,7 @@
     
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script src="script.js" defer></script>
 </head>
 <body class="theme-futuristic">
@@ -194,7 +195,7 @@
                                 <li>'Study' / 'Focus' -> Timers</li>
                             </ul>
                             <h3 style="margin-top: 15px;">2. Focus Engine</h3>
-                            <p>Use the <strong>Timer</strong> for Pomodoro sessions. It automatically cycles through work and break periods with audio alerts.</p>
+                            <p>Use the <strong>Timer</strong> for Pomodoro sessions.</p>
                         </div>
                     </div>
                 </section>
@@ -202,7 +203,6 @@
                 <section id="settings" class="view-section hidden">
                     <div class="glass-card">
                         <h2>System Customization</h2>
-                        
                         <div class="setting-item">
                             <h3>Time Format</h3>
                             <div class="flex-row">
@@ -210,16 +210,6 @@
                                 <button class="btn-outline" onclick="setTimeFormat(true)">Military (24h)</button>
                             </div>
                         </div>
-
-                        <div class="setting-item">
-                            <h3>Appearance Schedule</h3>
-                            <div class="schedule-inputs">
-                                <label>Light Mode: <input type="time" id="lightTime" value="07:00"></label>
-                                <label>Dark Mode: <input type="time" id="darkTime" value="19:00"></label>
-                                <button class="btn-glow" onclick="saveThemeSchedule()" style="margin-top:10px">Apply Schedule</button>
-                            </div>
-                        </div>
-
                         <div class="setting-item">
                             <label for="themePicker">Accent Color & Font</label>
                             <div class="flex-row">
@@ -235,20 +225,5 @@
             </div>
         </main>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Persistence for the Jotter
-            const jotter = document.getElementById('aiJotter');
-            if (jotter) {
-                const savedData = localStorage.getItem('lifeOS_jotter_draft');
-                if (savedData) jotter.value = savedData;
-
-                jotter.addEventListener('input', () => {
-                    localStorage.setItem('lifeOS_jotter_draft', jotter.value);
-                });
-            }
-        });
-    </script>
 </body>
 </html>
