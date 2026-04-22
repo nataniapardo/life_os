@@ -98,14 +98,25 @@
                 </div>
 
                 <div class="header-right">
+                    <div class="theme-switch-wrapper" onclick="toggleTheme()" style="cursor: pointer; margin-right: 20px;">
+                        <div id="theme-icon-container">
+                            <i data-lucide="moon" class="moon-icon"></i>
+                            <i data-lucide="sun" class="sun-icon"></i>
+                        </div>
+                    </div>
+
                     <div class="time-container">
                         <div id="dateDisplay" class="date-text"></div>
                         <div id="clockDisplay" class="time-text">00:00:00</div>
                     </div>
                     <div class="profile-area">
                         <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">US</div>
+                        
                         <div id="profileDropdown" class="dropdown-menu glass-card hidden">
-                            <div class="dropdown-item"><strong>Recently Deleted</strong></div>
+                            <div class="dropdown-header" style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px;">
+                                <strong>Recently Deleted</strong>
+                                <button class="btn-clear-small" onclick="clearRecentlyDeleted()" style="font-size: 10px; padding: 2px 5px; cursor: pointer;">Clear All</button>
+                            </div>
                             <div id="recentlyDeletedList" class="deleted-container" style="max-height:100px; overflow-y:auto; font-size:12px; color:gray;">
                                 No items deleted.
                             </div>
@@ -124,13 +135,35 @@
             </header>
 
             <div id="contentSections">
+                <section id="calendar" class="view-section hidden">
+                    <div class="glass-card">
+                        <div class="calendar-controls" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                            <select id="selectMonth"></select>
+                            <select id="selectYear"></select>
+                            <button class="btn-glow" onclick="jumpToDate()">Go</button>
+                        </div>
+                        <div class="calendar-container">
+                            <header>
+                                <h2 id="monthYearDisplay"></h2>
+                            </header>
+                            <div class="calendar-grid">
+                                <div class="day-label">Sun</div><div class="day-label">Mon</div>
+                                <div class="day-label">Tue</div><div class="day-label">Wed</div>
+                                <div class="day-label">Thu</div><div class="day-label">Fri</div>
+                                <div class="day-label">Sat</div>
+                            </div>
+                            <div id="calendarDays" class="days-container"></div>
+                        </div>
+                    </div>
+                </section>
+
                 <section id="settings" class="view-section hidden">
                     <div class="glass-card" style="margin-bottom: 20px;">
                         <h2>Theme Settings</h2>
                         
                         <div class="setting-item">
                             <label>Manual Mode</label>
-                            <button id="themeToggle" class="btn-outline">Switch Theme</button>
+                            <button id="themeToggle" class="btn-outline" onclick="toggleTheme()">Switch Theme</button>
                         </div>
 
                         <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
