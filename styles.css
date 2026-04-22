@@ -237,6 +237,54 @@ body {
 /* ==========================================
    7. UTILITIES & TASK INTERACTION
    ========================================== */
+.task-entry-grid {
+    display: grid;
+    grid-template-columns: 1fr 150px 150px;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.task-distribution-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.task-column h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.task-sublist {
+    list-style: none;
+    min-height: 100px;
+    padding: 0;
+}
+
+.task-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.3s ease;
+}
+
+.task-item:hover {
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(10px);
+}
+
 #taskList li:hover {
     transform: translateX(10px);
     transition: 0.3s ease;
