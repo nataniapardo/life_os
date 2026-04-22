@@ -124,94 +124,36 @@
             </header>
 
             <div id="contentSections">
-                <section id="home" class="view-section">
-                    <div class="glass-card">
-                        <h2>Home Dashboard</h2>
-                        <div id="homeWidgets" class="widget-grid">
-                            <p>Welcome to your central command. Your daily overview and neural status are active.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="professional" class="view-section hidden">
-                    <div class="glass-card">
-                        <h2>Professional Hub</h2>
-                        <p>Workflows and professional tools consolidated here.</p>
-                    </div>
-                </section>
-
-                <section id="personal" class="view-section hidden">
-                    <div class="glass-card">
-                        <h2>Personal Space</h2>
-                        <p>Manage your habits, goals, and personal reflections.</p>
-                    </div>
-                </section>
-
-                <section id="calendar" class="view-section hidden">
-                    <div class="glass-card">
-                        <div class="calendar-container">
-                            <header class="calendar-header" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                                <h2 id="monthYear"></h2>
-                                <div class="nav">
-                                    <button id="prevMonth" class="btn-outline">&lt;</button>
-                                    <button id="nextMonth" class="btn-outline">&gt;</button>
-                                </div>
-                            </header>
-                            <div class="calendar-grid">
-                                <div class="day-label">Sun</div>
-                                <div class="day-label">Mon</div>
-                                <div class="day-label">Tue</div>
-                                <div class="day-label">Wed</div>
-                                <div class="day-label">Thu</div>
-                                <div class="day-label">Fri</div>
-                                <div class="day-label">Sat</div>
-                            </div>
-                            <div id="calendarDays" class="days-container"></div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="timers" class="view-section hidden">
-                    <div class="glass-card" style="margin-bottom: 20px;">
-                        <h3>Basic Countdown</h3>
-                        <div class="flex-row">
-                            <input type="number" id="basicTimerInput" placeholder="Seconds">
-                            <button class="btn-glow" onclick="startBasicTimer()">Start</button>
-                        </div>
-                        <div id="basicDisplay" class="timer-text" style="text-align: center; font-size: 3rem; margin-top: 10px;">00:00</div>
-                    </div>
-
-                    <div class="glass-card" style="margin-bottom: 20px;">
-                        <h3>Custom 24-Hour Timer</h3>
-                        <div class="flex-row">
-                            <input type="number" id="custHH" placeholder="HH" max="24" min="0" style="width:60px;">
-                            <input type="number" id="custMM" placeholder="MM" max="59" min="0" style="width:60px;">
-                            <button class="btn-glow" onclick="startCustomTimer()">Set Timer</button>
-                        </div>
-                        <div id="customDisplay" class="timer-text" style="text-align: center; font-size: 3rem; margin-top: 10px;">00:00:00</div>
-                    </div>
-
-                    <div class="glass-card">
-                        <h3>Pomodoro Timer</h3>
-                        <div id="timerCountdown" class="timer-text" style="font-size: 5rem; text-align: center; color: var(--accent-glow);">25:00</div>
-                        <div class="flex-row" style="margin-top: 20px;">
-                            <div class="input-group">
-                                <label>Work (min)</label>
-                                <input type="number" id="workDuration" value="25">
-                            </div>
-                            <div class="input-group">
-                                <label>Break (min)</label>
-                                <input type="number" id="breakDuration" value="5">
-                            </div>
-                        </div>
-                        <div class="timer-controls" style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
-                            <button class="btn-glow" onclick="startPomodoro()">Start Session</button>
-                            <button class="btn-outline" onclick="resetTimer()">Reset</button>
-                        </div>
-                    </div>
-                </section>
-
                 <section id="settings" class="view-section hidden">
+                    <div class="glass-card" style="margin-bottom: 20px;">
+                        <h2>Theme Settings</h2>
+                        
+                        <div class="setting-item">
+                            <label>Manual Mode</label>
+                            <button id="themeToggle" class="btn-outline">Switch Theme</button>
+                        </div>
+
+                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+
+                        <div class="setting-item">
+                            <h3>Auto-Schedule</h3>
+                            <div class="flex-row">
+                                <div>
+                                    <label>Light Mode Starts</label>
+                                    <input type="time" id="lightStartTime" value="07:00">
+                                </div>
+                                <div>
+                                    <label>Dark Mode Starts</label>
+                                    <input type="time" id="darkStartTime" value="19:00">
+                                </div>
+                            </div>
+                            <div style="margin-top: 10px;">
+                                <input type="checkbox" id="enableSchedule"> 
+                                <label for="enableSchedule">Enable Auto-Schedule</label>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="glass-card">
                         <h2>System Customization</h2>
                         
