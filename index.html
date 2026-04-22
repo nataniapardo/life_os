@@ -18,28 +18,29 @@
 
     <audio id="timerAlert" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
 
-    <section id="authPage" class="full-screen-center">
-        <div class="logo-area-branding massive-logo" onclick="location.reload()">
-            <span class="brand-text">Life</span>
-            <div class="globe-wrap-small">
-                <div class="earth-sphere"></div>
-                <div class="orbit"></div>
+    <section id="authPage" class="auth-container">
+        <div class="glass-card auth-card">
+            <div class="logo-area-branding" style="justify-content: center; margin-bottom: 30px;">
+                <span class="brand-text">Life</span>
+                <div class="globe-container">
+                    <div class="globe">
+                        <div class="axis"></div>
+                    </div>
+                </div>
+                <span class="brand-text">OS</span>
             </div>
-            <span class="brand-text">OS</span>
-        </div>
 
-        <div class="auth-container glass-card">
             <div id="loginForm">
                 <h2>Welcome Back</h2>
-                <div class="setting-item">
+                <div class="input-group">
                     <label for="emailInput">Email Address</label>
                     <input type="email" id="emailInput" placeholder="Email Address">
                 </div>
-                <div class="setting-item">
+                <div class="input-group">
                     <label for="passInput">Password</label>
                     <input type="password" id="passInput" placeholder="Password">
                 </div>
-                <div class="flex-row">
+                <div class="auth-buttons">
                     <button class="btn-glow" onclick="handleAuth('login')">Log In</button>
                     <button class="btn-outline" onclick="toggleAuthMode()">Sign Up</button>
                 </div>
@@ -47,19 +48,19 @@
 
             <div id="signupForm" class="hidden">
                 <h2>Sign Up</h2> 
-                <div class="setting-item">
+                <div class="input-group">
                     <label for="newNameInput">Full Name</label>
                     <input type="text" id="newNameInput" placeholder="Enter your name">
                 </div>
-                <div class="setting-item">
+                <div class="input-group">
                     <label for="newEmailInput">Email Address</label>
                     <input type="email" id="newEmailInput" placeholder="Email Address">
                 </div>
-                <div class="setting-item">
+                <div class="input-group">
                     <label for="newPassInput">Password</label>
                     <input type="password" id="newPassInput" placeholder="Password">
                 </div>
-                <div class="flex-row">
+                <div class="auth-buttons">
                     <button class="btn-glow" onclick="handleAuth('signup')">Sign Up</button>
                     <button class="btn-outline" onclick="toggleAuthMode()">Back to Login</button>
                 </div>
@@ -72,7 +73,9 @@
         <nav class="sidebar">
             <div class="logo-area-branding" onclick="switchPage('home')">
                 <span class="brand-text">Life</span>
-                <div class="globe-wrap-small"><div class="earth-sphere"></div></div>
+                <div class="globe-container">
+                    <div class="globe"><div class="axis"></div></div>
+                </div>
                 <span class="brand-text">OS</span>
             </div>
             
@@ -94,36 +97,33 @@
         <main class="main-layout">
             <header class="top-bar">
                 <div class="header-left">
-                    <h1 id="dynamicGreeting">Good morning, User</h1>
+                    <div class="logo-area-branding">
+                        <span class="brand-text">Life</span>
+                        <div class="globe-container">
+                            <div class="globe"><div class="axis"></div></div>
+                        </div>
+                        <span class="brand-text">OS</span>
+                    </div>
                 </div>
 
                 <div class="header-right">
-                    <div class="theme-switch-wrapper" onclick="toggleTheme()" style="cursor: pointer; margin-right: 20px;">
-                        <div id="theme-icon-container">
-                            <i data-lucide="moon" class="moon-icon"></i>
-                            <i data-lucide="sun" class="sun-icon"></i>
-                        </div>
-                    </div>
-
-                    <div class="time-container">
+                    <div class="time-container" style="margin-right: 20px;">
                         <div id="dateDisplay" class="date-text"></div>
                         <div id="clockDisplay" class="time-text">00:00:00</div>
                     </div>
+
                     <div class="profile-area">
                         <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">US</div>
                         
                         <div id="profileDropdown" class="dropdown-menu glass-card hidden">
-                            <div class="dropdown-header" style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px;">
+                            <div class="dropdown-header">
                                 <strong>Recently Deleted</strong>
-                                <button class="btn-clear-small" onclick="clearRecentlyDeleted()" style="font-size: 10px; padding: 2px 5px; cursor: pointer;">Clear All</button>
+                                <button class="btn-clear-small" onclick="clearRecentlyDeleted()">Clear All</button>
                             </div>
-                            <div id="recentlyDeletedList" class="deleted-container" style="max-height:100px; overflow-y:auto; font-size:12px; color:gray;">
+                            <div id="recentlyDeletedList" class="deleted-container">
                                 No items deleted.
                             </div>
                             <div class="divider"></div>
-                            <div class="dropdown-item" onclick="alert('User Guide:\n1. Use Professional for work.\n2. Customize colors in Settings.\n3. Add dynamic sections with the + button.')">
-                                <i data-lucide="help-circle"></i> User Guide
-                            </div>
                             <div class="dropdown-item" onclick="switchPage('settings')"><i data-lucide="settings"></i> Settings</div>
                             <div class="divider"></div>
                             <div class="dropdown-item logout" onclick="location.reload()" style="color: #ff4d4d;">
@@ -135,17 +135,20 @@
             </header>
 
             <div id="contentSections">
+                <section id="home" class="view-section">
+                    <h1 id="dynamicGreeting">Good morning, User</h1>
+                    <p>Welcome to your command center.</p>
+                </section>
+
                 <section id="calendar" class="view-section hidden">
                     <div class="glass-card">
-                        <div class="calendar-controls" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <div class="calendar-controls">
                             <select id="selectMonth"></select>
                             <select id="selectYear"></select>
                             <button class="btn-glow" onclick="jumpToDate()">Go</button>
                         </div>
                         <div class="calendar-container">
-                            <header>
-                                <h2 id="monthYearDisplay"></h2>
-                            </header>
+                            <header><h2 id="monthYearDisplay"></h2></header>
                             <div class="calendar-grid">
                                 <div class="day-label">Sun</div><div class="day-label">Mon</div>
                                 <div class="day-label">Tue</div><div class="day-label">Wed</div>
@@ -158,50 +161,17 @@
                 </section>
 
                 <section id="settings" class="view-section hidden">
-                    <div class="glass-card" style="margin-bottom: 20px;">
-                        <h2>Theme Settings</h2>
-                        
-                        <div class="setting-item">
-                            <label>Manual Mode</label>
-                            <button id="themeToggle" class="btn-outline" onclick="toggleTheme()">Switch Theme</button>
-                        </div>
-
-                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
-
-                        <div class="setting-item">
-                            <h3>Auto-Schedule</h3>
-                            <div class="flex-row">
-                                <div>
-                                    <label>Light Mode Starts</label>
-                                    <input type="time" id="lightStartTime" value="07:00">
-                                </div>
-                                <div>
-                                    <label>Dark Mode Starts</label>
-                                    <input type="time" id="darkStartTime" value="19:00">
-                                </div>
-                            </div>
-                            <div style="margin-top: 10px;">
-                                <input type="checkbox" id="enableSchedule"> 
-                                <label for="enableSchedule">Enable Auto-Schedule</label>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="glass-card">
-                        <h2>System Customization</h2>
+                        <h3>Appearance</h3>
                         
                         <div class="setting-item">
-                            <h3>Identity Profile</h3>
-                            <div class="flex-row">
-                                <div style="flex: 2;">
-                                    <label>Display Name</label>
-                                    <input type="text" id="prefNameInput" placeholder="Update your name">
-                                </div>
-                                <div style="flex: 1;">
-                                    <label>Initials</label>
-                                    <input type="text" id="prefInitialsInput" maxlength="2" placeholder="US">
-                                </div>
-                            </div>
+                            <label for="themePicker">Accent Color</label>
+                            <input type="color" id="themePicker">
+                        </div>
+
+                        <div class="setting-item">
+                            <label for="fontChoice">System Font</label>
+                            <select id="fontChoice"></select>
                         </div>
 
                         <div class="setting-item">
@@ -209,26 +179,18 @@
                             <div id="stimContainer"></div>
                         </div>
 
-                        <div class="setting-item">
-                            <h3>Time Format</h3>
-                            <div class="flex-row">
-                                <button class="btn-outline" onclick="setTimeFormat(false)">Standard (12h)</button>
-                                <button class="btn-outline" onclick="setTimeFormat(true)">Military (24h)</button>
-                            </div>
-                        </div>
-
-                        <div class="setting-item">
-                            <label for="themePicker">Accent Color & Font</label>
-                            <div class="flex-row">
-                                <input type="color" id="themePicker">
-                                <select id="fontChoice"></select>
-                            </div>
-                        </div>
-
                         <div style="margin-top: 30px;">
-                            <button class="btn-glow" style="width: 100%;" onclick="saveAppearanceSettings()">Apply and Save Changes</button>
+                            <button class="btn-glow" id="saveSettingsBtn" style="width: 100%;">Apply and Save Changes</button>
                         </div>
                     </div>
+
+                    <div class="glass-card" style="margin-top: 20px;">
+                        <h2>Theme Auto-Schedule</h2>
+                        <div class="flex-row">
+                            <input type="checkbox" id="enableSchedule"> 
+                            <label for="enableSchedule">Enable Auto-Schedule</label>
+                        </div>
+                    </section>
                 </section>
             </div>
         </main>
