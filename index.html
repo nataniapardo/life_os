@@ -149,14 +149,25 @@
 
                 <section id="calendar" class="view-section hidden">
                     <div class="glass-card">
-                        <div class="calendar-header" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                            <h2 id="monthDisplay">Month Year</h2>
-                            <div class="btn-group">
-                                <button class="btn-outline" onclick="changeMonth(-1)">Prev</button>
-                                <button class="btn-outline" onclick="changeMonth(1)">Next</button>
+                        <div class="calendar-container">
+                            <header class="calendar-header" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <h2 id="monthYear"></h2>
+                                <div class="nav">
+                                    <button id="prevMonth" class="btn-outline">&lt;</button>
+                                    <button id="nextMonth" class="btn-outline">&gt;</button>
+                                </div>
+                            </header>
+                            <div class="calendar-grid">
+                                <div class="day-label">Sun</div>
+                                <div class="day-label">Mon</div>
+                                <div class="day-label">Tue</div>
+                                <div class="day-label">Wed</div>
+                                <div class="day-label">Thu</div>
+                                <div class="day-label">Fri</div>
+                                <div class="day-label">Sat</div>
                             </div>
+                            <div id="calendarDays" class="days-container"></div>
                         </div>
-                        <div id="calendarGrid" class="calendar-grid"></div>
                     </div>
                 </section>
 
