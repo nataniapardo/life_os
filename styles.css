@@ -2,7 +2,6 @@
    1. VARIABLE SYSTEM & THEME DEFAULTS
    ========================================== */
 :root {
-    /* Default Dark Mode Constants */
     --accent-glow: #00f2ff;
     --bg-main: #0a0a0c;
     --card-bg: rgba(20, 20, 25, 0.85);
@@ -127,18 +126,6 @@ body {
     gap: 10px;
 }
 
-.schedule-inputs label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9rem;
-}
-
-.schedule-inputs input[type="time"] {
-    width: auto;
-    padding: 5px;
-}
-
 /* ==========================================
    5. COMPONENTS (GLASS CARDS, BTNS, LOGO)
    ========================================== */
@@ -201,11 +188,6 @@ body {
     transition: var(--transition);
 }
 
-.btn-glow:hover {
-    filter: brightness(1.1);
-    box-shadow: 0 0 20px var(--accent-glow);
-}
-
 .btn-outline {
     background: transparent;
     border: 1px solid var(--accent-glow);
@@ -216,12 +198,8 @@ body {
     transition: var(--transition);
 }
 
-.btn-outline:hover {
-    background: rgba(0, 242, 255, 0.05);
-}
-
 /* ==========================================
-   6. UI UTILITIES
+   6. UI UTILITIES & NAVIGATION
    ========================================== */
 .view-section {
     padding: 2rem;
@@ -246,8 +224,15 @@ body {
     transition: var(--transition);
 }
 
-.nav-links li:hover, .nav-links li.active {
-    background: rgba(255, 255, 255, 0.05);
+/* BRIGHTENED NAVIGATION */
+.nav-links li:hover {
+    background: rgba(255, 255, 255, 0.2); /* Brighter hover */
+    color: var(--accent-glow);
+}
+
+.nav-links li.active {
+    background: rgba(255, 255, 255, 0.25);
+    border-left: 4px solid var(--accent-glow);
     color: var(--accent-glow);
 }
 
@@ -267,3 +252,42 @@ input, textarea, select {
 }
 
 .hidden { display: none !important; }
+
+/* ==========================================
+   7. CALENDAR GRID SYSTEM
+   ========================================== */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+}
+
+.calendar-day-header {
+    font-weight: bold;
+    padding: 10px;
+    font-size: 0.8rem;
+    color: var(--accent-glow);
+}
+
+.calendar-cell {
+    min-height: 80px;
+    padding: 5px;
+    font-size: 0.7rem;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.event-tag {
+    background: var(--accent-glow);
+    color: black;
+    border-radius: 3px;
+    padding: 2px 4px;
+    margin-top: 5px;
+    font-size: 0.6rem;
+}
+
+.day-number {
+    font-weight: bold;
+    opacity: 0.6;
+}
