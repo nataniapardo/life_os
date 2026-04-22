@@ -81,6 +81,7 @@
             
             <ul class="nav-links" id="mainNav">
                 <li class="active" id="nav-home" onclick="switchPage('home')"><i data-lucide="home"></i><span>Home</span></li>
+                <li id="nav-tasks" onclick="switchPage('tasks')"><i data-lucide="check-square"></i><span>Tasks</span></li>
                 <li id="nav-professional" onclick="switchPage('professional')"><i data-lucide="briefcase"></i><span>Professional</span></li>
                 <li id="nav-personal" onclick="switchPage('personal')"><i data-lucide="user"></i><span>Personal</span></li>
                 <li id="nav-timers" onclick="switchPage('timers')"><i data-lucide="timer"></i><span>Timer</span></li>
@@ -140,6 +141,18 @@
                     <p>Welcome to your command center.</p>
                 </section>
 
+                <section id="tasks" class="view-section hidden">
+                    <div class="glass-card">
+                        <h2>Daily Mission Control</h2>
+                        <div class="flex-row" style="margin-bottom: 20px; display: flex; gap: 10px;">
+                            <input type="text" id="taskInput" placeholder="Add a new objective..." style="flex: 1;">
+                            <button class="btn-glow" onclick="addTask()">Add Task</button>
+                        </div>
+                        <ul id="taskList" style="list-style: none; padding: 0;">
+                            </ul>
+                    </div>
+                </section>
+
                 <section id="calendar" class="view-section hidden">
                     <div class="glass-card">
                         <div class="calendar-controls">
@@ -190,7 +203,7 @@
                             <input type="checkbox" id="enableSchedule"> 
                             <label for="enableSchedule">Enable Auto-Schedule</label>
                         </div>
-                    </section>
+                    </div>
                 </section>
             </div>
         </main>
