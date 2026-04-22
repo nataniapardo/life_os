@@ -5,7 +5,7 @@ const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
 const db = (typeof supabase !== 'undefined') ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-const OS_VERSION = "2.0.4";
+const OS_VERSION = "2.0.5";
 let currentUser = null;
 
 const stimulations = ["Nature", "Food", "Space", "Shapes", "Flowers", "Futuristic", "Travel", "Location"];
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initThemeEngine();
     startTimeEngine();
     populateFontList();
-    populateStimulations();
+    populateStimulations(); // Now populates the settings container
     initPersistenceEngine();
     setupTimer(); 
     renderCalendar();
@@ -50,17 +50,22 @@ document.addEventListener('DOMContentLoaded', () => {
 // 3. AUTHENTICATION & UI CONTROL
 // ==========================================
 function handleAuth(mode) {
+    // Capture name if signing up, otherwise default to "User"
+    const nameInput = document.getElementById('newNameInput');
     const emailInput = (mode === 'login') ? 
         document.getElementById('emailInput') : 
         document.getElementById('newEmailInput');
     
-    currentUser = emailInput.value || "User";
+    currentUser = (mode === 'signup' && nameInput.value) ? nameInput.value : (emailInput.value || "User");
     
+    // Update Greeting
+    const greeting = document.getElementById('dynamicGreeting');
+    if (greeting) greeting.textContent = `Good morning, ${currentUser}`;
+
     // UI Transition
     document.getElementById('authPage').classList.add('hidden');
     document.getElementById('appContainer').classList.remove('hidden');
     
-    // Refresh icons
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
@@ -87,10 +92,6 @@ function switchPage(pageId) {
     const activeNav = document.getElementById(navId);
     if (activeNav) activeNav.classList.add('active');
 
-    const profileDropdown = document.getElementById('profileDropdown');
-    if (profileDropdown) profileDropdown.classList.add('hidden');
-
-    // Re-render calendar if moving to calendar page
     if(pageId === 'calendar') renderCalendar();
 }
 
@@ -112,6 +113,7 @@ function initThemeEngine() {
     }
     if (savedFont) {
         document.body.style.fontFamily = savedFont;
+        if (document.getElementById('fontChoice')) document.getElementById('fontChoice').value = savedFont;
     }
     
     setInterval(checkAutoTheme, 30000);
@@ -121,13 +123,11 @@ function initThemeEngine() {
 function checkAutoTheme() {
     const now = new Date();
     const currentTime = now.getHours() * 60 + now.getMinutes();
-    const lightTimeVal = document.getElementById('lightTime')?.value || localStorage.getItem('lightTime') || "07:00";
-    const darkTimeVal = document.getElementById('darkTime')?.value || localStorage.getItem('darkTime') || "19:00";
+    const lightTimeVal = localStorage.getItem('lightTime') || "07:00";
+    const darkTimeVal = localStorage.getItem('darkTime') || "19:00";
     
-    const lightParts = lightTimeVal.split(':');
-    const darkParts = darkTimeVal.split(':');
-    const lightMinutes = parseInt(lightParts[0]) * 60 + parseInt(lightParts[1]);
-    const darkMinutes = parseInt(darkParts[0]) * 60 + parseInt(darkParts[1]);
+    const lightMinutes = parseInt(lightTimeVal.split(':')[0]) * 60 + parseInt(lightTimeVal.split(':')[1]);
+    const darkMinutes = parseInt(darkTimeVal.split(':')[0]) * 60 + parseInt(darkTimeVal.split(':')[1]);
 
     if (currentTime >= lightMinutes && currentTime < darkMinutes) {
         document.body.classList.remove('dark-mode');
@@ -138,126 +138,44 @@ function checkAutoTheme() {
     }
 }
 
-function updateTheme() {
+/**
+ * Global Save function for Website Appearance
+ */
+function saveAppearanceSettings() {
     const color = document.getElementById('themePicker').value;
     const font = document.getElementById('fontChoice').value;
     
+    // Apply changes immediately
     document.documentElement.style.setProperty('--accent-glow', color);
     document.body.style.fontFamily = font;
     
+    // Persist to LocalStorage
     localStorage.setItem('lifeOS_themeColor', color);
     localStorage.setItem('lifeOS_font', font);
-}
-
-// ==========================================
-// 5. NEURAL DISTRIBUTION ENGINE
-// ==========================================
-function runAIProcessor() {
-    const input = document.getElementById('aiJotter').value;
-    if (!input.trim()) return;
-
-    const panel = document.getElementById('aiReviewPanel');
-    const list = document.getElementById('distributionList');
     
-    panel.classList.remove('hidden');
-    list.innerHTML = `<div class="loading-pulse">Analyzing Neural Input...</div>`;
-
+    // UI Feedback
+    const saveBtn = event.target;
+    const originalText = saveBtn.innerText;
+    saveBtn.innerText = "Settings Applied!";
+    saveBtn.classList.add('btn-success');
+    
     setTimeout(() => {
-        const tasks = input.split('\n').filter(line => line.trim() !== '');
-        let resultsHTML = '';
-
-        tasks.forEach(task => {
-            const lowerTask = task.toLowerCase();
-            let dest = "General To-Do";
-            let icon = "check-square";
-
-            if (lowerTask.includes('meeting') || lowerTask.includes('appointment') || lowerTask.includes('schedule')) {
-                dest = "Calendar"; icon = "calendar";
-            } else if (lowerTask.includes('buy') || lowerTask.includes('groceries') || lowerTask.includes('shopping')) {
-                dest = "Personal List"; icon = "user";
-            } else if (lowerTask.includes('study') || lowerTask.includes('focus') || lowerTask.includes('work')) {
-                dest = "Timers"; icon = "timer";
-            }
-
-            resultsHTML += `
-                <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
-                    <i data-lucide="${icon}" style="width:14px;"></i>
-                    <strong>${task}</strong> -> <em style="color:var(--accent-glow)">${dest}</em>
-                </div>`;
-        });
-
-        list.innerHTML = resultsHTML;
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-    }, 800);
-}
-
-function clearJotter() {
-    document.getElementById('aiJotter').value = '';
-    document.getElementById('aiReviewPanel').classList.add('hidden');
-    localStorage.removeItem('jotter_draft');
+        saveBtn.innerText = originalText;
+        saveBtn.classList.remove('btn-success');
+    }, 2000);
 }
 
 // ==========================================
-// 6. POMODORO TIMER
-// ==========================================
-function setupTimer() {
-    const workMins = parseInt(document.getElementById('workDuration').value) || 25;
-    timeLeft = workMins * 60;
-    updateTimerDisplay();
-}
-
-function startPomodoro() {
-    if (timerInterval) return;
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        updateTimerDisplay();
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            alert(isBreak ? "Break over!" : "Work session complete!");
-            isBreak = !isBreak;
-            
-            const nextDuration = isBreak ? 
-                (document.getElementById('breakDuration').value || 5) : 
-                (document.getElementById('workDuration').value || 25);
-            
-            timeLeft = nextDuration * 60;
-            updateTimerDisplay();
-        }
-    }, 1000);
-}
-
-function resetTimer() {
-    clearInterval(timerInterval);
-    timerInterval = null;
-    isBreak = false;
-    setupTimer();
-}
-
-function updateTimerDisplay() {
-    const mins = Math.floor(timeLeft / 60);
-    const secs = timeLeft % 60;
-    const display = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    const timerEl = document.getElementById('timerCountdown');
-    const statusEl = document.getElementById('timerStatus');
-    
-    if (timerEl) timerEl.textContent = display;
-    if (statusEl) statusEl.textContent = isBreak ? "BREAK" : "FOCUSING";
-}
-
-// ==========================================
-// 7. STIMULATION & BACKGROUND ENGINE
+// 5. STIMULATION ENGINE (RELOCATED)
 // ==========================================
 function populateStimulations() {
-    const container = document.getElementById('homeWidgets');
+    const container = document.getElementById('stimContainer'); 
     if (!container) return;
     
-    let html = `<h3>System Stimulation</h3><div class="stimulation-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap:10px; margin-top:15px;">`;
-    
+    let html = `<div class="stimulation-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap:10px; margin-top:10px;">`;
     stimulations.forEach(s => {
-        html += `<button class="btn-outline" onclick="setStimulation('${s}')" style="font-size:0.7rem;">${s}</button>`;
+        html += `<button class="btn-outline" onclick="setStimulation('${s}')" style="font-size:0.7rem; padding: 10px;">${s}</button>`;
     });
-    
     html += `</div>`;
     container.innerHTML = html;
 }
@@ -266,11 +184,10 @@ function setStimulation(type) {
     document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://source.unsplash.com/featured/?${type}')`;
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundAttachment = "fixed";
-    console.log(`Stimulation set to: ${type}`);
 }
 
 // ==========================================
-// 8. CALENDAR ENGINE
+// 6. HORIZONTAL CALENDAR ENGINE
 // ==========================================
 function renderCalendar() {
     const grid = document.getElementById('calendarGrid');
@@ -283,27 +200,25 @@ function renderCalendar() {
 
     monthYear.textContent = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(currentCalendarDate);
 
-    const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    days.forEach(d => {
-        const dayHeader = document.createElement('div');
-        dayHeader.className = 'calendar-day-header';
-        dayHeader.textContent = d;
-        grid.appendChild(dayHeader);
-    });
-
-    for (let i = 0; i < firstDay; i++) {
-        grid.appendChild(document.createElement('div'));
-    }
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     for (let day = 1; day <= daysInMonth; day++) {
+        const dateObj = new Date(year, month, day);
+        const dayName = dayNames[dateObj.getDay()];
+        
         const dayEl = document.createElement('div');
         dayEl.className = 'calendar-cell glass-card';
-        dayEl.innerHTML = `<span class="day-number">${day}</span>`;
+        dayEl.innerHTML = `
+            <span class="day-label">${dayName}</span>
+            <span class="day-number" style="font-size: 1.5rem;">${day}</span>
+            <div class="event-area" style="margin-top: 10px; width: 100%;"></div>
+        `;
         
-        if (day === 15) dayEl.innerHTML += `<div class="event-tag">Meeting</div>`;
+        // Logic for highlighting events
+        if (day === 15) {
+            dayEl.querySelector('.event-area').innerHTML += `<div class="event-tag">Neural Sync</div>`;
+        }
         
         grid.appendChild(dayEl);
     }
@@ -315,7 +230,7 @@ function changeMonth(offset) {
 }
 
 // ==========================================
-// 9. ENGINES & HELPERS
+// 7. TIME & UTILITY ENGINES
 // ==========================================
 function startTimeEngine() {
     setInterval(() => {
@@ -325,6 +240,20 @@ function startTimeEngine() {
             clock.textContent = now.toLocaleTimeString([], { hour12: !isMilitary });
         }
     }, 1000);
+}
+
+function setupTimer() {
+    const workMins = parseInt(document.getElementById('workDuration')?.value) || 25;
+    timeLeft = workMins * 60;
+    updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
+    const mins = Math.floor(timeLeft / 60);
+    const secs = timeLeft % 60;
+    const display = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    const timerEl = document.getElementById('timerCountdown');
+    if (timerEl) timerEl.textContent = display;
 }
 
 function populateFontList() {
@@ -347,6 +276,10 @@ function initPersistenceEngine() {
             localStorage.setItem('jotter_draft', jotter.value);
         });
     }
+}
+
+function setTimeFormat(military) {
+    isMilitary = military;
 }
 
 function setTimeFormat(military) {
