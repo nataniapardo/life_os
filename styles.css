@@ -254,28 +254,49 @@ input, textarea, select {
 .hidden { display: none !important; }
 
 /* ==========================================
-   7. CALENDAR GRID SYSTEM
+   7. CALENDAR SYSTEM (HORIZONTAL)
    ========================================== */
 .calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-    text-align: center;
-}
-
-.calendar-day-header {
-    font-weight: bold;
-    padding: 10px;
-    font-size: 0.8rem;
-    color: var(--accent-glow);
+    display: flex; /* Changed from Grid to Flex for horizontal scroll */
+    overflow-x: auto;
+    gap: 15px;
+    padding: 20px 5px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-glow) transparent;
 }
 
 .calendar-cell {
-    min-height: 80px;
-    padding: 5px;
-    font-size: 0.7rem;
+    min-width: 140px; /* Wider cells for horizontal view */
+    height: 180px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 15px;
     position: relative;
     border: 1px solid rgba(255,255,255,0.1);
+    background: var(--card-bg);
+    border-radius: var(--radius);
+}
+
+.calendar-day-header {
+    display: none; /* Removed day headers as cells now contain day names */
+}
+
+.day-label {
+    font-size: 0.8rem;
+    color: var(--accent-glow);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.day-number {
+    font-weight: bold;
+    opacity: 0.6;
+    font-size: 1.2rem;
 }
 
 .event-tag {
@@ -285,9 +306,4 @@ input, textarea, select {
     padding: 2px 4px;
     margin-top: 5px;
     font-size: 0.6rem;
-}
-
-.day-number {
-    font-weight: bold;
-    opacity: 0.6;
 }
