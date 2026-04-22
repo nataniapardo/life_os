@@ -16,6 +16,7 @@
 </head>
 <body class="theme-futuristic">
 
+    <!-- Authentication Section -->
     <section id="authPage" class="full-screen-center">
         <div class="logo-area-branding massive-logo" onclick="location.reload()">
             <span class="brand-text">Life</span>
@@ -66,6 +67,7 @@
         </div>
     </section>
 
+    <!-- Main Application Container -->
     <div id="appContainer" class="app-container hidden">
         <nav class="sidebar">
             <div class="logo-area-branding" onclick="switchPage('home')">
@@ -77,6 +79,7 @@
                 <span class="brand-text">OS</span>
             </div>
             
+            <!-- Updated Navigation Section -->
             <ul class="nav-links">
                 <li class="active" id="nav-home" onclick="switchPage('home')">
                     <i data-lucide="home"></i><span>Home</span>
@@ -87,14 +90,19 @@
                 <li id="nav-timers" onclick="switchPage('timers')">
                     <i data-lucide="timer"></i><span>Timer</span>
                 </li>
-                <li id="nav-tools" onclick="switchPage('tools')">
-                    <i data-lucide="globe"></i><span>World Tools</span>
+                <li id="nav-personal" onclick="switchPage('personal')">
+                    <i data-lucide="user"></i><span>Personal</span>
                 </li>
                 <li id="nav-calendar" onclick="switchPage('calendar')">
                     <i data-lucide="calendar"></i><span>Calendar</span>
                 </li>
-                <li id="nav-guide" onclick="switchPage('guide')">
-                    <i data-lucide="book-open"></i><span>User Guide</span>
+                <li id="nav-tools" onclick="switchPage('tools')">
+                    <i data-lucide="globe"></i><span>World Tools</span>
+                </li>
+                <!-- Highlighted Log Out -->
+                <li class="logout-item" onclick="location.reload()" style="margin-top: auto;">
+                    <i data-lucide="log-out" style="color: #ff4d4d;"></i>
+                    <span style="color: #ff4d4d; font-weight: bold;">Log Out</span>
                 </li>
             </ul>
         </nav>
@@ -118,7 +126,7 @@
                                 <i data-lucide="settings"></i> Settings
                             </div>
                             <div class="divider"></div>
-                            <div class="dropdown-item logout" onclick="location.reload()">
+                            <div class="dropdown-item logout" onclick="location.reload()" style="color: #ff4d4d;">
                                 <i data-lucide="log-out"></i> Log Out
                             </div>
                         </div>
@@ -131,7 +139,34 @@
                     <div class="glass-card">
                         <h2>Home Dashboard</h2>
                         <div id="homeWidgets" class="widget-grid">
-                            <p>Welcome to your central command. Access your neural tools from the sidebar or type a thought in Productivity to begin.</p>
+                            <!-- Background Stimulations List will be populated here -->
+                            <p>Welcome to your central command.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Personal Section (Formerly Grocery) -->
+                <section id="personal" class="view-section hidden">
+                    <div class="glass-card">
+                        <h2>Personal Management</h2>
+                        <div id="personalList">
+                            <!-- Personal items and trackers -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Dedicated Calendar Section -->
+                <section id="calendar" class="view-section hidden">
+                    <div class="glass-card">
+                        <div class="calendar-header" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h2 id="monthDisplay">Month Year</h2>
+                            <div class="btn-group">
+                                <button class="btn-outline" onclick="changeMonth(-1)">Prev</button>
+                                <button class="btn-outline" onclick="changeMonth(1)">Next</button>
+                            </div>
+                        </div>
+                        <div id="calendarGrid" class="calendar-grid">
+                            <!-- Functional Grid Rendered by JS -->
                         </div>
                     </div>
                 </section>
@@ -156,12 +191,10 @@
                 <section id="timers" class="view-section hidden">
                     <div class="glass-card">
                         <h2 style="text-align: center; letter-spacing: 3px;">Neural Focus Timer</h2>
-                        
                         <div class="timer-display-container" style="text-align: center; padding: 40px 0;">
                             <div id="timerStatus" style="font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 10px;">READY</div>
                             <div id="timerCountdown" style="font-size: 5rem; font-weight: bold; color: var(--accent-glow); text-shadow: 0 0 20px var(--accent-glow);">25:00</div>
                         </div>
-
                         <div class="timer-controls" style="display: flex; flex-direction: column; gap: 20px; align-items: center;">
                             <div class="flex-row">
                                 <div class="input-group">
@@ -174,28 +207,10 @@
                                 </div>
                                 <button class="btn-outline" onclick="setupTimer()" style="margin-top: 18px;">Set</button>
                             </div>
-
                             <div class="flex-row">
                                 <button class="btn-glow" onclick="startPomodoro()">Start Session</button>
                                 <button class="btn-outline" onclick="resetTimer()">Reset</button>
                             </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="guide" class="view-section hidden">
-                    <div class="glass-card">
-                        <h2>Life OS: System Manual</h2>
-                        <div style="margin-top: 20px;">
-                            <h3>1. Neural Distribution</h3>
-                            <p>Type tasks in <strong>Productivity</strong>. Keywords trigger destinations:</p>
-                            <ul>
-                                <li>'Meeting' / 'Schedule' -> Calendar</li>
-                                <li>'Buy' / 'Grocery' -> Grocery List</li>
-                                <li>'Study' / 'Focus' -> Timers</li>
-                            </ul>
-                            <h3 style="margin-top: 15px;">2. Focus Engine</h3>
-                            <p>Use the <strong>Timer</strong> for Pomodoro sessions.</p>
                         </div>
                     </div>
                 </section>
@@ -221,7 +236,6 @@
                 </section>
 
                 <section id="tools" class="view-section hidden"><div class="glass-card"><h2>World Tools</h2></div></section>
-                <section id="calendar" class="view-section hidden"><div class="glass-card"><h2>Calendar & Grocery</h2></div></section>
             </div>
         </main>
     </div>
