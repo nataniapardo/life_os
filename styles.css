@@ -2,8 +2,8 @@
    1. VARIABLE SYSTEM & THEME DEFAULTS
    ========================================== */
 :root {
-    /* Font System */
-    --main-font: 'Inter', sans-serif;
+    /* Font System - Forced to Papyrus */
+    --main-font: 'Papyrus', 'Fantasy', 'Copperplate', sans-serif;
 
     /* Default: Dark Mode Variables */
     --bg-main: #0a0a0c;
@@ -38,7 +38,7 @@ body.light-mode {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /* Updated to use the dynamic variable system */
+    /* GLOBAL FONT THEME */
     font-family: var(--main-font) !important;
 }
 
@@ -52,7 +52,72 @@ body {
 }
 
 /* ==========================================
-   2. LAYOUT & RESPONSIVE CONTAINERS
+   2. AUTH PAGE & CENTERING LOGIC
+   ========================================== */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    position: fixed; /* Ensures it covers the viewport */
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.auth-card {
+    width: 400px;
+    text-align: center;
+}
+
+/* ==========================================
+   3. GLOWING GLOBE BRANDING
+   ========================================== */
+.logo-area-branding {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 2rem 1.5rem;
+}
+
+.globe-container {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.globe {
+    width: 30px;
+    height: 30px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 15px var(--accent-glow);
+    position: relative;
+    overflow: hidden;
+}
+
+.axis {
+    width: 2px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.6);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: rotateAxis 3s linear infinite;
+}
+
+@keyframes rotateAxis {
+    0% { transform: translateX(-50%) rotateY(0deg); }
+    100% { transform: translateX(-50%) rotateY(360deg); }
+}
+
+/* ==========================================
+   4. LAYOUT & SIDEBAR
    ========================================== */
 .app-container {
     display: flex;
@@ -86,7 +151,7 @@ body {
 }
 
 /* ==========================================
-   3. COMPONENTS (GLASS CARDS, BTNS, TOGGLES)
+   5. COMPONENTS & DROPDOWNS
    ========================================== */
 .glass-card {
     background: var(--card-bg);
@@ -98,28 +163,13 @@ body {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-/* Sun/Moon Toggle Styles */
-.theme-switch-wrapper {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    transition: 0.3s;
-}
-
-body.light-mode .moon-icon { display: none; }
-body:not(.light-mode) .sun-icon { display: none; }
-
-.logo-area-branding {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    padding: 2rem 1.5rem;
+#profileDropdown {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    z-index: 1000;
+    padding: 1rem;
+    min-width: 200px;
 }
 
 .brand-text {
@@ -140,10 +190,6 @@ body:not(.light-mode) .sun-icon { display: none; }
     transition: opacity 0.2s;
 }
 
-.btn-glow:hover {
-    opacity: 0.9;
-}
-
 .btn-outline {
     background: transparent;
     border: 1px solid var(--accent);
@@ -154,40 +200,7 @@ body:not(.light-mode) .sun-icon { display: none; }
 }
 
 /* ==========================================
-   4. NAVIGATION & SECTION CONTROLS
-   ========================================== */
-.nav-links { list-style: none; padding: 1rem; }
-
-.nav-links li {
-    padding: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    cursor: pointer;
-    border-radius: 8px;
-    color: var(--text-dim);
-    transition: var(--transition);
-    position: relative; /* Required for three-dots positioning */
-}
-
-.nav-links li:hover, .nav-links li.active {
-    background: rgba(255, 255, 255, 0.15);
-    color: var(--accent);
-}
-
-/* Three Dots Navigation Style */
-.three-dots-trigger {
-    position: absolute;
-    bottom: 5px;
-    right: 10px;
-    opacity: 0.5;
-    cursor: pointer;
-}
-
-.three-dots-trigger:hover { opacity: 1; }
-
-/* ==========================================
-   5. TIMER SYSTEM
+   6. TIMER & CALENDAR SYSTEM
    ========================================== */
 .timer-text {
     font-size: 3.5rem;
@@ -197,9 +210,6 @@ body:not(.light-mode) .sun-icon { display: none; }
     font-family: 'JetBrains Mono', monospace !important;
 }
 
-/* ==========================================
-   6. CALENDAR SYSTEM (GRID BASED)
-   ========================================== */
 .calendar-container {
     border: 1px solid var(--border-color);
     width: 100%;
@@ -210,33 +220,6 @@ body:not(.light-mode) .sun-icon { display: none; }
     overflow: hidden;
 }
 
-.calendar-container header {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px 25px;
-    align-items: center;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    border-top: 1px solid var(--border-color);
-}
-
-.day-label {
-    text-align: center;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 10px 0;
-    text-transform: uppercase;
-    color: var(--accent);
-    border-right: 1px solid var(--border-color);
-}
-
-.days-container {
-    display: contents; 
-}
-
 .day {
     min-height: 120px;
     border-right: 1px solid var(--border-color);
@@ -245,31 +228,10 @@ body:not(.light-mode) .sun-icon { display: none; }
     transition: background 0.2s;
 }
 
-.day:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-    cursor: pointer;
-}
-
-.day-number {
-    font-size: 12px;
-    font-weight: 500;
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
-    text-align: center;
-    color: var(--text-main);
-}
-
 .today .day-number {
     background-color: var(--google-blue);
     color: white;
     border-radius: 50%;
-}
-
-.other-month {
-    color: var(--text-dim);
-    opacity: 0.4;
 }
 
 /* ==========================================
