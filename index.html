@@ -77,18 +77,11 @@
             </div>
             
             <ul class="nav-links" id="mainNav">
-                <li class="active" id="nav-home" onclick="switchPage('home')">
-                    <i data-lucide="home"></i><span>Home</span>
-                </li>
-                <li id="nav-professional" onclick="switchPage('professional')">
-                    <i data-lucide="briefcase"></i><span>Professional</span>
-                </li>
-                <li id="nav-timers" onclick="switchPage('timers')">
-                    <i data-lucide="timer"></i><span>Timer</span>
-                </li>
-                <li id="nav-calendar" onclick="switchPage('calendar')">
-                    <i data-lucide="calendar"></i><span>Calendar</span>
-                </li>
+                <li class="active" id="nav-home" onclick="switchPage('home')"><i data-lucide="home"></i><span>Home</span></li>
+                <li id="nav-professional" onclick="switchPage('professional')"><i data-lucide="briefcase"></i><span>Professional</span></li>
+                <li id="nav-personal" onclick="switchPage('personal')"><i data-lucide="user"></i><span>Personal</span></li>
+                <li id="nav-timers" onclick="switchPage('timers')"><i data-lucide="timer"></i><span>Timer</span></li>
+                <li id="nav-calendar" onclick="switchPage('calendar')"><i data-lucide="calendar"></i><span>Calendar</span></li>
             </ul>
 
             <div class="add-section-wrap" style="padding: 10px 20px;">
@@ -113,12 +106,14 @@
                         <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">US</div>
                         <div id="profileDropdown" class="dropdown-menu glass-card hidden">
                             <div class="dropdown-item"><strong>Recently Deleted</strong></div>
-                            <div id="recentlyDeletedList" class="deleted-container" style="max-height: 150px; overflow-y: auto; font-size: 0.8rem; padding: 5px;">
-                                </div>
-                            <div class="divider"></div>
-                            <div class="dropdown-item" onclick="switchPage('settings')">
-                                <i data-lucide="settings"></i> Settings
+                            <div id="recentlyDeletedList" class="deleted-container" style="max-height:100px; overflow-y:auto; font-size:12px; color:gray;">
+                                No items deleted.
                             </div>
+                            <div class="divider"></div>
+                            <div class="dropdown-item" onclick="alert('User Guide:\n1. Use Professional for work.\n2. Customize colors in Settings.\n3. Add dynamic sections with the + button.')">
+                                <i data-lucide="help-circle"></i> User Guide
+                            </div>
+                            <div class="dropdown-item" onclick="switchPage('settings')"><i data-lucide="settings"></i> Settings</div>
                             <div class="divider"></div>
                             <div class="dropdown-item logout" onclick="location.reload()" style="color: #ff4d4d;">
                                 <i data-lucide="log-out"></i> Log Out
@@ -145,6 +140,13 @@
                     </div>
                 </section>
 
+                <section id="personal" class="view-section hidden">
+                    <div class="glass-card">
+                        <h2>Personal Space</h2>
+                        <p>Manage your habits, goals, and personal reflections.</p>
+                    </div>
+                </section>
+
                 <section id="calendar" class="view-section hidden">
                     <div class="glass-card">
                         <div class="calendar-header" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -154,8 +156,7 @@
                                 <button class="btn-outline" onclick="changeMonth(1)">Next</button>
                             </div>
                         </div>
-                        <div id="calendarGrid" class="calendar-grid">
-                            </div>
+                        <div id="calendarGrid" class="calendar-grid"></div>
                     </div>
                 </section>
 
@@ -169,8 +170,18 @@
                         <div id="basicDisplay" class="timer-text" style="text-align: center; font-size: 3rem; margin-top: 10px;">00:00</div>
                     </div>
 
+                    <div class="glass-card" style="margin-bottom: 20px;">
+                        <h3>Custom 24-Hour Timer</h3>
+                        <div class="flex-row">
+                            <input type="number" id="custHH" placeholder="HH" max="24" min="0" style="width:60px;">
+                            <input type="number" id="custMM" placeholder="MM" max="59" min="0" style="width:60px;">
+                            <button class="btn-glow" onclick="startCustomTimer()">Set Timer</button>
+                        </div>
+                        <div id="customDisplay" class="timer-text" style="text-align: center; font-size: 3rem; margin-top: 10px;">00:00:00</div>
+                    </div>
+
                     <div class="glass-card">
-                        <h3>Neural Focus (Pomodoro)</h3>
+                        <h3>Pomodoro Timer</h3>
                         <div id="timerCountdown" class="timer-text" style="font-size: 5rem; text-align: center; color: var(--accent-glow);">25:00</div>
                         <div class="flex-row" style="margin-top: 20px;">
                             <div class="input-group">
