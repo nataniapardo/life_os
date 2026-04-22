@@ -2,12 +2,15 @@
    1. VARIABLE SYSTEM & THEME DEFAULTS
    ========================================== */
 :root {
+    /* Font System */
+    --main-font: 'Inter', sans-serif;
+
     /* Default: Dark Mode Variables */
     --bg-main: #0a0a0c;
     --text-main: #e0e0e0;
     --card-bg: rgba(20, 20, 25, 0.85);
     --accent: #00f2ff;
-    --accent-glow: #00f2ff; /* Kept for compatibility with your existing styles */
+    --accent-glow: #00f2ff;
     
     --sidebar-width: 280px; 
     --text-dim: #a0a0a0;
@@ -35,8 +38,8 @@ body.light-mode {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /* Note: Keeping Papyrus as requested, though JetBrains Mono is used for Timers below */
-    font-family: 'Papyrus', 'Fantasy', 'Copperplate', sans-serif !important;
+    /* Updated to use the dynamic variable system */
+    font-family: var(--main-font) !important;
 }
 
 body {
@@ -45,7 +48,6 @@ body {
     overflow-x: hidden;
     min-height: 100vh;
     line-height: 1.6;
-    /* Updated transition to match your request */
     transition: background 0.4s ease, color 0.4s ease;
 }
 
@@ -84,7 +86,7 @@ body {
 }
 
 /* ==========================================
-   3. COMPONENTS (GLASS CARDS, BTNS, LOGO)
+   3. COMPONENTS (GLASS CARDS, BTNS, TOGGLES)
    ========================================== */
 .glass-card {
     background: var(--card-bg);
@@ -95,6 +97,22 @@ body {
     margin-bottom: 1.5rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
+
+/* Sun/Moon Toggle Styles */
+.theme-switch-wrapper {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    transition: 0.3s;
+}
+
+body.light-mode .moon-icon { display: none; }
+body:not(.light-mode) .sun-icon { display: none; }
 
 .logo-area-branding {
     display: flex;
@@ -136,7 +154,7 @@ body {
 }
 
 /* ==========================================
-   4. NAVIGATION
+   4. NAVIGATION & SECTION CONTROLS
    ========================================== */
 .nav-links { list-style: none; padding: 1rem; }
 
@@ -149,12 +167,24 @@ body {
     border-radius: 8px;
     color: var(--text-dim);
     transition: var(--transition);
+    position: relative; /* Required for three-dots positioning */
 }
 
 .nav-links li:hover, .nav-links li.active {
     background: rgba(255, 255, 255, 0.15);
     color: var(--accent);
 }
+
+/* Three Dots Navigation Style */
+.three-dots-trigger {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.three-dots-trigger:hover { opacity: 1; }
 
 /* ==========================================
    5. TIMER SYSTEM
