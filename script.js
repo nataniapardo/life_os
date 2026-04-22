@@ -8,10 +8,7 @@ const db = (typeof supabase !== 'undefined') ? supabase.createClient(SUPABASE_UR
 const OS_VERSION = "2.0.4";
 let currentUser = null;
 
-const stimulations = [
-    "Nature", "Food", "Travel", "Location", "Zen", "Cities", 
-    "Earth", "Water", "Space", "Futuristic", "Shapes", "Art", "Cartoon"
-];
+const stimulations = ["Nature", "Food", "Space", "Shapes", "Flowers", "Futuristic", "Travel", "Location"];
 
 const fonts = [
     { name: 'Modern Sans', value: "'Inter', sans-serif" },
@@ -28,6 +25,9 @@ let timeLeft = 0;
 let isBreak = false;
 let isMilitary = false;
 
+// Calendar State
+let currentCalendarDate = new Date();
+
 // ==========================================
 // 2. SYSTEM INITIALIZATION
 // ==========================================
@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     populateStimulations();
     initPersistenceEngine();
     setupTimer(); 
+    renderCalendar();
 });
 
 // ==========================================
@@ -88,6 +89,9 @@ function switchPage(pageId) {
 
     const profileDropdown = document.getElementById('profileDropdown');
     if (profileDropdown) profileDropdown.classList.add('hidden');
+
+    // Re-render calendar if moving to calendar page
+    if(pageId === 'calendar') renderCalendar();
 }
 
 function toggleProfileMenu() {
@@ -170,7 +174,7 @@ function runAIProcessor() {
             if (lowerTask.includes('meeting') || lowerTask.includes('appointment') || lowerTask.includes('schedule')) {
                 dest = "Calendar"; icon = "calendar";
             } else if (lowerTask.includes('buy') || lowerTask.includes('groceries') || lowerTask.includes('shopping')) {
-                dest = "Grocery List"; icon = "shopping-cart";
+                dest = "Personal List"; icon = "user";
             } else if (lowerTask.includes('study') || lowerTask.includes('focus') || lowerTask.includes('work')) {
                 dest = "Timers"; icon = "timer";
             }
@@ -242,7 +246,76 @@ function updateTimerDisplay() {
 }
 
 // ==========================================
-// 7. ENGINES & HELPERS
+// 7. STIMULATION & BACKGROUND ENGINE
+// ==========================================
+function populateStimulations() {
+    const container = document.getElementById('homeWidgets');
+    if (!container) return;
+    
+    let html = `<h3>System Stimulation</h3><div class="stimulation-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap:10px; margin-top:15px;">`;
+    
+    stimulations.forEach(s => {
+        html += `<button class="btn-outline" onclick="setStimulation('${s}')" style="font-size:0.7rem;">${s}</button>`;
+    });
+    
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function setStimulation(type) {
+    document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://source.unsplash.com/featured/?${type}')`;
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundAttachment = "fixed";
+    console.log(`Stimulation set to: ${type}`);
+}
+
+// ==========================================
+// 8. CALENDAR ENGINE
+// ==========================================
+function renderCalendar() {
+    const grid = document.getElementById('calendarGrid');
+    const monthYear = document.getElementById('monthDisplay');
+    if (!grid) return;
+
+    grid.innerHTML = ''; 
+    const year = currentCalendarDate.getFullYear();
+    const month = currentCalendarDate.getMonth();
+
+    monthYear.textContent = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(currentCalendarDate);
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    days.forEach(d => {
+        const dayHeader = document.createElement('div');
+        dayHeader.className = 'calendar-day-header';
+        dayHeader.textContent = d;
+        grid.appendChild(dayHeader);
+    });
+
+    for (let i = 0; i < firstDay; i++) {
+        grid.appendChild(document.createElement('div'));
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayEl = document.createElement('div');
+        dayEl.className = 'calendar-cell glass-card';
+        dayEl.innerHTML = `<span class="day-number">${day}</span>`;
+        
+        if (day === 15) dayEl.innerHTML += `<div class="event-tag">Meeting</div>`;
+        
+        grid.appendChild(dayEl);
+    }
+}
+
+function changeMonth(offset) {
+    currentCalendarDate.setMonth(currentCalendarDate.getMonth() + offset);
+    renderCalendar();
+}
+
+// ==========================================
+// 9. ENGINES & HELPERS
 // ==========================================
 function startTimeEngine() {
     setInterval(() => {
@@ -264,12 +337,6 @@ function populateFontList() {
         opt.textContent = f.name;
         selector.appendChild(opt);
     });
-}
-
-function populateStimulations() {
-    const container = document.getElementById('homeWidgets');
-    if (!container) return;
-    // You can add logic here to display the stimulation categories
 }
 
 function initPersistenceEngine() {
