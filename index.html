@@ -16,7 +16,6 @@
 </head>
 <body class="theme-futuristic">
 
-    <!-- Authentication Section -->
     <section id="authPage" class="full-screen-center">
         <div class="logo-area-branding massive-logo" onclick="location.reload()">
             <span class="brand-text">Life</span>
@@ -46,10 +45,10 @@
             </div>
 
             <div id="signupForm" class="hidden">
-                <h2>Initialize Account</h2>
+                <h2>Sign Up</h2> 
                 <div class="setting-item">
                     <label for="newNameInput">Full Name</label>
-                    <input type="text" id="newNameInput" placeholder="Your Name">
+                    <input type="text" id="newNameInput" placeholder="Enter your name">
                 </div>
                 <div class="setting-item">
                     <label for="newEmailInput">Email Address</label>
@@ -60,14 +59,13 @@
                     <input type="password" id="newPassInput" placeholder="Password">
                 </div>
                 <div class="flex-row">
-                    <button class="btn-glow" onclick="handleAuth('signup')">Create Account</button>
+                    <button class="btn-glow" onclick="handleAuth('signup')">Sign Up</button>
                     <button class="btn-outline" onclick="toggleAuthMode()">Back to Login</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Main Application Container -->
     <div id="appContainer" class="app-container hidden">
         <nav class="sidebar">
             <div class="logo-area-branding" onclick="switchPage('home')">
@@ -79,7 +77,6 @@
                 <span class="brand-text">OS</span>
             </div>
             
-            <!-- Updated Navigation Section -->
             <ul class="nav-links">
                 <li class="active" id="nav-home" onclick="switchPage('home')">
                     <i data-lucide="home"></i><span>Home</span>
@@ -98,11 +95,6 @@
                 </li>
                 <li id="nav-tools" onclick="switchPage('tools')">
                     <i data-lucide="globe"></i><span>World Tools</span>
-                </li>
-                <!-- Highlighted Log Out -->
-                <li class="logout-item" onclick="location.reload()" style="margin-top: auto;">
-                    <i data-lucide="log-out" style="color: #ff4d4d;"></i>
-                    <span style="color: #ff4d4d; font-weight: bold;">Log Out</span>
                 </li>
             </ul>
         </nav>
@@ -139,23 +131,18 @@
                     <div class="glass-card">
                         <h2>Home Dashboard</h2>
                         <div id="homeWidgets" class="widget-grid">
-                            <!-- Background Stimulations List will be populated here -->
-                            <p>Welcome to your central command.</p>
+                            <p>Welcome to your central command. Your daily overview and neural status are active.</p>
                         </div>
                     </div>
                 </section>
 
-                <!-- Personal Section (Formerly Grocery) -->
                 <section id="personal" class="view-section hidden">
                     <div class="glass-card">
                         <h2>Personal Management</h2>
-                        <div id="personalList">
-                            <!-- Personal items and trackers -->
-                        </div>
+                        <div id="personalList"></div>
                     </div>
                 </section>
 
-                <!-- Dedicated Calendar Section -->
                 <section id="calendar" class="view-section hidden">
                     <div class="glass-card">
                         <div class="calendar-header" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -165,9 +152,8 @@
                                 <button class="btn-outline" onclick="changeMonth(1)">Next</button>
                             </div>
                         </div>
-                        <div id="calendarGrid" class="calendar-grid">
-                            <!-- Functional Grid Rendered by JS -->
-                        </div>
+                        <div id="calendarGrid" class="calendar-grid horizontal-scroll-container">
+                            </div>
                     </div>
                 </section>
 
@@ -175,12 +161,11 @@
                     <div class="glass-card">
                         <div class="card-header">
                             <h2>AI Neural Processor</h2>
-                            <div class="ai-badge">Auto-Categorization Active</div>
                         </div>
-                        <textarea id="aiJotter" placeholder="Example: 'Meeting with Sam tomorrow' or 'Buy milk'"></textarea>
+                        <textarea id="aiJotter" placeholder="Example: 'Meeting with Sam tomorrow'"></textarea>
                         <div class="button-group" style="margin-top: 15px; display: flex; gap: 10px;">
-                            <button class="btn-glow" onclick="runAIProcessor()">Process & Distribute</button>
-                            <button class="btn-outline" onclick="clearJotter()">Clear Space</button>
+                            <button class="btn-glow" onclick="runAIProcessor()">Process</button>
+                            <button class="btn-outline" onclick="clearJotter()">Clear</button>
                         </div>
                         <div id="aiReviewPanel" class="hidden review-box" style="margin-top: 20px;">
                             <div id="distributionList"></div>
@@ -190,27 +175,11 @@
 
                 <section id="timers" class="view-section hidden">
                     <div class="glass-card">
-                        <h2 style="text-align: center; letter-spacing: 3px;">Neural Focus Timer</h2>
-                        <div class="timer-display-container" style="text-align: center; padding: 40px 0;">
-                            <div id="timerStatus" style="font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 10px;">READY</div>
-                            <div id="timerCountdown" style="font-size: 5rem; font-weight: bold; color: var(--accent-glow); text-shadow: 0 0 20px var(--accent-glow);">25:00</div>
-                        </div>
-                        <div class="timer-controls" style="display: flex; flex-direction: column; gap: 20px; align-items: center;">
-                            <div class="flex-row">
-                                <div class="input-group">
-                                    <label style="font-size: 0.7rem; display: block;">Work (min)</label>
-                                    <input type="number" id="workDuration" value="25" style="width: 80px; text-align: center;">
-                                </div>
-                                <div class="input-group">
-                                    <label style="font-size: 0.7rem; display: block;">Break (min)</label>
-                                    <input type="number" id="breakDuration" value="5" style="width: 80px; text-align: center;">
-                                </div>
-                                <button class="btn-outline" onclick="setupTimer()" style="margin-top: 18px;">Set</button>
-                            </div>
-                            <div class="flex-row">
-                                <button class="btn-glow" onclick="startPomodoro()">Start Session</button>
-                                <button class="btn-outline" onclick="resetTimer()">Reset</button>
-                            </div>
+                        <h2 style="text-align: center;">Neural Focus Timer</h2>
+                        <div id="timerCountdown" style="font-size: 5rem; text-align: center; color: var(--accent-glow);">25:00</div>
+                        <div class="timer-controls" style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+                            <button class="btn-glow" onclick="startPomodoro()">Start</button>
+                            <button class="btn-outline" onclick="resetTimer()">Reset</button>
                         </div>
                     </div>
                 </section>
@@ -218,6 +187,13 @@
                 <section id="settings" class="view-section hidden">
                     <div class="glass-card">
                         <h2>System Customization</h2>
+                        
+                        <div class="setting-item">
+                            <h3>Environment Stimulation</h3>
+                            <div id="stimContainer">
+                                </div>
+                        </div>
+
                         <div class="setting-item">
                             <h3>Time Format</h3>
                             <div class="flex-row">
@@ -225,12 +201,17 @@
                                 <button class="btn-outline" onclick="setTimeFormat(true)">Military (24h)</button>
                             </div>
                         </div>
+
                         <div class="setting-item">
                             <label for="themePicker">Accent Color & Font</label>
                             <div class="flex-row">
-                                <input type="color" id="themePicker" onchange="updateTheme()">
-                                <select id="fontChoice" onchange="updateTheme()"></select>
+                                <input type="color" id="themePicker">
+                                <select id="fontChoice"></select>
                             </div>
+                        </div>
+
+                        <div style="margin-top: 30px;">
+                            <button class="btn-glow" style="width: 100%;" onclick="saveAppearanceSettings()">Apply and Save Changes</button>
                         </div>
                     </div>
                 </section>
