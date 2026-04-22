@@ -35,18 +35,15 @@ const fonts = [
 // 2. SYSTEM INITIALIZATION
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    // Map Theme DOM Elements
     themeBtn = document.getElementById('themeToggle');
     scheduleCheckbox = document.getElementById('enableSchedule');
     lightInput = document.getElementById('lightStartTime');
     darkInput = document.getElementById('darkStartTime');
 
-    // Load Lucide Icons
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
     
-    // Initialize Systems
     updateSystemDate();
     initThemeEngine(); 
     startTimeEngine(); 
@@ -54,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
     populateStimulations();
     initCalendar();
 
-    // FIX: Apply and Save Changes Button Listener
     const saveBtn = document.getElementById('saveSettingsBtn');
     if (saveBtn) {
         saveBtn.addEventListener('click', () => {
@@ -63,27 +59,32 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Apply saved accent color
     const savedColor = localStorage.getItem('lifeOS_themeColor');
     if (savedColor) {
         document.documentElement.style.setProperty('--accent', savedColor);
         document.documentElement.style.setProperty('--accent-glow', savedColor);
     }
 
-    // Apply saved font (Defaults to Papyrus if not set)
     const savedFont = localStorage.getItem('lifeOS_font') || "'Papyrus', fantasy";
     document.documentElement.style.setProperty('--main-font', savedFont);
 });
 
 // ==========================================
-// 3. TASK MANAGEMENT SYSTEM (CRUD)
+// 3. TASK MANAGEMENT SYSTEM (CRUD) - UPDATED FOR AI DISTRIBUTION
 // ==========================================
 
-// 1. Fetch and Display Tasks
 async function loadTasks() {
-    const taskList = document.getElementById('taskList');
-    if (!taskList) return;
-    taskList.innerHTML = '<p>Loading objectives...</p>';
+    const lists = {
+        high: document.getElementById('highTaskList'),
+        medium: document.getElementById('midTaskList'),
+        low: document.getElementById('lowTaskList')
+    };
+
+    // Exit if elements don't exist yet
+    if (!lists.high) return;
+
+    // Clear existing items
+    Object.values(lists).forEach(list => list.innerHTML = '');
 
     const { data: tasks, error } = await db
         .from('tasks')
@@ -92,40 +93,45 @@ async function loadTasks() {
 
     if (error) return console.error(error);
 
-    taskList.innerHTML = '';
-    if (tasks.length === 0) {
-        taskList.innerHTML = '<p style="opacity:0.5; text-align:center;">No active objectives.</p>';
-    }
-
     tasks.forEach(task => {
         const li = document.createElement('li');
-        li.className = 'glass-card';
-        li.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 10px 20px;";
+        li.className = 'task-item';
         li.innerHTML = `
             <span style="${task.is_completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}">
                 ${task.text}
             </span>
-            <div>
-                <button class="btn-outline" onclick="toggleTask('${task.id}', ${task.is_completed})">
-                    ${task.is_completed ? 'Undo' : 'Complete'}
-                </button>
-                <button class="btn-outline" style="color: #ff4d4d; border-color: #ff4d4d; margin-left: 10px;" onclick="deleteTask('${task.id}')">
-                    Delete
-                </button>
+            <div class="task-actions">
+                <i data-lucide="${task.is_completed ? 'rotate-ccw' : 'check'}" 
+                   onclick="toggleTask('${task.id}', ${task.is_completed})" 
+                   style="cursor:pointer; margin-right: 10px; color: var(--accent);"></i>
+                <i data-lucide="trash-2" 
+                   onclick="deleteTask('${task.id}')" 
+                   style="cursor:pointer; color: #ff4d4d;"></i>
             </div>
         `;
-        taskList.appendChild(li);
+        
+        // Distribute to the correct list based on priority
+        const targetList = lists[task.priority] || lists.medium;
+        targetList.appendChild(li);
     });
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-// 2. Add a New Task
 async function addTask() {
     const input = document.getElementById('taskInput');
+    const prioritySelect = document.getElementById('taskPriority');
+    const priority = prioritySelect ? prioritySelect.value : 'medium';
+    
     if (!input || !input.value) return;
 
     const { error } = await db
         .from('tasks')
-        .insert([{ text: input.value, user_id: db.auth.user()?.id }]);
+        .insert([{ 
+            text: input.value, 
+            priority: priority,
+            user_id: db.auth.user()?.id 
+        }]);
 
     if (!error) {
         input.value = '';
@@ -136,13 +142,11 @@ async function addTask() {
     }
 }
 
-// 3. Toggle Completion Status
 async function toggleTask(id, currentStatus) {
     await db.from('tasks').update({ is_completed: !currentStatus }).eq('id', id);
     loadTasks();
 }
 
-// 4. Delete Task
 async function deleteTask(id) {
     if(confirm("Permanently delete this objective?")) {
         await db.from('tasks').delete().eq('id', id);
@@ -177,7 +181,6 @@ function switchPage(pageId) {
     const activeNav = document.getElementById(`nav-${pageId}`);
     if (activeNav) activeNav.classList.add('active');
 
-    // Trigger specific page loaders
     if(pageId === 'calendar') renderCalendar();
     if(pageId === 'tasks') loadTasks(); 
 }
