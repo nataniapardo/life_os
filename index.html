@@ -16,6 +16,8 @@
 </head>
 <body class="theme-futuristic">
 
+    <audio id="timerAlert" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
+
     <section id="authPage" class="full-screen-center">
         <div class="logo-area-branding massive-logo" onclick="location.reload()">
             <span class="brand-text">Life</span>
@@ -41,7 +43,6 @@
                     <button class="btn-glow" onclick="handleAuth('login')">Log In</button>
                     <button class="btn-outline" onclick="toggleAuthMode()">Sign Up</button>
                 </div>
-                <p style="margin-top:15px; font-size:0.8rem;">New user? <span class="accent-text" onclick="toggleAuthMode()" style="cursor:pointer; color:var(--accent-glow);">Create Account</span></p>
             </div>
 
             <div id="signupForm" class="hidden">
@@ -67,53 +68,54 @@
     </section>
 
     <div id="appContainer" class="app-container hidden">
+        
         <nav class="sidebar">
             <div class="logo-area-branding" onclick="switchPage('home')">
                 <span class="brand-text">Life</span>
-                <div class="globe-wrap-small">
-                    <div class="earth-sphere"></div>
-                    <div class="orbit"></div>
-                </div>
+                <div class="globe-wrap-small"><div class="earth-sphere"></div></div>
                 <span class="brand-text">OS</span>
             </div>
             
-            <ul class="nav-links">
+            <ul class="nav-links" id="mainNav">
                 <li class="active" id="nav-home" onclick="switchPage('home')">
                     <i data-lucide="home"></i><span>Home</span>
                 </li>
-                <li id="nav-productivity" onclick="switchPage('productivity')">
-                    <i data-lucide="zap"></i><span>Productivity</span>
+                <li id="nav-professional" onclick="switchPage('professional')">
+                    <i data-lucide="briefcase"></i><span>Professional</span>
                 </li>
                 <li id="nav-timers" onclick="switchPage('timers')">
                     <i data-lucide="timer"></i><span>Timer</span>
                 </li>
-                <li id="nav-personal" onclick="switchPage('personal')">
-                    <i data-lucide="user"></i><span>Personal</span>
-                </li>
                 <li id="nav-calendar" onclick="switchPage('calendar')">
                     <i data-lucide="calendar"></i><span>Calendar</span>
                 </li>
-                <li id="nav-tools" onclick="switchPage('tools')">
-                    <i data-lucide="globe"></i><span>World Tools</span>
-                </li>
             </ul>
+
+            <div class="add-section-wrap" style="padding: 10px 20px;">
+                <button class="btn-outline" onclick="addNewSection()" style="width: 100%; border-style: dashed;">
+                    <i data-lucide="plus"></i> Add Section
+                </button>
+            </div>
         </nav>
 
         <main class="main-layout">
             <header class="top-bar">
                 <div class="header-left">
-                    <div class="ai-status">AI: Operational</div>
                     <h1 id="dynamicGreeting">Good morning, User</h1>
                 </div>
 
                 <div class="header-right">
                     <div class="time-container">
-                        <div id="dateDisplay" class="date-text">Monday, April 20, 2026</div>
+                        <div id="dateDisplay" class="date-text"></div>
                         <div id="clockDisplay" class="time-text">00:00:00</div>
                     </div>
                     <div class="profile-area">
-                        <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">U</div>
+                        <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">US</div>
                         <div id="profileDropdown" class="dropdown-menu glass-card hidden">
+                            <div class="dropdown-item"><strong>Recently Deleted</strong></div>
+                            <div id="recentlyDeletedList" class="deleted-container" style="max-height: 150px; overflow-y: auto; font-size: 0.8rem; padding: 5px;">
+                                </div>
+                            <div class="divider"></div>
                             <div class="dropdown-item" onclick="switchPage('settings')">
                                 <i data-lucide="settings"></i> Settings
                             </div>
@@ -136,10 +138,10 @@
                     </div>
                 </section>
 
-                <section id="personal" class="view-section hidden">
+                <section id="professional" class="view-section hidden">
                     <div class="glass-card">
-                        <h2>Personal Management</h2>
-                        <div id="personalList"></div>
+                        <h2>Professional Hub</h2>
+                        <p>Workflows and professional tools consolidated here.</p>
                     </div>
                 </section>
 
@@ -152,33 +154,36 @@
                                 <button class="btn-outline" onclick="changeMonth(1)">Next</button>
                             </div>
                         </div>
-                        <div id="calendarGrid" class="calendar-grid horizontal-scroll-container">
+                        <div id="calendarGrid" class="calendar-grid">
                             </div>
                     </div>
                 </section>
 
-                <section id="productivity" class="view-section hidden">
-                    <div class="glass-card">
-                        <div class="card-header">
-                            <h2>AI Neural Processor</h2>
-                        </div>
-                        <textarea id="aiJotter" placeholder="Example: 'Meeting with Sam tomorrow'"></textarea>
-                        <div class="button-group" style="margin-top: 15px; display: flex; gap: 10px;">
-                            <button class="btn-glow" onclick="runAIProcessor()">Process</button>
-                            <button class="btn-outline" onclick="clearJotter()">Clear</button>
-                        </div>
-                        <div id="aiReviewPanel" class="hidden review-box" style="margin-top: 20px;">
-                            <div id="distributionList"></div>
-                        </div>
-                    </div>
-                </section>
-
                 <section id="timers" class="view-section hidden">
+                    <div class="glass-card" style="margin-bottom: 20px;">
+                        <h3>Basic Countdown</h3>
+                        <div class="flex-row">
+                            <input type="number" id="basicTimerInput" placeholder="Seconds">
+                            <button class="btn-glow" onclick="startBasicTimer()">Start</button>
+                        </div>
+                        <div id="basicDisplay" class="timer-text" style="text-align: center; font-size: 3rem; margin-top: 10px;">00:00</div>
+                    </div>
+
                     <div class="glass-card">
-                        <h2 style="text-align: center;">Neural Focus Timer</h2>
-                        <div id="timerCountdown" style="font-size: 5rem; text-align: center; color: var(--accent-glow);">25:00</div>
+                        <h3>Neural Focus (Pomodoro)</h3>
+                        <div id="timerCountdown" class="timer-text" style="font-size: 5rem; text-align: center; color: var(--accent-glow);">25:00</div>
+                        <div class="flex-row" style="margin-top: 20px;">
+                            <div class="input-group">
+                                <label>Work (min)</label>
+                                <input type="number" id="workDuration" value="25">
+                            </div>
+                            <div class="input-group">
+                                <label>Break (min)</label>
+                                <input type="number" id="breakDuration" value="5">
+                            </div>
+                        </div>
                         <div class="timer-controls" style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
-                            <button class="btn-glow" onclick="startPomodoro()">Start</button>
+                            <button class="btn-glow" onclick="startPomodoro()">Start Session</button>
                             <button class="btn-outline" onclick="resetTimer()">Reset</button>
                         </div>
                     </div>
@@ -189,9 +194,22 @@
                         <h2>System Customization</h2>
                         
                         <div class="setting-item">
-                            <h3>Environment Stimulation</h3>
-                            <div id="stimContainer">
+                            <h3>Identity Profile</h3>
+                            <div class="flex-row">
+                                <div style="flex: 2;">
+                                    <label>Display Name</label>
+                                    <input type="text" id="prefNameInput" placeholder="Update your name">
                                 </div>
+                                <div style="flex: 1;">
+                                    <label>Initials</label>
+                                    <input type="text" id="prefInitialsInput" maxlength="2" placeholder="US">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <h3>Environment Stimulation</h3>
+                            <div id="stimContainer"></div>
                         </div>
 
                         <div class="setting-item">
@@ -215,8 +233,6 @@
                         </div>
                     </div>
                 </section>
-
-                <section id="tools" class="view-section hidden"><div class="glass-card"><h2>World Tools</h2></div></section>
             </div>
         </main>
     </div>
