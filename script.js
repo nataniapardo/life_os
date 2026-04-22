@@ -23,12 +23,12 @@ let themeBtn, scheduleCheckbox, lightInput, darkInput;
 const stimulations = ["Nature", "Food", "Space", "Shapes", "Flowers", "Futuristic", "Travel", "Location"];
 
 const fonts = [
+    { name: 'Papyrus (System Default)', value: "'Papyrus', fantasy" },
     { name: 'Modern Sans', value: "'Inter', sans-serif" },
     { name: 'Futuristic', value: "'Orbitron', sans-serif" },
     { name: 'Elegant Serif', value: "'Playfair Display', serif" },
     { name: 'Coding Mono', value: "'JetBrains Mono', monospace" },
-    { name: 'Clean Montserrat', value: "'Montserrat', sans-serif" },
-    { name: 'Papyrus (Legacy)', value: "'Papyrus', fantasy" }
+    { name: 'Clean Montserrat', value: "'Montserrat', sans-serif" }
 ];
 
 // ==========================================
@@ -53,7 +53,16 @@ document.addEventListener('DOMContentLoaded', () => {
     populateFontList();
     populateStimulations();
     initCalendar();
-    
+
+    // FIX: Apply and Save Changes Button Listener
+    const saveBtn = document.getElementById('saveSettingsBtn');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+            saveAppearanceSettings();
+            alert("Settings applied successfully!");
+        });
+    }
+
     // Apply saved accent color
     const savedColor = localStorage.getItem('lifeOS_themeColor');
     if (savedColor) {
@@ -61,24 +70,38 @@ document.addEventListener('DOMContentLoaded', () => {
         document.documentElement.style.setProperty('--accent-glow', savedColor);
     }
 
-    // Apply saved font
-    const savedFont = localStorage.getItem('lifeOS_font');
-    if (savedFont) {
-        document.documentElement.style.setProperty('--main-font', savedFont);
+    // Apply saved font (Defaults to Papyrus if not set)
+    const savedFont = localStorage.getItem('lifeOS_font') || "'Papyrus', fantasy";
+    document.documentElement.style.setProperty('--main-font', savedFont);
+});
+
+// ==========================================
+// 3. PROFILE & LOGOUT FUNCTIONALITY (FIXED)
+// ==========================================
+function toggleProfileMenu() {
+    const menu = document.getElementById('profileDropdown');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
+
+// Ensure the dropdown closes if clicking outside the avatar or menu
+window.addEventListener('click', (e) => {
+    const menu = document.getElementById('profileDropdown');
+    const avatar = document.getElementById('userAvatar');
+    if (menu && !menu.contains(e.target) && e.target !== avatar) {
+        menu.classList.add('hidden');
     }
 });
 
-function updateSystemDate() {
-    const dateEl = document.getElementById('dateDisplay');
-    if (dateEl) {
-        dateEl.textContent = new Date().toLocaleDateString('en-US', { 
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-        });
+function handleLogout() {
+    if(confirm("Are you sure you want to log out?")) {
+        location.reload(); // Resets session and returns to login
     }
 }
 
 // ==========================================
-// 3. APPEARANCE & FONTS
+// 4. APPEARANCE & FONTS
 // ==========================================
 function saveAppearanceSettings() {
     const font = document.getElementById('fontChoice')?.value;
@@ -106,7 +129,7 @@ function populateFontList() {
 }
 
 // ==========================================
-// 4. CALENDAR JUMP FEATURE
+// 5. CALENDAR SYSTEM
 // ==========================================
 function initCalendar() {
     const monthSelect = document.getElementById('selectMonth');
@@ -165,26 +188,20 @@ function renderCalendar() {
 }
 
 // ==========================================
-// 5. THEME ENGINE & SCHEDULING
+// 6. THEME ENGINE & STIMULATION
 // ==========================================
 function initThemeEngine() {
-    // 1. Load Saved Settings from LocalStorage
     const savedLight = localStorage.getItem('scheduledLight') || "07:00";
     const savedDark = localStorage.getItem('scheduledDark') || "19:00";
     const scheduleActive = localStorage.getItem('scheduleEnabled') === 'true';
     const lastTheme = localStorage.getItem('themePreference');
 
-    // 2. Sync UI Elements with Saved Data
     if (lightInput) lightInput.value = savedLight;
     if (darkInput) darkInput.value = savedDark;
     if (scheduleCheckbox) scheduleCheckbox.checked = scheduleActive;
 
-    // 3. Apply the last used theme immediately
-    if (lastTheme === 'light') {
-        document.body.classList.add('light-mode');
-    }
+    if (lastTheme === 'light') document.body.classList.add('light-mode');
 
-    // 4. Set up Auto-Schedule Checkers
     [lightInput, darkInput, scheduleCheckbox].forEach(input => {
         if (!input) return;
         input.addEventListener('change', () => {
@@ -198,26 +215,19 @@ function initThemeEngine() {
 
 function checkThemeSchedule() {
     if (!scheduleCheckbox || !scheduleCheckbox.checked) return;
-
     const now = new Date();
     const currentTime = now.getHours().toString().padStart(2, '0') + ":" + 
                         now.getMinutes().toString().padStart(2, '0');
 
-    const lightTime = lightInput.value;
-    const darkTime = darkInput.value;
-
-    if (currentTime === lightTime) {
+    if (currentTime === lightInput.value) {
         document.body.classList.add('light-mode');
         localStorage.setItem('themePreference', 'light');
-    } else if (currentTime === darkTime) {
+    } else if (currentTime === darkInput.value) {
         document.body.classList.remove('light-mode');
         localStorage.setItem('themePreference', 'dark');
     }
 }
 
-// ==========================================
-// 6. STIMULATION ENGINE
-// ==========================================
 function populateStimulations() {
     const container = document.getElementById('stimContainer');
     if (!container) return;
@@ -234,14 +244,13 @@ function populateStimulations() {
 function setStimulation(type) {
     const bgOverlay = "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6))";
     const url = `https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&q=80&w=1920&sig=${Math.random()}&keyword=${type}`;
-    
     document.body.style.background = `${bgOverlay}, url('${url}')`;
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundAttachment = "fixed";
 }
 
 // ==========================================
-// 7. TIME ENGINE
+// 7. TIME ENGINE & NAVIGATION
 // ==========================================
 function startTimeEngine() {
     setInterval(() => {
@@ -250,23 +259,19 @@ function startTimeEngine() {
         if (clockEl) {
             clockEl.innerText = now.toLocaleTimeString('en-US', { 
                 hour12: !isMilitary, 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit' 
+                hour: '2-digit', minute: '2-digit', second: '2-digit' 
             });
         }
         checkThemeSchedule();
     }, 1000);
 }
 
-// ==========================================
-// 8. UTILITIES & NAVIGATION
-// ==========================================
-function clearRecentlyDeleted() {
-    if(confirm("Permanently clear all deleted items?")) {
-        recentlyDeleted = [];
-        const list = document.getElementById('recentlyDeletedList');
-        if (list) list.innerHTML = "No items deleted.";
+function updateSystemDate() {
+    const dateEl = document.getElementById('dateDisplay');
+    if (dateEl) {
+        dateEl.textContent = new Date().toLocaleDateString('en-US', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
     }
 }
 
@@ -282,15 +287,6 @@ function switchPage(pageId) {
     if(pageId === 'calendar') renderCalendar();
 }
 
-function toggleTheme() {
-    const isLight = document.body.classList.toggle('light-mode');
-    localStorage.setItem('themePreference', isLight ? 'light' : 'dark');
-}
-
-function refreshIcons() {
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-}
-
 function handleAuth(mode) {
     const nameInput = document.getElementById('newNameInput');
     const emailInput = (mode === 'login') ? document.getElementById('emailInput') : document.getElementById('newEmailInput');
@@ -301,5 +297,5 @@ function handleAuth(mode) {
     
     document.getElementById('authPage').classList.add('hidden');
     document.getElementById('appContainer').classList.remove('hidden');
-    refreshIcons();
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
