@@ -76,7 +76,82 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 3. PROFILE & LOGOUT FUNCTIONALITY (FIXED)
+// 3. TASK MANAGEMENT SYSTEM (CRUD)
+// ==========================================
+
+// 1. Fetch and Display Tasks
+async function loadTasks() {
+    const taskList = document.getElementById('taskList');
+    if (!taskList) return;
+    taskList.innerHTML = '<p>Loading objectives...</p>';
+
+    const { data: tasks, error } = await db
+        .from('tasks')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) return console.error(error);
+
+    taskList.innerHTML = '';
+    if (tasks.length === 0) {
+        taskList.innerHTML = '<p style="opacity:0.5; text-align:center;">No active objectives.</p>';
+    }
+
+    tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.className = 'glass-card';
+        li.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 10px 20px;";
+        li.innerHTML = `
+            <span style="${task.is_completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}">
+                ${task.text}
+            </span>
+            <div>
+                <button class="btn-outline" onclick="toggleTask('${task.id}', ${task.is_completed})">
+                    ${task.is_completed ? 'Undo' : 'Complete'}
+                </button>
+                <button class="btn-outline" style="color: #ff4d4d; border-color: #ff4d4d; margin-left: 10px;" onclick="deleteTask('${task.id}')">
+                    Delete
+                </button>
+            </div>
+        `;
+        taskList.appendChild(li);
+    });
+}
+
+// 2. Add a New Task
+async function addTask() {
+    const input = document.getElementById('taskInput');
+    if (!input || !input.value) return;
+
+    const { error } = await db
+        .from('tasks')
+        .insert([{ text: input.value, user_id: db.auth.user()?.id }]);
+
+    if (!error) {
+        input.value = '';
+        loadTasks();
+    } else {
+        alert("Error adding task. Check console.");
+        console.error(error);
+    }
+}
+
+// 3. Toggle Completion Status
+async function toggleTask(id, currentStatus) {
+    await db.from('tasks').update({ is_completed: !currentStatus }).eq('id', id);
+    loadTasks();
+}
+
+// 4. Delete Task
+async function deleteTask(id) {
+    if(confirm("Permanently delete this objective?")) {
+        await db.from('tasks').delete().eq('id', id);
+        loadTasks();
+    }
+}
+
+// ==========================================
+// 4. PROFILE & NAVIGATION
 // ==========================================
 function toggleProfileMenu() {
     const menu = document.getElementById('profileDropdown');
@@ -85,7 +160,6 @@ function toggleProfileMenu() {
     }
 }
 
-// Ensure the dropdown closes if clicking outside the avatar or menu
 window.addEventListener('click', (e) => {
     const menu = document.getElementById('profileDropdown');
     const avatar = document.getElementById('userAvatar');
@@ -94,14 +168,22 @@ window.addEventListener('click', (e) => {
     }
 });
 
-function handleLogout() {
-    if(confirm("Are you sure you want to log out?")) {
-        location.reload(); // Resets session and returns to login
-    }
+function switchPage(pageId) {
+    document.querySelectorAll('.view-section').forEach(section => section.classList.add('hidden'));
+    const target = document.getElementById(pageId);
+    if (target) target.classList.remove('hidden');
+
+    document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
+    const activeNav = document.getElementById(`nav-${pageId}`);
+    if (activeNav) activeNav.classList.add('active');
+
+    // Trigger specific page loaders
+    if(pageId === 'calendar') renderCalendar();
+    if(pageId === 'tasks') loadTasks(); 
 }
 
 // ==========================================
-// 4. APPEARANCE & FONTS
+// 5. APPEARANCE & THEME ENGINE
 // ==========================================
 function saveAppearanceSettings() {
     const font = document.getElementById('fontChoice')?.value;
@@ -128,68 +210,6 @@ function populateFontList() {
     });
 }
 
-// ==========================================
-// 5. CALENDAR SYSTEM
-// ==========================================
-function initCalendar() {
-    const monthSelect = document.getElementById('selectMonth');
-    const yearSelect = document.getElementById('selectYear');
-    if (!monthSelect || !yearSelect) return;
-    
-    monthSelect.innerHTML = '';
-    yearSelect.innerHTML = '';
-
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    months.forEach((m, i) => {
-        let opt = new Option(m, i);
-        monthSelect.add(opt);
-    });
-
-    for (let i = 1900; i <= 2100; i++) {
-        let opt = new Option(i, i);
-        yearSelect.add(opt);
-    }
-
-    monthSelect.value = calendarDate.getMonth();
-    yearSelect.value = calendarDate.getFullYear();
-
-    renderCalendar();
-}
-
-function jumpToDate() {
-    const m = document.getElementById('selectMonth').value;
-    const y = document.getElementById('selectYear').value;
-    calendarDate = new Date(y, m, 1);
-    renderCalendar();
-}
-
-function renderCalendar() {
-    const container = document.getElementById('calendarDays');
-    const display = document.getElementById('monthYearDisplay');
-    if(!container) return;
-
-    container.innerHTML = '';
-    const y = calendarDate.getFullYear();
-    const m = calendarDate.getMonth();
-    
-    display.innerText = `${new Intl.DateTimeFormat('en-US', { month: 'long' }).format(calendarDate)} ${y}`;
-
-    const firstDay = new Date(y, m, 1).getDay();
-    const lastDate = new Date(y, m + 1, 0).getDate();
-
-    for(let i=0; i < firstDay; i++) {
-        container.innerHTML += `<div class="day empty"></div>`;
-    }
-
-    for(let i=1; i <= lastDate; i++) {
-        const isToday = i === new Date().getDate() && m === new Date().getMonth() && y === new Date().getFullYear();
-        container.innerHTML += `<div class="day ${isToday ? 'today' : ''}"><span class="day-number">${i}</span></div>`;
-    }
-}
-
-// ==========================================
-// 6. THEME ENGINE & STIMULATION
-// ==========================================
 function initThemeEngine() {
     const savedLight = localStorage.getItem('scheduledLight') || "07:00";
     const savedDark = localStorage.getItem('scheduledDark') || "19:00";
@@ -228,6 +248,62 @@ function checkThemeSchedule() {
     }
 }
 
+// ==========================================
+// 6. CALENDAR & STIMULATION
+// ==========================================
+function initCalendar() {
+    const monthSelect = document.getElementById('selectMonth');
+    const yearSelect = document.getElementById('selectYear');
+    if (!monthSelect || !yearSelect) return;
+    
+    monthSelect.innerHTML = '';
+    yearSelect.innerHTML = '';
+
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    months.forEach((m, i) => {
+        let opt = new Option(m, i);
+        monthSelect.add(opt);
+    });
+
+    for (let i = 1900; i <= 2100; i++) {
+        let opt = new Option(i, i);
+        yearSelect.add(opt);
+    }
+
+    monthSelect.value = calendarDate.getMonth();
+    yearSelect.value = calendarDate.getFullYear();
+
+    renderCalendar();
+}
+
+function renderCalendar() {
+    const container = document.getElementById('calendarDays');
+    const display = document.getElementById('monthYearDisplay');
+    if(!container) return;
+
+    container.innerHTML = '';
+    const y = calendarDate.getFullYear();
+    const m = calendarDate.getMonth();
+    display.innerText = `${new Intl.DateTimeFormat('en-US', { month: 'long' }).format(calendarDate)} ${y}`;
+
+    const firstDay = new Date(y, m, 1).getDay();
+    const lastDate = new Date(y, m + 1, 0).getDate();
+
+    for(let i=0; i < firstDay; i++) container.innerHTML += `<div class="day empty"></div>`;
+
+    for(let i=1; i <= lastDate; i++) {
+        const isToday = i === new Date().getDate() && m === new Date().getMonth() && y === new Date().getFullYear();
+        container.innerHTML += `<div class="day ${isToday ? 'today' : ''}"><span class="day-number">${i}</span></div>`;
+    }
+}
+
+function jumpToDate() {
+    const m = document.getElementById('selectMonth').value;
+    const y = document.getElementById('selectYear').value;
+    calendarDate = new Date(y, m, 1);
+    renderCalendar();
+}
+
 function populateStimulations() {
     const container = document.getElementById('stimContainer');
     if (!container) return;
@@ -250,7 +326,7 @@ function setStimulation(type) {
 }
 
 // ==========================================
-// 7. TIME ENGINE & NAVIGATION
+// 7. TIME ENGINE & AUTH
 // ==========================================
 function startTimeEngine() {
     setInterval(() => {
@@ -273,18 +349,6 @@ function updateSystemDate() {
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
         });
     }
-}
-
-function switchPage(pageId) {
-    document.querySelectorAll('.view-section').forEach(section => section.classList.add('hidden'));
-    const target = document.getElementById(pageId);
-    if (target) target.classList.remove('hidden');
-
-    document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
-    const activeNav = document.getElementById(`nav-${pageId}`);
-    if (activeNav) activeNav.classList.add('active');
-
-    if(pageId === 'calendar') renderCalendar();
 }
 
 function handleAuth(mode) {
