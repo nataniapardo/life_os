@@ -64,16 +64,11 @@
                         <label for="newPassInput">Password</label>
                         <input type="password" id="newPassInput" placeholder="Password">
                     </div>
-                    <div class="input-group">
-                        <label for="regConfirm">Confirm Password</label>
-                        <input type="password" id="regConfirm" placeholder="Confirm Password">
-                    </div>
                 </div>
                 <div class="auth-buttons">
                     <button class="btn-glow" onclick="handleAuth('signup')">Initialize System</button>
                     <button class="btn-outline" onclick="toggleAuthMode()">Back to Login</button>
                 </div>
-                <p style="margin-top:15px; cursor:pointer; opacity:0.7; text-align:center;" onclick="togglePasswordReset()">Forgot Password?</p>
             </div>
         </div>
     </section>
@@ -90,51 +85,48 @@
             </div>
             
             <ul class="nav-links" id="mainNav">
-                <li class="active" id="nav-home" onclick="switchPage('home')"><i data-lucide="home"></i><span>Dashboard</span></li>
-                <li id="nav-tasks" onclick="switchPage('tasks')"><i data-lucide="check-square"></i><span>Objectives</span></li>
+                <li class="active" id="nav-home" onclick="switchPage('home')"><i data-lucide="home"></i><span>Home</span></li>
+                <li id="nav-tasks" onclick="switchPage('tasks')"><i data-lucide="check-square"></i><span>Tasks</span></li>
                 <li id="nav-professional" onclick="switchPage('professional')"><i data-lucide="briefcase"></i><span>Professional</span></li>
+                <li id="nav-personal" onclick="switchPage('personal')"><i data-lucide="user"></i><span>Personal</span></li>
                 <li id="nav-timers" onclick="switchPage('timers')"><i data-lucide="timer"></i><span>Timer</span></li>
-                <li id="nav-calendar" onclick="switchPage('calendar')"><i data-lucide="calendar"></i><span>Schedule</span></li>
+                <li id="nav-calendar" onclick="switchPage('calendar')"><i data-lucide="calendar"></i><span>Calendar</span></li>
                 <li id="nav-settings" onclick="switchPage('settings')"><i data-lucide="settings"></i><span>Settings</span></li>
             </ul>
 
-            <div class="add-section-wrap" style="padding: 10px 20px;">
-                <button class="btn-outline" onclick="addNewSection()" style="width: 100%; border-style: dashed;">
-                    <i data-lucide="plus"></i> Add Section
-                </button>
+            <div class="add-section-wrap">
+                <select id="categorySelector" class="glass-select">
+                    <option value="" disabled selected>+ Add Section</option>
+                    <option value="notes">Notes</option>
+                    <option value="journal">Journal</option>
+                    <option value="mood">Mood</option>
+                </select>
+                <button class="btn-outline-dash" onclick="addNewCategorizedSection()">Confirm</button>
             </div>
         </nav>
 
         <main class="main-layout">
             <header class="top-bar">
                 <div class="header-left">
-                    <h2 id="dynamicGreeting">System Active</h2>
+                    <div class="greeting-block">
+                        <h2 id="dynamicGreeting">Initializing...</h2>
+                        <p class="sub-text">Welcome to your command center.</p>
+                    </div>
                 </div>
 
                 <div class="header-right">
-                    <div class="time-container" style="margin-right: 20px;">
-                        <div id="dateDisplay" class="date-text"></div>
-                        <div id="clockDisplay" class="time-text">00:00:00</div>
+                    <button id="themeToggle" class="btn-icon" onclick="manualThemeToggle()">
+                        <i id="themeIcon" data-lucide="moon"></i>
+                    </button>
+                    
+                    <div class="time-container">
+                        <div id="dateDisplay" class="date-text">Thursday, April 23, 2026</div>
+                        <div id="clockDisplay" class="time-text" onclick="toggleMilitaryTime()" style="cursor: pointer;">12:51:03 PM</div>
                     </div>
 
-                    <div class="profile-area">
-                        <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">
-                            <span id="userInitials">US</span>
-                            <img id="userAvatarImg" src="" class="hidden" alt="Profile">
-                        </div>
-                        
-                        <div id="profileDropdown" class="dropdown-menu glass-card hidden">
-                            <div class="dropdown-header">
-                                <strong id="userNameDisplay">User</strong>
-                            </div>
-                            <div class="divider"></div>
-                            <div class="dropdown-item" onclick="openSettingsModal()"><i data-lucide="user"></i> Edit Profile</div>
-                            <div class="dropdown-item" onclick="switchPage('settings')"><i data-lucide="settings"></i> Settings</div>
-                            <div class="divider"></div>
-                            <div class="dropdown-item logout" onclick="location.reload()" style="color: #ff4d4d;">
-                                <i data-lucide="log-out"></i> Log Out
-                            </div>
-                        </div>
+                    <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">
+                        <span id="userInitials">US</span>
+                        <img id="userAvatarImg" src="" class="hidden" alt="Profile">
                     </div>
                 </div>
             </header>
@@ -145,10 +137,7 @@
                     
                     <div class="ai-input-zone glass-card">
                         <h3><i data-lucide="sparkles"></i> AI Personal Assistant</h3>
-                        <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px;">
-                            Tell AI: "I have a meeting at 3pm tomorrow" or "Urgent: call bank today".
-                        </p>
-                        <div class="task-entry-grid" style="display: flex; gap: 10px;">
+                        <div class="task-entry-grid" style="display: flex; gap: 10px; margin-top: 15px;">
                             <input type="text" id="aiTaskInput" placeholder="What's the plan?..." style="flex: 1;">
                             <button class="btn-glow" onclick="smartAddTask()">Distribute Task</button>
                         </div>
@@ -166,61 +155,41 @@
                     </div>
                 </section>
 
-                <section id="tasks" class="view-section hidden">
-                    <div class="glass-card">
-                        <h2>Manual Entry Control</h2>
-                        <div class="task-entry-grid" style="display: flex; gap: 10px; margin-bottom: 20px;">
-                            <input type="text" id="taskInput" placeholder="Add a manual objective..." style="flex: 1;">
-                            <select id="taskPriority" style="width: 120px;">
-                                <option value="high">High</option>
-                                <option value="medium" selected>Medium</option>
-                                <option value="low">Low</option>
-                            </select>
-                            <button class="btn-glow" onclick="addTask()">Add Task</button>
-                        </div>
-                        <ul id="taskList" style="list-style: none; padding: 0;"></ul>
-                    </div>
-                </section>
-
-                <section id="calendar" class="view-section hidden">
-                    <div class="glass-card">
-                        <div class="calendar-controls">
-                            <select id="selectMonth"></select>
-                            <select id="selectYear"></select>
-                            <button class="btn-glow" onclick="jumpToDate()">Go</button>
-                        </div>
-                        <div class="calendar-container">
-                            <header><h2 id="monthYearDisplay"></h2></header>
-                            <div class="calendar-grid">
-                                <div class="day-label">Sun</div><div class="day-label">Mon</div>
-                                <div class="day-label">Tue</div><div class="day-label">Wed</div>
-                                <div class="day-label">Thu</div><div class="day-label">Fri</div>
-                                <div class="day-label">Sat</div>
-                            </div>
-                            <div id="calendarDays" class="days-container"></div>
-                        </div>
-                    </div>
-                </section>
-
                 <section id="settings" class="view-section hidden">
                     <div class="glass-card">
-                        <h3>Appearance & Environment</h3>
+                        <h3>Appearance</h3>
                         <div class="setting-item">
-                            <label for="themePicker">Accent Color</label>
-                            <input type="color" id="themePicker">
+                            <label>Accent Color</label>
+                            <input type="color" id="themePicker" value="#00f2ff">
                         </div>
                         <div class="setting-item">
-                            <label for="fontChoice">System Font</label>
-                            <select id="fontChoice"></select>
+                            <label>System Font</label>
+                            <select id="fontChoice" class="glass-select-small"></select>
                         </div>
                         <div class="setting-item">
                             <h3>Environment Stimulation</h3>
-                            <div id="stimContainer"></div>
+                            <div id="stimContainer" class="stim-grid">
+                                </div>
                         </div>
-                        <div class="setting-item">
-                            <label><input type="checkbox" id="enableSchedule"> Enable Auto-Theme Schedule</label>
+                        <button class="btn-glow" style="width: 100%; margin-top: 20px;" onclick="saveSettings()">Apply and Save Changes</button>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3>Theme Auto-Schedule</h3>
+                        <div class="flex-row" style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="enableSchedule" onchange="toggleSchedule()">
+                            <label for="enableSchedule">Enable Auto-Schedule</label>
                         </div>
-                        <button class="btn-glow" id="saveSettingsBtn" style="width: 100%; margin-top: 20px;">Apply Changes</button>
+                        <div id="scheduleInputs" class="hidden" style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <label>Light Mode At:</label>
+                                <input type="time" id="lightTime" value="07:00">
+                            </div>
+                            <div>
+                                <label>Dark Mode At:</label>
+                                <input type="time" id="darkTime" value="19:00">
+                            </div>
+                        </div>
                     </div>
                 </section>
             </div>
