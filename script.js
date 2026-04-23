@@ -1,67 +1,63 @@
 document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
     initClock();
     renderAppleStrip();
-    lucide.createIcons();
 });
 
-// --- AUTHENTICATION LOGIC ---
+// Authentication System
 function toggleAuthMode() {
-    document.getElementById('loginForm').classList.toggle('hidden');
-    document.getElementById('signupForm').classList.toggle('hidden');
+    const title = document.querySelector('#loginForm h2');
+    title.innerText = title.innerText === "Welcome Back" ? "Initialize System" : "Welcome Back";
 }
 
 function handleAuth(type) {
-    // Basic Simulation: Usually Supabase logic goes here
-    console.log(`Authenticating: ${type}`);
+    // Simulation: In production, use Supabase here
     document.getElementById('authPage').classList.add('hidden');
     document.getElementById('appContainer').classList.remove('hidden');
 }
 
-// --- CLOCK & DATE ---
+// Clock Logic
 function initClock() {
     const update = () => {
         const now = new Date();
-        document.getElementById('clockDisplay').textContent = now.toLocaleTimeString();
-        document.getElementById('dateDisplay').textContent = now.toLocaleDateString(undefined, { 
-            weekday: 'long', month: 'long', day: 'numeric' 
+        document.getElementById('clockDisplay').innerText = now.toLocaleTimeString();
+        document.getElementById('dateDisplay').innerText = now.toLocaleDateString(undefined, {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
         });
     };
     setInterval(update, 1000);
     update();
 }
 
-// --- APPLE CALENDAR STRIP GENERATION ---
+// Apple Calendar Strip Logic
 function renderAppleStrip() {
     const strip = document.getElementById('appleCalendar');
-    if (!strip) return;
-    
     const today = new Date();
     strip.innerHTML = '';
 
-    for (let i = -3; i <= 10; i++) {
-        const date = new Date();
-        date.setDate(today.getDate() + i);
-        
+    for (let i = -2; i < 12; i++) {
+        const d = new Date();
+        d.setDate(today.getDate() + i);
         const card = document.createElement('div');
         card.className = `calendar-day-card ${i === 0 ? 'active' : ''}`;
         card.innerHTML = `
-            <span style="font-size: 0.7rem; opacity: 0.7;">${date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
-            <span style="font-size: 1.2rem; font-weight: bold;">${date.getDate()}</span>
+            <span style="font-size: 0.7rem; opacity: 0.6;">${d.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+            <span style="font-size: 1.2rem; font-weight: bold; margin-top: 5px;">${d.getDate()}</span>
         `;
         strip.appendChild(card);
     }
 }
 
-// --- PROFILE & AVATAR SYSTEM ---
+// Profile System
 function toggleProfileMenu() {
     document.getElementById('profileDropdown').classList.toggle('hidden');
 }
 
-function openSettingsModal() {
+function openProfileSettings() {
     document.getElementById('settingsModal').classList.remove('hidden');
 }
 
-function closeSettingsModal() {
+function closeProfileSettings() {
     document.getElementById('settingsModal').classList.add('hidden');
 }
 
@@ -69,34 +65,56 @@ function previewImage(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            const preview = document.getElementById('imagePreview');
+            const preview = document.createElement('img');
             preview.src = e.target.result;
-            preview.classList.remove('hidden');
-        }
+            preview.id = "tempPreview";
+            // Store it globally for the "Save" function
+            window.tempAvatar = e.target.result;
+        };
         reader.readAsDataURL(input.files[0]);
     }
 }
 
 function saveProfileChanges() {
-    const newName = document.getElementById('editFullName').value;
-    const newImgSrc = document.getElementById('imagePreview').src;
-
-    if (newName) document.getElementById('userNameDisplay').textContent = newName;
-    if (newImgSrc) {
-        const avatarImg = document.getElementById('userAvatarImg');
-        avatarImg.src = newImgSrc;
-        avatarImg.classList.remove('hidden');
+    const name = document.getElementById('editFullName').value;
+    if (name) {
+        document.getElementById('dynamicGreeting').innerText = `Good Afternoon, ${name}`;
+        document.getElementById('userNameDisplay').innerText = name;
+    }
+    if (window.tempAvatar) {
+        const img = document.getElementById('userAvatarImg');
+        img.src = window.tempAvatar;
+        img.classList.remove('hidden');
         document.getElementById('userInitials').classList.add('hidden');
     }
-    closeSettingsModal();
+    closeProfileSettings();
 }
 
-// --- NAVIGATION ---
+// Navigation Logic
 function switchPage(pageId) {
-    document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
+    document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
     document.getElementById(pageId).classList.remove('hidden');
     
+    // Update active state in sidebar
     document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
-    const activeNav = document.getElementById(`nav-${pageId}`);
-    if(activeNav) activeNav.classList.add('active');
+    // (In real use, you'd add logic to find the specific LI clicked)
+}
+
+// AI Task Distribution Simulation
+function smartAddTask() {
+    const input = document.getElementById('aiTaskInput');
+    if (!input.value) return;
+
+    const li = document.createElement('li');
+    li.style.padding = "10px";
+    li.style.borderBottom = "1px solid var(--border)";
+    li.innerText = input.value;
+
+    // Simulate AI "sorting"
+    if (input.value.toLowerCase().includes('urgent') || input.value.toLowerCase().includes('priority')) {
+        document.getElementById('highTaskList').appendChild(li);
+    } else {
+        document.getElementById('midTaskList').appendChild(li);
+    }
+    input.value = '';
 }
