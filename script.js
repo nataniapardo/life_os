@@ -101,7 +101,6 @@ function updateUserName() {
         userName = input.value.trim();
         localStorage.setItem('lifeOS_name', userName);
         updateTimeAndGreeting();
-        // Update profile display name too
         const display = document.getElementById('userNameDisplay');
         if(display) display.innerText = userName;
     }
@@ -117,16 +116,6 @@ function manualThemeToggle() {
     if(icon) {
         icon.setAttribute('data-lucide', isLight ? 'sun' : 'moon');
         lucide.createIcons();
-    }
-}
-
-function toggleSchedule() {
-    const check = document.getElementById('enableSchedule');
-    const inputArea = document.getElementById('scheduleInputs');
-    if (check && inputArea) {
-        const isEnabled = check.checked;
-        inputArea.style.display = isEnabled ? 'grid' : 'none';
-        localStorage.setItem('themeScheduleActive', isEnabled);
     }
 }
 
@@ -149,20 +138,64 @@ function checkThemeSchedule(now) {
 }
 
 // ==========================================
-// 4. NAVIGATION & SECTIONS
+// 4. CALENDAR ENGINE (BOXED GRID)
+// ==========================================
+
+function initCalendar() {
+    const daysContainer = document.getElementById('calendarDays');
+    if (!daysContainer) return;
+
+    const now = new Date();
+    const month = calendarDate.getMonth();
+    const year = calendarDate.getFullYear();
+
+    daysContainer.innerHTML = '';
+
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"];
+    
+    const displayEl = document.getElementById('monthYearDisplay');
+    if(displayEl) displayEl.innerText = `${monthNames[month]} ${year}`;
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = 32 - new Date(year, month, 32).getDate();
+
+    // 1. Padding for previous month days
+    for (let i = 0; i < firstDay; i++) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'calendar-day-box empty';
+        daysContainer.appendChild(emptyDiv);
+    }
+
+    // 2. Generation of Day Boxes
+    for (let date = 1; date <= daysInMonth; date++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day-box';
+        dayDiv.innerText = date;
+
+        if (date === now.getDate() && year === now.getFullYear() && month === now.getMonth()) {
+            dayDiv.classList.add('today');
+        }
+
+        dayDiv.onclick = () => selectCalendarDate(year, month, date);
+        daysContainer.appendChild(dayDiv);
+    }
+}
+
+// ==========================================
+// 5. NAVIGATION & SECTIONS
 // ==========================================
 
 function addNewCategorizedSection() {
     const category = document.getElementById('categorySelector').value;
     if (!category) return alert("Please select a category first.");
     
-    console.log("System adding customized section:", category);
-    
-    // UI logic to append a new tab to the navigation
-    const nav = document.getElementById('mainNav');
+    const nav = document.getElementById('mainNav'); // Assuming your UL has this ID
+    if(!nav) return;
+
     const li = document.createElement('li');
     li.id = `nav-${category}`;
-    li.onclick = () => switchPage('home'); // Redirecting to home for now or specific UI
+    li.onclick = () => switchPage('home'); 
     li.innerHTML = `<i data-lucide="layers"></i><span>${category.charAt(0).toUpperCase() + category.slice(1)}</span>`;
     
     nav.appendChild(li);
@@ -179,35 +212,27 @@ function switchPage(pageId) {
     if (target) target.classList.remove('hidden');
     if (navItem) navItem.classList.add('active');
     
-    if(pageId === 'calendar') renderHorizontalCalendar();
+    if(pageId === 'calendar') initCalendar();
 }
 
 // ==========================================
-// 5. TIME ENGINE & AUTH
+// 6. TIME ENGINE & AUTH
 // ==========================================
 
 function startTimeEngine() {
-    // Initial call
     updateTimeAndGreeting();
-    // Run every second
     setInterval(updateTimeAndGreeting, 1000);
 }
 
 function handleAuth(mode) {
     const nameInput = document.getElementById('newNameInput');
-    const emailInput = (mode === 'login') ? document.getElementById('emailInput') : document.getElementById('newEmailInput');
-    
-    // Sync the global name with the signup name
-    if (mode === 'signup' && nameInput.value) {
+    if (mode === 'signup' && nameInput && nameInput.value) {
         userName = nameInput.value;
         localStorage.setItem('lifeOS_name', userName);
     }
     
     updateTimeAndGreeting();
-    
     document.getElementById('authPage').classList.add('hidden');
     document.getElementById('appContainer').classList.remove('hidden');
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
-
-// ... rest of your background/task functions remain the same ...
