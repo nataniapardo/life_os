@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life OS | AI Productivity</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;700&family=Papyrus&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js" defer></script>
@@ -19,11 +16,9 @@
 
     <section id="authPage" class="auth-container">
         <div class="glass-card auth-card">
-            <div class="logo-area-branding" style="justify-content: center; margin-bottom: 30px;">
+            <div class="logo-area-branding">
                 <span class="brand-text">Life</span>
-                <div class="globe-container">
-                    <div class="globe"><div class="axis"></div></div>
-                </div>
+                <div class="globe-container"><div class="globe"><div class="axis"></div></div></div>
                 <span class="brand-text">OS</span>
             </div>
             
@@ -48,86 +43,67 @@
     <div id="appContainer" class="app-container hidden">
         <nav class="sidebar">
             <div class="sidebar-header">
-                <div class="logo-area-branding" onclick="switchPage('home')">
-                    <span class="brand-text">Life</span>
-                    <div class="globe-container">
-                        <div class="globe"><div class="axis"></div></div>
-                    </div>
-                    <span class="brand-text">OS</span>
+                <div class="logo-area-branding">
+                    <span class="brand-text">Life OS</span>
                 </div>
             </div>
             
-            <ul class="nav-links" id="mainNav">
-                <li class="active" id="nav-home" onclick="switchPage('home')"><i data-lucide="home"></i><span>Home</span></li>
-                <li id="nav-tasks" onclick="switchPage('tasks')"><i data-lucide="layers"></i><span>Strategic Flow</span></li>
-                <li id="nav-professional" onclick="switchPage('professional')"><i data-lucide="briefcase"></i><span>Professional</span></li>
-                <li id="nav-personal" onclick="switchPage('personal')"><i data-lucide="user"></i><span>Personal</span></li>
-                <li id="nav-timers" onclick="switchPage('timers')"><i data-lucide="timer"></i><span>Timer</span></li>
-                <li id="nav-calendar" onclick="switchPage('calendar')"><i data-lucide="calendar"></i><span>Calendar</span></li>
-                <li id="nav-settings" onclick="switchPage('settings')"><i data-lucide="settings"></i><span>Settings</span></li>
+            <ul class="nav-links">
+                <li class="active" onclick="switchPage('home')"><i data-lucide="home"></i><span>Home</span></li>
+                <li onclick="switchPage('tasks')"><i data-lucide="layers"></i><span>Objectives</span></li>
+                <li onclick="switchPage('timers')"><i data-lucide="timer"></i><span>Timer</span></li>
+                <li onclick="switchPage('calendar')"><i data-lucide="calendar"></i><span>Schedule</span></li>
+                <li onclick="switchPage('settings')"><i data-lucide="settings"></i><span>Settings</span></li>
             </ul>
-
-            <div id="customSectionsList" class="custom-nav-list">
-                <div class="custom-section-item" id="section-journal">
-                    <li onclick="switchPage('journal')"><i data-lucide="book"></i><span>Journal</span></li>
-                    <div class="item-options">
-                        <button class="three-dots-btn" onclick="toggleDeletePopover('journal')"><i data-lucide="more-vertical"></i></button>
-                        <div id="delete-popover-journal" class="delete-popover hidden">
-                            <button class="delete-btn" onclick="deleteSection('journal')">Delete</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <div class="add-section-wrap">
                 <select id="categorySelector" class="glass-select">
                     <option value="" disabled selected>+ Add Section</option>
                     <option value="notes">Notes</option>
                     <option value="journal">Journal</option>
-                    <option value="mood">Mood</option>
                 </select>
-                <button class="btn-outline-dash" onclick="addNewCategorizedSection()">Confirm</button>
+                <button class="btn-outline-dash" onclick="addNewSection()">Confirm</button>
             </div>
         </nav>
 
         <main class="main-layout">
             <header class="top-bar">
                 <div class="header-left">
-                    <div class="greeting-block">
-                        <h2 id="dynamicGreeting">Initializing...</h2>
-                        <p class="sub-text">Welcome to your command center.</p>
-                    </div>
+                    <h2 id="dynamicGreeting">Good Afternoon, User</h2>
+                    <p class="sub-text">Welcome back to your command center.</p>
                 </div>
 
                 <div class="header-right">
                     <div class="time-container">
-                        <div id="dateDisplay" class="date-text">Thursday, April 23, 2026</div>
-                        <div id="clockDisplay" class="time-text">12:51:03 PM</div>
+                        <div id="dateDisplay" class="date-text"></div>
+                        <div id="clockDisplay" class="time-text">00:00:00</div>
                     </div>
-
-                    <div class="profile-wrapper">
-                        <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">
+                    <div class="profile-area" onclick="toggleProfileMenu()">
+                        <div id="userAvatar" class="avatar-circle">
                             <span id="userInitials">US</span>
+                            <img id="userAvatarImg" src="" class="hidden">
                         </div>
-                        <div id="profileDropdown" class="profile-dropdown hidden">
-                            <button onclick="switchPage('settings')"><i data-lucide="settings"></i> System Settings</button>
-                            <button onclick="openRecentlyDeleted()"><i data-lucide="trash-2"></i> Recently Deleted</button>
+                        <div id="profileDropdown" class="profile-dropdown glass-card hidden">
+                            <button onclick="openProfileSettings()"><i data-lucide="user"></i> Profile</button>
                             <hr>
-                            <button onclick="handleLogout()"><i data-lucide="log-out"></i> Logout</button>
+                            <button onclick="location.reload()" style="color: #ff4d4d;"><i data-lucide="log-out"></i> Logout</button>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <div id="contentSections" class="content-padding">
-                <section id="tasks" class="view-section hidden">
+            <div class="content-padding">
+                <section id="home" class="view-section">
+                    <div class="apple-calendar-strip" id="appleCalendar"></div>
+                    
                     <div class="ai-input-zone glass-card">
-                        <h3><i data-lucide="sparkles"></i> AI Personal Assistant</h3>
+                        <h3><i data-lucide="sparkles"></i> AI Command</h3>
                         <div class="task-entry-grid">
-                            <input type="text" id="aiTaskInput" placeholder="What's the plan?...">
-                            <button class="btn-glow" onclick="smartAddTask()">Distribute Task</button>
+                            <input type="text" id="aiTaskInput" placeholder="Command: I have a meeting at 3pm tomorrow...">
+                            <button class="btn-glow" onclick="smartAddTask()">Distribute</button>
                         </div>
                     </div>
+
                     <div class="task-distribution-grid">
                         <div class="task-column glass-card">
                             <h3><i data-lucide="zap"></i> High Priority</h3>
@@ -139,47 +115,28 @@
                         </div>
                     </div>
                 </section>
-
-                <section id="settings" class="view-section hidden">
-                    <div class="glass-card">
-                        <h3>System Customization</h3>
-                        
-                        <div class="setting-item">
-                            <label>Appearance Mode</label>
-                            <div class="theme-toggle-container">
-                                <span id="themeLabel">Dark Mode</span>
-                                <button id="embeddedThemeToggle" class="btn-icon" onclick="manualThemeToggle()">
-                                    <i id="themeIcon" data-lucide="moon"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="setting-item">
-                            <label>Accent Color</label>
-                            <input type="color" id="themePicker" value="#00f2ff">
-                        </div>
-                        
-                        <div class="setting-item">
-                            <label>System Font</label>
-                            <select id="fontChoice" class="glass-select-small">
-                                <option value="Papyrus">Papyrus (Forced)</option>
-                                <option value="Inter">Inter (Clean)</option>
-                            </select>
-                        </div>
-                        <button class="btn-glow" onclick="saveSettings()">Apply Changes</button>
-                    </div>
+                
+                <section id="tasks" class="view-section hidden">
+                    <div class="glass-card"><h2>Objectives</h2><p>Manual task management system active.</p></div>
                 </section>
             </div>
         </main>
     </div>
 
-    <div id="deletedModal" class="auth-container hidden" style="z-index: 2000;">
-        <div class="glass-card">
-            <h3>Recently Deleted</h3>
-            <div id="deletedItemsList"></div>
-            <div class="auth-buttons">
-                <button class="btn-glow" onclick="clearAllDeleted()">Clear All</button>
-                <button class="btn-outline" onclick="closeDeletedModal()">Close</button>
+    <div id="settingsModal" class="modal-overlay hidden">
+        <div class="glass-card modal-content">
+            <h3>Profile Settings</h3>
+            <div class="input-group">
+                <label>Display Name</label>
+                <input type="text" id="editFullName" placeholder="Your Name">
+            </div>
+            <div class="input-group">
+                <label>Avatar</label>
+                <input type="file" id="profilePicUpload" accept="image/*" onchange="previewImage(this)">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-glow" onclick="saveProfileChanges()">Save</button>
+                <button class="btn-outline" onclick="closeProfileSettings()">Cancel</button>
             </div>
         </div>
     </div>
