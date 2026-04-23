@@ -1,200 +1,102 @@
-// ==========================================
-// 1. SYSTEM SETUP & GLOBAL STATE
-// ==========================================
-const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
-const db = (typeof supabase !== 'undefined') ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
-
-const OS_VERSION = "2.0.6";
-let currentUser = null;
-
-// --- GLOBAL STATE ---
-let isMilitaryTime = false;
-let userName = localStorage.getItem('lifeOS_name') || "User";
-let recentlyDeleted = [];
-let timerInterval = null; 
-let timeLeft = 0;
-let calendarDate = new Date(); 
-
-// Mock data based on API structure for Smart Engine
-const smartEnergyData = {
-    morningPeak: "08:00-10:00",
-    afternoonDip: "12:00-14:00",
-    chronotype: "morning person"
-};
-
-const stimulations = ["Nature", "Food", "Space", "Shapes", "Flowers", "Futuristic", "Travel", "Location"];
-const fonts = [
-    { name: 'Papyrus (System Default)', value: "'Papyrus', fantasy" },
-    { name: 'Modern Sans', value: "'Inter', sans-serif" },
-    { name: 'Futuristic', value: "'Orbitron', sans-serif" },
-    { name: 'Elegant Serif', value: "'Playfair Display', serif" },
-    { name: 'Coding Mono', value: "'JetBrains Mono', monospace" },
-    { name: 'Clean Montserrat', value: "'Montserrat', sans-serif" }
-];
-
-// ==========================================
-// 2. SYSTEM INITIALIZATION
-// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-    
-    // Core Engine Starts
-    updateSystemDate(); 
-    initThemeEngine(); 
-    startTimeEngine(); 
-    
-    // UI Setup
-    populateFontList();
-    populateStimulations();
-    initCalendar(); 
-    renderHorizontalCalendar(); 
-
-    const lastBg = localStorage.getItem('lifeOS_lastBackground') || 'Nature';
-    setBackground(lastBg);
-
-    const nameInput = document.getElementById('userNameInput');
-    if(nameInput) nameInput.value = userName;
-
-    const savedColor = localStorage.getItem('lifeOS_themeColor');
-    if (savedColor) {
-        document.documentElement.style.setProperty('--accent', savedColor);
-        document.documentElement.style.setProperty('--accent-glow', savedColor);
-    }
-
-    const savedFont = localStorage.getItem('lifeOS_font') || "'Papyrus', fantasy";
-    document.documentElement.style.setProperty('--main-font', savedFont);
+    initClock();
+    renderAppleStrip();
+    lucide.createIcons();
 });
 
-// ==========================================
-// 3. NAVIGATION & PAGE TITLE ENGINE
-// ==========================================
+// --- AUTHENTICATION LOGIC ---
+function toggleAuthMode() {
+    document.getElementById('loginForm').classList.toggle('hidden');
+    document.getElementById('signupForm').classList.toggle('hidden');
+}
+
+function handleAuth(type) {
+    // Basic Simulation: Usually Supabase logic goes here
+    console.log(`Authenticating: ${type}`);
+    document.getElementById('authPage').classList.add('hidden');
+    document.getElementById('appContainer').classList.remove('hidden');
+}
+
+// --- CLOCK & DATE ---
+function initClock() {
+    const update = () => {
+        const now = new Date();
+        document.getElementById('clockDisplay').textContent = now.toLocaleTimeString();
+        document.getElementById('dateDisplay').textContent = now.toLocaleDateString(undefined, { 
+            weekday: 'long', month: 'long', day: 'numeric' 
+        });
+    };
+    setInterval(update, 1000);
+    update();
+}
+
+// --- APPLE CALENDAR STRIP GENERATION ---
+function renderAppleStrip() {
+    const strip = document.getElementById('appleCalendar');
+    if (!strip) return;
+    
+    const today = new Date();
+    strip.innerHTML = '';
+
+    for (let i = -3; i <= 10; i++) {
+        const date = new Date();
+        date.setDate(today.getDate() + i);
+        
+        const card = document.createElement('div');
+        card.className = `calendar-day-card ${i === 0 ? 'active' : ''}`;
+        card.innerHTML = `
+            <span style="font-size: 0.7rem; opacity: 0.7;">${date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+            <span style="font-size: 1.2rem; font-weight: bold;">${date.getDate()}</span>
+        `;
+        strip.appendChild(card);
+    }
+}
+
+// --- PROFILE & AVATAR SYSTEM ---
+function toggleProfileMenu() {
+    document.getElementById('profileDropdown').classList.toggle('hidden');
+}
+
+function openSettingsModal() {
+    document.getElementById('settingsModal').classList.remove('hidden');
+}
+
+function closeSettingsModal() {
+    document.getElementById('settingsModal').classList.add('hidden');
+}
+
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('imagePreview');
+            preview.src = e.target.result;
+            preview.classList.remove('hidden');
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function saveProfileChanges() {
+    const newName = document.getElementById('editFullName').value;
+    const newImgSrc = document.getElementById('imagePreview').src;
+
+    if (newName) document.getElementById('userNameDisplay').textContent = newName;
+    if (newImgSrc) {
+        const avatarImg = document.getElementById('userAvatarImg');
+        avatarImg.src = newImgSrc;
+        avatarImg.classList.remove('hidden');
+        document.getElementById('userInitials').classList.add('hidden');
+    }
+    closeSettingsModal();
+}
+
+// --- NAVIGATION ---
 function switchPage(pageId) {
-    document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
-    const targetSection = document.getElementById(pageId);
-    if (targetSection) targetSection.classList.remove('hidden');
+    document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
+    document.getElementById(pageId).classList.remove('hidden');
     
     document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
-    const navItem = document.getElementById(`nav-${pageId}`);
-    if (navItem) navItem.classList.add('active');
-
-    const titleMap = {
-        'home': 'Command Center',
-        'tasks': 'Strategic Flow',
-        'calendar': 'Temporal Grid',
-        'settings': 'System Matrix'
-    };
-    const titleDisplay = document.getElementById('sectionTitle');
-    if (titleDisplay) {
-        titleDisplay.innerText = titleMap[pageId] || pageId;
-    }
-    
-    if(pageId === 'calendar') initCalendar();
-}
-
-// ==========================================
-// 4. SMART CALENDAR ENGINE (Temporal Grid)
-// ==========================================
-function initCalendar() {
-    const monthSelect = document.getElementById('monthSelect');
-    const yearSelect = document.getElementById('yearSelect');
-    if (!monthSelect || !yearSelect) return;
-    
-    if(yearSelect.options.length === 0) {
-        for(let i = 2020; i <= 2030; i++) {
-            let opt = document.createElement('option');
-            opt.value = i; opt.innerHTML = i;
-            yearSelect.appendChild(opt);
-        }
-        yearSelect.value = new Date().getFullYear();
-    }
-    
-    if(monthSelect.value === "") monthSelect.value = new Date().getMonth();
-
-    updateCalendar();
-}
-
-function updateCalendar() {
-    const grid = document.getElementById('calendarDays');
-    const monthSelect = document.getElementById('monthSelect');
-    const yearSelect = document.getElementById('yearSelect');
-    
-    if (!grid || !monthSelect || !yearSelect) return;
-
-    const month = parseInt(monthSelect.value);
-    const year = parseInt(yearSelect.value);
-    grid.innerHTML = ''; 
-
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    for(let i = 0; i < firstDay; i++) {
-        const emptyBox = document.createElement('div');
-        emptyBox.className = 'calendar-day-box empty';
-        grid.appendChild(emptyBox);
-    }
-
-    const now = new Date();
-    for(let d = 1; d <= daysInMonth; d++) {
-        const isToday = now.getDate() === d && now.getMonth() === month && now.getFullYear() === year;
-        const dayOfWeek = new Date(year, month, d).getDay();
-        const isWorkDay = dayOfWeek > 0 && dayOfWeek < 6;
-
-        const dayBox = document.createElement('div');
-        dayBox.className = `calendar-day-box ${isToday ? 'today' : ''}`;
-        
-        dayBox.innerHTML = `
-            <span class="day-num">${d}</span>
-            <div class="day-metadata">
-                ${isWorkDay ? '<span class="energy-dot high" title="High Energy: Analytical Mode"></span>' : ''}
-                ${d % 5 === 0 ? '<span class="energy-dot creative" title="Brainstorming Session"></span>' : ''}
-            </div>
-        `;
-        
-        dayBox.onclick = () => showSmartDayView(year, month, d);
-        grid.appendChild(dayBox);
-    }
-}
-
-function showSmartDayView(y, m, d) {
-    console.log(`Loading Smart Schedule for ${y}-${m+1}-${d}`);
-}
-
-// ==========================================
-// 5. GREETING, DATE & TIME ENGINE
-// ==========================================
-
-function updateSystemDate() {
-    const dateDisplay = document.getElementById('systemDate');
-    if (!dateDisplay) return;
-
-    const now = new Date();
-    const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-    };
-    
-    dateDisplay.innerText = now.toLocaleDateString('en-US', options);
-}
-
-function updateTimeAndGreeting() {
-    const now = new Date();
-    const hours = now.getHours();
-    const greetingEl = document.getElementById('dynamicGreeting');
-    const clockEl = document.getElementById('clockDisplay');
-
-    let status = (hours < 12) ? "Morning" : (hours < 17) ? "Afternoon" : (hours < 21) ? "Evening" : "Night";
-    if (greetingEl) greetingEl.innerText = `Good ${status}, ${userName}`;
-
-    if (clockEl) {
-        clockEl.innerText = isMilitaryTime ? now.toLocaleTimeString('en-GB') : now.toLocaleTimeString('en-US');
-    }
-    checkThemeSchedule(now);
-}
-
-function startTimeEngine() {
-    updateTimeAndGreeting();
-    setInterval(updateTimeAndGreeting, 1000);
+    const activeNav = document.getElementById(`nav-${pageId}`);
+    if(activeNav) activeNav.classList.add('active');
 }
