@@ -16,6 +16,13 @@ let timerInterval = null;
 let timeLeft = 0;
 let calendarDate = new Date(); 
 
+// Mock data based on API structure for Smart Engine
+const smartEnergyData = {
+    morningPeak: "08:00-10:00",
+    afternoonDip: "12:00-14:00",
+    chronotype: "morning person"
+};
+
 const stimulations = ["Nature", "Food", "Space", "Shapes", "Flowers", "Futuristic", "Travel", "Location"];
 const fonts = [
     { name: 'Papyrus (System Default)', value: "'Papyrus', fantasy" },
@@ -89,5 +96,106 @@ function switchPage(pageId) {
 }
 
 // ==========================================
-// 4. CALENDAR GENERATOR (Temporal Grid)
-// =================
+// 4. SMART CALENDAR ENGINE (Temporal Grid)
+// ==========================================
+function initCalendar() {
+    const monthSelect = document.getElementById('monthSelect');
+    const yearSelect = document.getElementById('yearSelect');
+    if (!monthSelect || !yearSelect) return;
+    
+    // Populate Years (2020 to 2030) if empty
+    if(yearSelect.options.length === 0) {
+        for(let i = 2020; i <= 2030; i++) {
+            let opt = document.createElement('option');
+            opt.value = i; opt.innerHTML = i;
+            yearSelect.appendChild(opt);
+        }
+        yearSelect.value = new Date().getFullYear();
+    }
+    
+    if(monthSelect.value === "") monthSelect.value = new Date().getMonth();
+
+    updateCalendar();
+}
+
+/**
+ * Enhanced updateCalendar: Logic inspired by Task Planner API
+ * Color-codes days based on focus levels and energy peaks
+ */
+function updateCalendar() {
+    const grid = document.getElementById('calendarDays');
+    const monthSelect = document.getElementById('monthSelect');
+    const yearSelect = document.getElementById('yearSelect');
+    
+    if (!grid || !monthSelect || !yearSelect) return;
+
+    const month = parseInt(monthSelect.value);
+    const year = parseInt(yearSelect.value);
+    grid.innerHTML = ''; 
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // 1. Add empty boxes for alignment
+    for(let i = 0; i < firstDay; i++) {
+        const emptyBox = document.createElement('div');
+        emptyBox.className = 'calendar-day-box empty';
+        grid.appendChild(emptyBox);
+    }
+
+    // 2. Generate Days with Energy Indicators
+    const now = new Date();
+    for(let d = 1; d <= daysInMonth; d++) {
+        const isToday = now.getDate() === d && now.getMonth() === month && now.getFullYear() === year;
+        
+        // Smart Logic: Weekdays get "High Focus" marker
+        const dayOfWeek = new Date(year, month, d).getDay();
+        const isWorkDay = dayOfWeek > 0 && dayOfWeek < 6;
+
+        const dayBox = document.createElement('div');
+        dayBox.className = `calendar-day-box ${isToday ? 'today' : ''}`;
+        
+        // UI injection for metadata indicators
+        dayBox.innerHTML = `
+            <span class="day-num">${d}</span>
+            <div class="day-metadata">
+                ${isWorkDay ? '<span class="energy-dot high" title="High Energy: Analytical Mode"></span>' : ''}
+                ${d % 5 === 0 ? '<span class="energy-dot creative" title="Brainstorming Session"></span>' : ''}
+            </div>
+        `;
+        
+        dayBox.onclick = () => showSmartDayView(year, month, d);
+        grid.appendChild(dayBox);
+    }
+}
+
+/**
+ * Handles detailed "Day View" using API-inspired scheduling
+ */
+function showSmartDayView(y, m, d) {
+    console.log(`Loading Smart Schedule for ${y}-${m+1}-${d}`);
+    // Future integration: display core hours and break schedules
+}
+
+// ==========================================
+// 5. GREETING, TIME & THEME ENGINE
+// ==========================================
+function updateTimeAndGreeting() {
+    const now = new Date();
+    const hours = now.getHours();
+    const greetingEl = document.getElementById('dynamicGreeting');
+    const clockEl = document.getElementById('clockDisplay');
+
+    let status = (hours < 12) ? "Morning" : (hours < 17) ? "Afternoon" : (hours < 21) ? "Evening" : "Night";
+    if (greetingEl) greetingEl.innerText = `Good ${status}, ${userName}`;
+
+    if (clockEl) {
+        clockEl.innerText = isMilitaryTime ? now.toLocaleTimeString('en-GB') : now.toLocaleTimeString('en-US');
+    }
+    checkThemeSchedule(now);
+}
+
+function startTimeEngine() {
+    updateTimeAndGreeting();
+    setInterval(updateTimeAndGreeting, 1000);
+}
