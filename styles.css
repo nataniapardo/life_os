@@ -8,7 +8,7 @@
     /* Default: Dark Mode Variables */
     --bg-main: #0a0a0c;
     --text-main: #e0e0e0;
-    --card-bg: rgba(20, 20, 25, 0.85);
+    --card-bg: rgba(20, 20, 25, 0.7); /* Adjusted for transparency */
     --accent: #00f2ff;
     --accent-glow: #00f2ff;
     
@@ -26,7 +26,7 @@
 body.light-mode {
     --bg-main: #f5f5f7;
     --text-main: #1d1d1f;
-    --card-bg: rgba(255, 255, 255, 0.9);
+    --card-bg: rgba(255, 255, 255, 0.8);
     --accent: #0071e3;
     --accent-glow: #0071e3;
     
@@ -38,17 +38,21 @@ body.light-mode {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /* GLOBAL FONT THEME */
     font-family: var(--main-font) !important;
 }
 
 body {
+    /* Background logic updated for stimulation images */
     background-color: var(--bg-main);
+    background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7));
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
     color: var(--text-main);
     overflow-x: hidden;
     min-height: 100vh;
     line-height: 1.6;
-    transition: background 0.4s ease, color 0.4s ease;
+    transition: background 0.5s ease-in-out, color 0.4s ease;
 }
 
 /* ==========================================
@@ -60,7 +64,7 @@ body {
     align-items: center;
     height: 100vh;
     width: 100%;
-    position: fixed; /* Ensures it covers the viewport */
+    position: fixed;
     top: 0;
     left: 0;
     z-index: 1000;
@@ -123,12 +127,14 @@ body {
     display: flex;
     width: 100%;
     min-height: 100vh;
+    background: transparent !important; /* Allow background to show through */
 }
 
 .sidebar {
     width: var(--sidebar-width);
     min-width: var(--sidebar-width);
-    background: rgba(15, 15, 18, 0.95);
+    background: rgba(15, 15, 18, 0.9);
+    backdrop-filter: blur(10px);
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
@@ -155,7 +161,8 @@ body {
    ========================================== */
 .glass-card {
     background: var(--card-bg);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius);
     padding: 2rem;
