@@ -8,7 +8,6 @@ const db = (typeof supabase !== 'undefined') ? supabase.createClient(SUPABASE_UR
 const OS_VERSION = "2.0.6";
 let currentUser = null;
 
-// --- 1. GLOBAL STATE UPDATES ---
 let recentlyDeleted = [];
 let customInterval; 
 let timerInterval = null; 
@@ -16,9 +15,6 @@ let timeLeft = 0;
 let isBreak = false;
 let isMilitary = false;
 let calendarDate = new Date(); 
-
-// THEME ELEMENTS
-let themeBtn, scheduleCheckbox, lightInput, darkInput;
 
 const stimulations = ["Nature", "Food", "Space", "Shapes", "Flowers", "Futuristic", "Travel", "Location"];
 
@@ -35,33 +31,20 @@ const fonts = [
 // 2. SYSTEM INITIALIZATION
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    themeBtn = document.getElementById('themeToggle');
-    scheduleCheckbox = document.getElementById('enableSchedule');
-    lightInput = document.getElementById('lightStartTime');
-    darkInput = document.getElementById('darkStartTime');
-
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
+    if (typeof lucide !== 'undefined') lucide.createIcons();
     
     updateSystemDate();
     initThemeEngine(); 
     startTimeEngine(); 
     populateFontList();
     populateStimulations();
-    initCalendar();
+    
+    // Initialize both calendars
+    initCalendar(); // Standard
+    renderHorizontalCalendar(); // Apple-style
 
-    // Persistent Background Initialization
     const lastBg = localStorage.getItem('lifeOS_lastBackground') || 'Nature';
     setBackground(lastBg);
-
-    const saveBtn = document.getElementById('saveSettingsBtn');
-    if (saveBtn) {
-        saveBtn.addEventListener('click', () => {
-            saveAppearanceSettings();
-            alert("Settings applied successfully!");
-        });
-    }
 
     const savedColor = localStorage.getItem('lifeOS_themeColor');
     if (savedColor) {
@@ -74,7 +57,60 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 3. TASK MANAGEMENT SYSTEM (CRUD)
+// 3. AI PERSONAL ASSISTANT LOGIC
+// ==========================================
+
+async function processTaskWithAI(rawText) {
+    /**
+     * AI Personal Assistant Simulation
+     * Reads natural language and distributes attributes automatically.
+     */
+    const text = rawText.toLowerCase();
+    let priority = 'medium';
+    let dueDate = new Date().toISOString().split('T')[0];
+
+    // Priority Heuristics
+    if (text.includes('urgent') || text.includes('important') || text.includes('asap') || text.includes('today')) {
+        priority = 'high';
+    } else if (text.includes('whenever') || text.includes('later') || text.includes('low')) {
+        priority = 'low';
+    }
+
+    // Simple Date Heuristics
+    if (text.includes('tomorrow')) {
+        let tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        dueDate = tomorrow.toISOString().split('T')[0];
+    }
+
+    return { text: rawText, priority, dueDate };
+}
+
+async function smartAddTask() {
+    const input = document.getElementById('aiTaskInput');
+    if (!input || !input.value) return;
+
+    // AI "reads" and "distributes" the data
+    const analyzedTask = await processTaskWithAI(input.value);
+
+    const { error } = await db
+        .from('tasks')
+        .insert([{ 
+            text: analyzedTask.text, 
+            priority: analyzedTask.priority,
+            due_date: analyzedTask.dueDate,
+            user_id: db.auth.user()?.id 
+        }]);
+
+    if (!error) {
+        input.value = '';
+        renderHorizontalCalendar(); 
+        loadTasks(); 
+    }
+}
+
+// ==========================================
+// 4. TASK MANAGEMENT SYSTEM (CRUD)
 // ==========================================
 
 async function loadTasks() {
@@ -85,7 +121,6 @@ async function loadTasks() {
     };
 
     if (!lists.high) return;
-
     Object.values(lists).forEach(list => list.innerHTML = '');
 
     const { data: tasks, error } = await db
@@ -119,205 +154,96 @@ async function loadTasks() {
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-async function addTask() {
-    const input = document.getElementById('taskInput');
-    const prioritySelect = document.getElementById('taskPriority');
-    const priority = prioritySelect ? prioritySelect.value : 'medium';
+// ==========================================
+// 5. PROFILE & AVATAR SYSTEM
+// ==========================================
+
+function updateProfileUI(user) {
+    const nameEl = document.getElementById('userNameDisplay');
+    const initialEl = document.getElementById('userInitials');
+    const avatarEl = document.getElementById('userAvatarImg');
+
+    if (user.user_metadata.full_name) {
+        nameEl.innerText = user.user_metadata.full_name;
+        // Generate Initials
+        const initials = user.user_metadata.full_name
+            .split(' ')
+            .map(n => n[0])
+            .join('')
+            .toUpperCase();
+        initialEl.innerText = initials;
+    }
+
+    if (user.user_metadata.avatar_url) {
+        avatarEl.src = user.user_metadata.avatar_url;
+        initialEl.classList.add('hidden');
+        avatarEl.classList.remove('hidden');
+    }
+}
+
+async function uploadAvatar(file) {
+    const user = db.auth.user();
+    const filePath = `avatars/${user.id}-${Date.now()}`;
     
-    if (!input || !input.value) return;
+    let { error: uploadError } = await db.storage
+        .from('profile-pics')
+        .upload(filePath, file);
 
-    const { error } = await db
-        .from('tasks')
-        .insert([{ 
-            text: input.value, 
-            priority: priority,
-            user_id: db.auth.user()?.id 
-        }]);
-
-    if (!error) {
-        input.value = '';
-        loadTasks();
+    if (!uploadError) {
+        const { publicURL } = db.storage.from('profile-pics').getPublicUrl(filePath);
+        await db.auth.update({ data: { avatar_url: publicURL } });
+        location.reload(); 
     }
 }
 
-async function toggleTask(id, currentStatus) {
-    await db.from('tasks').update({ is_completed: !currentStatus }).eq('id', id);
-    loadTasks();
-}
-
-async function deleteTask(id) {
-    if(confirm("Permanently delete this objective?")) {
-        await db.from('tasks').delete().eq('id', id);
-        loadTasks();
-    }
-}
-
-// ==========================================
-// 4. PROFILE & NAVIGATION
-// ==========================================
 function toggleProfileMenu() {
     const menu = document.getElementById('profileDropdown');
     if (menu) menu.classList.toggle('hidden');
 }
 
-window.addEventListener('click', (e) => {
-    const menu = document.getElementById('profileDropdown');
-    const avatar = document.getElementById('userAvatar');
-    if (menu && !menu.contains(e.target) && e.target !== avatar) {
-        menu.classList.add('hidden');
-    }
-});
-
-function switchPage(pageId) {
-    document.querySelectorAll('.view-section').forEach(section => section.classList.add('hidden'));
-    const target = document.getElementById(pageId);
-    if (target) target.classList.remove('hidden');
-
-    document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
-    const activeNav = document.getElementById(`nav-${pageId}`);
-    if (activeNav) activeNav.classList.add('active');
-
-    if(pageId === 'calendar') renderCalendar();
-    if(pageId === 'tasks') loadTasks(); 
-}
-
 // ==========================================
-// 5. APPEARANCE & THEME ENGINE
+// 6. APPLE-STYLE HORIZONTAL CALENDAR
 // ==========================================
-function saveAppearanceSettings() {
-    const font = document.getElementById('fontChoice')?.value;
-    const color = document.getElementById('themePicker')?.value;
 
-    if (font) {
-        document.documentElement.style.setProperty('--main-font', font);
-        localStorage.setItem('lifeOS_font', font);
-    }
-    
-    if (color) {
-        document.documentElement.style.setProperty('--accent', color);
-        document.documentElement.style.setProperty('--accent-glow', color);
-        localStorage.setItem('lifeOS_themeColor', color);
-    }
-}
-
-function populateFontList() {
-    const select = document.getElementById('fontChoice');
-    if (!select) return;
-    fonts.forEach(f => {
-        let opt = new Option(f.name, f.value);
-        select.add(opt);
-    });
-}
-
-function initThemeEngine() {
-    const savedLight = localStorage.getItem('scheduledLight') || "07:00";
-    const savedDark = localStorage.getItem('scheduledDark') || "19:00";
-    const scheduleActive = localStorage.getItem('scheduleEnabled') === 'true';
-    const lastTheme = localStorage.getItem('themePreference');
-
-    if (lightInput) lightInput.value = savedLight;
-    if (darkInput) darkInput.value = savedDark;
-    if (scheduleCheckbox) scheduleCheckbox.checked = scheduleActive;
-
-    if (lastTheme === 'light') document.body.classList.add('light-mode');
-
-    [lightInput, darkInput, scheduleCheckbox].forEach(input => {
-        if (!input) return;
-        input.addEventListener('change', () => {
-            localStorage.setItem('scheduledLight', lightInput.value);
-            localStorage.setItem('scheduledDark', darkInput.value);
-            localStorage.setItem('scheduleEnabled', scheduleCheckbox.checked);
-            checkThemeSchedule(); 
-        });
-    });
-}
-
-function checkThemeSchedule() {
-    if (!scheduleCheckbox || !scheduleCheckbox.checked) return;
-    const now = new Date();
-    const currentTime = now.getHours().toString().padStart(2, '0') + ":" + 
-                        now.getMinutes().toString().padStart(2, '0');
-
-    if (currentTime === lightInput.value) {
-        document.body.classList.add('light-mode');
-        localStorage.setItem('themePreference', 'light');
-    } else if (currentTime === darkInput.value) {
-        document.body.classList.remove('light-mode');
-        localStorage.setItem('themePreference', 'dark');
-    }
-}
-
-// ==========================================
-// 6. CALENDAR & BACKGROUND ENGINE
-// ==========================================
-function initCalendar() {
-    const monthSelect = document.getElementById('selectMonth');
-    const yearSelect = document.getElementById('selectYear');
-    if (!monthSelect || !yearSelect) return;
-    
-    monthSelect.innerHTML = '';
-    yearSelect.innerHTML = '';
-
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    months.forEach((m, i) => {
-        let opt = new Option(m, i);
-        monthSelect.add(opt);
-    });
-
-    for (let i = 1900; i <= 2100; i++) {
-        let opt = new Option(i, i);
-        yearSelect.add(opt);
-    }
-
-    monthSelect.value = calendarDate.getMonth();
-    yearSelect.value = calendarDate.getFullYear();
-
-    renderCalendar();
-}
-
-function renderCalendar() {
-    const container = document.getElementById('calendarDays');
-    const display = document.getElementById('monthYearDisplay');
-    if(!container) return;
-
-    container.innerHTML = '';
-    const y = calendarDate.getFullYear();
-    const m = calendarDate.getMonth();
-    display.innerText = `${new Intl.DateTimeFormat('en-US', { month: 'long' }).format(calendarDate)} ${y}`;
-
-    const firstDay = new Date(y, m, 1).getDay();
-    const lastDate = new Date(y, m + 1, 0).getDate();
-
-    for(let i=0; i < firstDay; i++) container.innerHTML += `<div class="day empty"></div>`;
-
-    for(let i=1; i <= lastDate; i++) {
-        const isToday = i === new Date().getDate() && m === new Date().getMonth() && y === new Date().getFullYear();
-        container.innerHTML += `<div class="day ${isToday ? 'today' : ''}"><span class="day-number">${i}</span></div>`;
-    }
-}
-
-function jumpToDate() {
-    const m = document.getElementById('selectMonth').value;
-    const y = document.getElementById('selectYear').value;
-    calendarDate = new Date(y, m, 1);
-    renderCalendar();
-}
-
-function populateStimulations() {
-    const container = document.getElementById('stimContainer');
+function renderHorizontalCalendar() {
+    const container = document.getElementById('appleCalendar');
     if (!container) return;
-    
     container.innerHTML = '';
     
-    stimulations.forEach(s => {
-        const btn = document.createElement('button');
-        btn.className = "btn-outline";
-        btn.style.margin = "5px";
-        btn.textContent = s;
-        btn.onclick = () => setBackground(s);
-        container.appendChild(btn);
-    });
+    const today = new Date();
+    // Show 12 days spanning from 2 days ago to 9 days ahead
+    for (let i = -2; i < 10; i++) { 
+        const date = new Date();
+        date.setDate(today.getDate() + i);
+        
+        const card = document.createElement('div');
+        const isActive = i === 0;
+        card.className = `calendar-day-card ${isActive ? 'active' : ''}`;
+        
+        card.innerHTML = `
+            <span class="day-name">${date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+            <span class="day-num">${date.getDate()}</span>
+        `;
+        
+        // When clicked, AI/Assistant filters tasks for that day
+        card.onclick = () => {
+            document.querySelectorAll('.calendar-day-card').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            filterTasksByDate(date.toISOString().split('T')[0]);
+        };
+        container.appendChild(card);
+    }
 }
+
+async function filterTasksByDate(dateStr) {
+    console.log("AI Personal Assistant filtering tasks for:", dateStr);
+    // Logic to reload task lists based on the selected due_date
+    // loadTasks(dateStr); 
+}
+
+// ==========================================
+// 7. APPEARANCE & BACKGROUND ENGINE
+// ==========================================
 
 function setBackground(query) {
     const bgOverlay = "linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7))";
@@ -328,14 +254,14 @@ function setBackground(query) {
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundPosition = "center";
     document.body.style.backgroundAttachment = "fixed";
-    document.body.style.backgroundRepeat = "no-repeat";
 
     localStorage.setItem('lifeOS_lastBackground', query);
 }
 
 // ==========================================
-// 7. TIME ENGINE & AUTH
+// 8. TIME ENGINE & AUTH
 // ==========================================
+
 function startTimeEngine() {
     setInterval(() => {
         const now = new Date();
@@ -346,17 +272,7 @@ function startTimeEngine() {
                 hour: '2-digit', minute: '2-digit', second: '2-digit' 
             });
         }
-        checkThemeSchedule();
     }, 1000);
-}
-
-function updateSystemDate() {
-    const dateEl = document.getElementById('dateDisplay');
-    if (dateEl) {
-        dateEl.textContent = new Date().toLocaleDateString('en-US', { 
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-        });
-    }
 }
 
 function handleAuth(mode) {
@@ -370,4 +286,13 @@ function handleAuth(mode) {
     document.getElementById('authPage').classList.add('hidden');
     document.getElementById('appContainer').classList.remove('hidden');
     if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// Navigation Utilities
+function switchPage(pageId) {
+    document.querySelectorAll('.view-section').forEach(section => section.classList.add('hidden'));
+    const target = document.getElementById(pageId);
+    if (target) target.classList.remove('hidden');
+    
+    if(pageId === 'calendar') renderHorizontalCalendar();
 }
