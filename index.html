@@ -112,6 +112,8 @@
             <header class="top-bar">
                 <div class="header-left">
                     <h1 id="sectionTitle" class="page-header-title">Home</h1>
+                    <div id="systemDate" class="page-header-title" style="font-size: 0.8rem; opacity: 0.7;"></div>
+                    
                     <div class="greeting-block">
                         <h2 id="dynamicGreeting">Initializing...</h2>
                         <p class="sub-text">Welcome to your command center.</p>
@@ -120,8 +122,7 @@
 
                 <div class="header-right">
                     <div class="time-container">
-                        <div id="dateDisplay" class="date-text">Thursday, April 23, 2026</div>
-                        <div id="clockDisplay" class="time-text" onclick="toggleMilitaryTime()" style="cursor: pointer;">12:51:03 PM</div>
+                        <div id="clockDisplay" class="time-text" onclick="toggleMilitaryTime()" style="cursor: pointer;">--:--:--</div>
                     </div>
 
                     <div class="profile-wrapper">
@@ -172,7 +173,7 @@
                 <section id="calendar" class="view-section hidden">
                     <div class="glass-card calendar-wrapper">
                         <div class="calendar-controls">
-                            <h2 id="currentMonthYear">April 2026</h2>
+                            <h2 id="currentMonthYear">-- 2026</h2>
                             <div class="selector-group">
                                 <select id="monthSelect" onchange="updateCalendar()" class="glass-select-small">
                                     <option value="0">January</option>
@@ -188,16 +189,14 @@
                                     <option value="10">November</option>
                                     <option value="11">December</option>
                                 </select>
-                                <select id="yearSelect" onchange="updateCalendar()" class="glass-select-small">
-                                    </select>
+                                <select id="yearSelect" onchange="updateCalendar()" class="glass-select-small"></select>
                             </div>
                         </div>
                         <div class="calendar-grid-container">
                             <div class="calendar-days-header">
                                 <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
                             </div>
-                            <div id="calendarDays" class="calendar-grid">
-                                </div>
+                            <div id="calendarDays" class="calendar-grid"></div>
                         </div>
                     </div>
                 </section>
