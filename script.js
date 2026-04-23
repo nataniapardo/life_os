@@ -39,13 +39,14 @@ const fonts = [
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof lucide !== 'undefined') lucide.createIcons();
     
-    updateSystemDate();
+    // Core Engine Starts
+    updateSystemDate(); 
     initThemeEngine(); 
     startTimeEngine(); 
+    
+    // UI Setup
     populateFontList();
     populateStimulations();
-    
-    // Initialize calendars
     initCalendar(); 
     renderHorizontalCalendar(); 
 
@@ -69,17 +70,14 @@ document.addEventListener('DOMContentLoaded', () => {
 // 3. NAVIGATION & PAGE TITLE ENGINE
 // ==========================================
 function switchPage(pageId) {
-    // 1. Toggle visibility of sections
     document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
     const targetSection = document.getElementById(pageId);
     if (targetSection) targetSection.classList.remove('hidden');
     
-    // 2. Update Nav active states
     document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
     const navItem = document.getElementById(`nav-${pageId}`);
     if (navItem) navItem.classList.add('active');
 
-    // 3. Update the Top Left Section Title
     const titleMap = {
         'home': 'Command Center',
         'tasks': 'Strategic Flow',
@@ -91,7 +89,6 @@ function switchPage(pageId) {
         titleDisplay.innerText = titleMap[pageId] || pageId;
     }
     
-    // 4. Trigger specific page logic
     if(pageId === 'calendar') initCalendar();
 }
 
@@ -103,7 +100,6 @@ function initCalendar() {
     const yearSelect = document.getElementById('yearSelect');
     if (!monthSelect || !yearSelect) return;
     
-    // Populate Years (2020 to 2030) if empty
     if(yearSelect.options.length === 0) {
         for(let i = 2020; i <= 2030; i++) {
             let opt = document.createElement('option');
@@ -118,10 +114,6 @@ function initCalendar() {
     updateCalendar();
 }
 
-/**
- * Enhanced updateCalendar: Logic inspired by Task Planner API
- * Color-codes days based on focus levels and energy peaks
- */
 function updateCalendar() {
     const grid = document.getElementById('calendarDays');
     const monthSelect = document.getElementById('monthSelect');
@@ -136,26 +128,21 @@ function updateCalendar() {
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    // 1. Add empty boxes for alignment
     for(let i = 0; i < firstDay; i++) {
         const emptyBox = document.createElement('div');
         emptyBox.className = 'calendar-day-box empty';
         grid.appendChild(emptyBox);
     }
 
-    // 2. Generate Days with Energy Indicators
     const now = new Date();
     for(let d = 1; d <= daysInMonth; d++) {
         const isToday = now.getDate() === d && now.getMonth() === month && now.getFullYear() === year;
-        
-        // Smart Logic: Weekdays get "High Focus" marker
         const dayOfWeek = new Date(year, month, d).getDay();
         const isWorkDay = dayOfWeek > 0 && dayOfWeek < 6;
 
         const dayBox = document.createElement('div');
         dayBox.className = `calendar-day-box ${isToday ? 'today' : ''}`;
         
-        // UI injection for metadata indicators
         dayBox.innerHTML = `
             <span class="day-num">${d}</span>
             <div class="day-metadata">
@@ -169,17 +156,29 @@ function updateCalendar() {
     }
 }
 
-/**
- * Handles detailed "Day View" using API-inspired scheduling
- */
 function showSmartDayView(y, m, d) {
     console.log(`Loading Smart Schedule for ${y}-${m+1}-${d}`);
-    // Future integration: display core hours and break schedules
 }
 
 // ==========================================
-// 5. GREETING, TIME & THEME ENGINE
+// 5. GREETING, DATE & TIME ENGINE
 // ==========================================
+
+function updateSystemDate() {
+    const dateDisplay = document.getElementById('systemDate');
+    if (!dateDisplay) return;
+
+    const now = new Date();
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    };
+    
+    dateDisplay.innerText = now.toLocaleDateString('en-US', options);
+}
+
 function updateTimeAndGreeting() {
     const now = new Date();
     const hours = now.getHours();
