@@ -74,7 +74,6 @@
     </section>
 
     <div id="appContainer" class="app-container hidden">
-        
         <nav class="sidebar">
             <div class="sidebar-header">
                 <div class="logo-area-branding" onclick="switchPage('home')">
@@ -88,13 +87,16 @@
             
             <ul class="nav-links" id="mainNav">
                 <li class="active" id="nav-home" onclick="switchPage('home')"><i data-lucide="home"></i><span>Home</span></li>
-                <li id="nav-tasks" onclick="switchPage('tasks')"><i data-lucide="check-square"></i><span>Tasks</span></li>
+                <li id="nav-tasks" onclick="switchPage('tasks')"><i data-lucide="layers"></i><span>Strategic Flow</span></li>
                 <li id="nav-professional" onclick="switchPage('professional')"><i data-lucide="briefcase"></i><span>Professional</span></li>
                 <li id="nav-personal" onclick="switchPage('personal')"><i data-lucide="user"></i><span>Personal</span></li>
                 <li id="nav-timers" onclick="switchPage('timers')"><i data-lucide="timer"></i><span>Timer</span></li>
                 <li id="nav-calendar" onclick="switchPage('calendar')"><i data-lucide="calendar"></i><span>Calendar</span></li>
                 <li id="nav-settings" onclick="switchPage('settings')"><i data-lucide="settings"></i><span>Settings</span></li>
             </ul>
+
+            <div id="customSectionsList" class="custom-nav-list">
+                </div>
 
             <div class="add-section-wrap">
                 <select id="categorySelector" class="glass-select">
@@ -117,20 +119,22 @@
                 </div>
 
                 <div class="header-right">
-                    <div class="status-indicators">
-                        <button id="themeToggle" class="btn-icon" onclick="manualThemeToggle()">
-                            <i id="themeIcon" data-lucide="moon"></i>
-                        </button>
-                    </div>
-                    
                     <div class="time-container">
                         <div id="dateDisplay" class="date-text">Thursday, April 23, 2026</div>
                         <div id="clockDisplay" class="time-text" onclick="toggleMilitaryTime()" style="cursor: pointer;">12:51:03 PM</div>
                     </div>
 
-                    <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">
-                        <span id="userInitials">US</span>
-                        <img id="userAvatarImg" src="" class="hidden" alt="Profile">
+                    <div class="profile-wrapper">
+                        <div id="userAvatar" class="avatar-circle" onclick="toggleProfileDropdown()">
+                            <span id="userInitials">US</span>
+                            <img id="userAvatarImg" src="" class="hidden" alt="Profile">
+                        </div>
+                        <div id="profileDropdown" class="profile-dropdown hidden">
+                            <button onclick="switchPage('settings'); toggleProfileDropdown()"><i data-lucide="settings"></i> Settings</button>
+                            <button onclick="openRecentlyDeleted(); toggleProfileDropdown()"><i data-lucide="trash-2"></i> Recently Deleted</button>
+                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 5px 0;">
+                            <button onclick="handleLogout()" style="color: #ff4d4d;"><i data-lucide="log-out"></i> Logout</button>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -138,7 +142,13 @@
             <div id="contentSections" class="content-padding">
                 <section id="home" class="view-section">
                     <div class="apple-calendar-strip" id="appleCalendar"></div>
-                    
+                    <div class="glass-card" style="text-align: center; padding: 50px;">
+                        <h3>System Stable</h3>
+                        <p class="sub-text">Select a module from the sidebar to begin.</p>
+                    </div>
+                </section>
+
+                <section id="tasks" class="view-section hidden">
                     <div class="ai-input-zone glass-card">
                         <h3><i data-lucide="sparkles"></i> AI Personal Assistant</h3>
                         <div class="task-entry-grid" style="display: flex; gap: 10px; margin-top: 15px;">
@@ -161,19 +171,35 @@
 
                 <section id="settings" class="view-section hidden">
                     <div class="glass-card">
-                        <h3>Appearance</h3>
+                        <h3>System Customization</h3>
+                        
+                        <div class="setting-item theme-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.03);">
+                            <label>Appearance Mode</label>
+                            <button id="themeToggle" class="btn-outline" onclick="manualThemeToggle()" style="display: flex; align-items: center; gap: 10px; min-width: 140px; justify-content: center;">
+                                <i id="themeIcon" data-lucide="moon"></i>
+                                <span id="themeModeLabel">Dark Mode</span>
+                            </button>
+                        </div>
+
                         <div class="setting-item">
                             <label>Accent Color</label>
                             <input type="color" id="themePicker" value="#00f2ff">
                         </div>
+                        
                         <div class="setting-item">
                             <label>System Font</label>
-                            <select id="fontChoice" class="glass-select-small"></select>
+                            <select id="fontChoice" class="glass-select-small">
+                                <option value="Papyrus">Papyrus (System Default)</option>
+                                <option value="Inter">Inter (Modern)</option>
+                                <option value="Orbitron">Orbitron (Cyber)</option>
+                            </select>
                         </div>
+
                         <div class="setting-item">
                             <h3>Environment Stimulation</h3>
                             <div id="stimContainer" class="stim-grid"></div>
                         </div>
+
                         <button class="btn-glow" style="width: 100%; margin-top: 20px;" onclick="saveSettings()">Apply and Save Changes</button>
                     </div>
 
@@ -199,23 +225,15 @@
         </main>
     </div>
 
-    <div id="settingsModal" class="auth-container hidden" style="background: rgba(0,0,0,0.8); z-index: 2000; position: fixed; inset: 0;">
-        <div class="glass-card" style="width: 400px; margin: auto;">
-            <h3>Profile Settings</h3>
-            <div style="margin: 20px 0;">
-                <label>Display Name</label>
-                <input type="text" id="editFullName" placeholder="Full Name">
-                
-                <label style="margin-top: 15px; display: block;">Avatar Upload</label>
-                <input type="file" id="profilePicUpload" accept="image/*" onchange="previewImage(this)">
-                <div style="display: flex; justify-content: center; margin-top: 10px;">
-                    <img id="imagePreview" src="" class="profile-avatar-large hidden" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+    <div id="deletedModal" class="auth-container hidden" style="background: rgba(0,0,0,0.9); z-index: 3000;">
+        <div class="glass-card" style="width: 450px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3>Recently Deleted</h3>
+                <button class="btn-outline" style="border-color: #ff4d4d; color: #ff4d4d; padding: 5px 10px;" onclick="clearAllDeleted()">Clear All</button>
+            </div>
+            <div id="deletedItemsList" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
                 </div>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn-glow" onclick="saveProfileChanges()">Save Changes</button>
-                <button class="btn-outline" onclick="closeSettingsModal()">Cancel</button>
-            </div>
+            <button class="btn-glow" style="width: 100%;" onclick="closeDeletedModal()">Close</button>
         </div>
     </div>
 
