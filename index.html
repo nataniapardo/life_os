@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life OS | AI Productivity</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="styles.css">
+    
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js" defer></script>
@@ -18,9 +21,12 @@
         <div class="glass-card auth-card">
             <div class="logo-area-branding" style="justify-content: center; margin-bottom: 30px;">
                 <span class="brand-text">Life</span>
-                <div class="globe-container"><div class="globe"><div class="axis"></div></div></div>
+                <div class="globe-container">
+                    <div class="globe"><div class="axis"></div></div>
+                </div>
                 <span class="brand-text">OS</span>
             </div>
+            
             <div id="loginForm">
                 <h2>Welcome Back</h2>
                 <div class="input-group">
@@ -44,7 +50,9 @@
             <div class="sidebar-header">
                 <div class="logo-area-branding" onclick="switchPage('home')">
                     <span class="brand-text">Life</span>
-                    <div class="globe-container"><div class="globe"><div class="axis"></div></div></div>
+                    <div class="globe-container">
+                        <div class="globe"><div class="axis"></div></div>
+                    </div>
                     <span class="brand-text">OS</span>
                 </div>
             </div>
@@ -164,16 +172,3 @@
             </div>
         </main>
     </div>
-
-    <div id="deletedModal" class="auth-container hidden" style="z-index: 2000;">
-        <div class="glass-card">
-            <h3>Recently Deleted</h3>
-            <div id="deletedItemsList"></div>
-            <div class="auth-buttons">
-                <button class="btn-glow" onclick="clearAllDeleted()">Clear All</button>
-                <button class="btn-outline" onclick="closeDeletedModal()">Close</button>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
