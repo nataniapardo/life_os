@@ -1,261 +1,126 @@
 /* ==========================================
-   1. VARIABLE SYSTEM & THEME DEFAULTS
+   VARIABLE SYSTEM & THEME DEFAULTS
    ========================================== */
 :root {
-    /* Font System - Forced to Papyrus */
     --main-font: 'Papyrus', 'Fantasy', 'Copperplate', sans-serif;
-
-    /* Default: Dark Mode Variables */
     --bg-main: #0a0a0c;
     --text-main: #e0e0e0;
     --card-bg: rgba(20, 20, 25, 0.7); 
     --sidebar-bg: rgba(15, 15, 18, 0.9);
     --accent: #00f2ff;
     --accent-glow: #00f2ff;
-    
     --sidebar-width: 280px; 
     --text-dim: #a0a0a0;
     --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --radius: 12px;
-    
     --border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Light Mode Overrides */
 body.light-mode {
     --bg-main: #f0f2f5;
     --text-main: #1a1a1a;
     --card-bg: rgba(255, 255, 255, 0.8);
     --sidebar-bg: rgba(255, 255, 255, 0.9);
     --accent: #0071e3;
-    --accent-glow: #0071e3;
-    
-    --text-dim: #4a4a4a;
     --border-color: rgba(0, 0, 0, 0.1);
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: var(--main-font) !important;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--main-font) !important; }
 
-body {
-    background-color: var(--bg-main);
-    background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7));
-    background-size: cover;
-    background-attachment: fixed;
-    background-position: center;
-    color: var(--text-main);
-    overflow-x: hidden;
-    min-height: 100vh;
-    line-height: 1.6;
-    transition: background 0.5s ease-in-out, color 0.4s ease;
-}
+/* LAYOUT STRUCTURE */
+.app-container { display: flex; width: 100%; min-height: 100vh; }
 
-body.light-mode {
-    background-image: none;
-}
-
-/* ==========================================
-   2. APP LAYOUT (The appContainer)
-   ========================================== */
-.app-container {
-    display: flex;
-    width: 100%;
-    min-height: 100vh;
-    background: transparent !important;
-}
-
-/* --- Sidebar Styling --- */
 .sidebar {
     width: var(--sidebar-width);
-    min-width: var(--sidebar-width);
     background: var(--sidebar-bg);
-    backdrop-filter: blur(10px);
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
     height: 100vh;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    transition: background 0.4s ease;
+    position: sticky; top: 0; z-index: 100;
 }
 
-.sidebar-header {
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border-color);
+/* THREE DOTS & DELETE SYSTEM */
+.custom-section-item {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-right: 10px;
 }
+.custom-section-item li { flex-grow: 1; margin-bottom: 0 !important; }
 
-.nav-links {
-    list-style: none;
-    padding: 20px 0;
-    flex-grow: 1; /* Allows nav to take available space */
+.three-dots-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    opacity: 0.5;
 }
+.three-dots-btn:hover { opacity: 1; color: var(--accent); }
 
-.nav-links li {
-    margin-bottom: 10px;
-    padding: 12px 25px;
+.delete-popover {
+    position: absolute;
+    right: 35px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #ff4d4d;
+    padding: 5px 12px;
+    border-radius: 4px;
+    z-index: 200;
+}
+.delete-btn { background: none; border: none; color: white; cursor: pointer; font-size: 0.8rem; }
+
+/* PROFILE DROPDOWN */
+.profile-wrapper { position: relative; }
+.profile-dropdown {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 220px;
+    background: var(--sidebar-bg);
+    border: 1px solid var(--accent);
+    backdrop-filter: blur(15px);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+.profile-dropdown button {
+    width: 100%;
+    text-align: left;
+    padding: 12px;
+    background: none;
+    border: none;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+.profile-dropdown button:hover { background: rgba(0, 242, 255, 0.1); color: var(--accent); }
+
+/* SETTINGS EMBEDDED TOGGLE */
+.theme-toggle-container {
     display: flex;
     align-items: center;
     gap: 15px;
-    cursor: pointer;
-    transition: var(--transition);
-    color: var(--text-dim);
+    background: rgba(255,255,255,0.05);
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
 }
 
-.nav-links li i {
-    width: 20px;
-}
-
-.nav-links li:hover, .nav-links li.active {
-    color: var(--accent);
-    background: rgba(0, 242, 255, 0.05);
-}
-
-/* --- Section Add Styling (Bottom of Sidebar) --- */
-.add-section-wrap {
-    padding: 20px;
-    border-top: 1px solid var(--border-color);
-    background: rgba(0,0,0,0.1);
-}
-
-/* ==========================================
-   3. MAIN CONTENT & TOP BAR
-   ========================================== */
-.main-layout {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    width: calc(100% - var(--sidebar-width));
-}
-
+/* TOP BAR & CONTENT */
 .top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px 40px;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
 }
 
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-}
-
-.time-container {
-    text-align: right;
-}
-
-.time-text {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: var(--accent);
-}
-
-.date-text {
-    font-size: 0.85rem;
-    opacity: 0.7;
-}
-
-.avatar-circle {
-    width: 45px;
-    height: 45px;
-    background: var(--accent);
-    color: #000;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/* ==========================================
-   4. BRANDING ELEMENTS
-   ========================================== */
-.logo-area-branding {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    cursor: pointer;
-    padding: 1rem;
-}
-
-.brand-text {
-    font-size: 1.8rem;
-    font-weight: 900;
-    color: var(--text-main);
-    text-transform: uppercase;
-}
-
-.globe-container {
-    width: 40px;
-    height: 40px;
-    position: relative;
-}
-
-.globe {
-    width: 30px;
-    height: 30px;
-    background: var(--accent);
-    border-radius: 50%;
-    box-shadow: 0 0 15px var(--accent-glow);
-    margin: 5px;
-}
-
-/* ==========================================
-   5. UTILITY & COMPONENTS
-   ========================================== */
-.content-padding {
-    padding: 40px;
-}
-
-.glass-select {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--accent);
-    color: white;
-    padding: 10px;
-    border-radius: 8px;
-    width: 100%;
-    cursor: pointer;
-    margin-bottom: 10px;
-}
-
-.btn-outline-dash {
-    background: transparent;
-    border: 1px dashed var(--accent);
-    color: var(--accent);
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.btn-outline-dash:hover {
-    background: rgba(0, 242, 255, 0.1);
-}
-
-.btn-icon {
-    background: transparent;
-    border: none;
-    color: var(--text-main);
-    cursor: pointer;
-    font-size: 1.2rem;
-}
+.ai-input-zone { margin-bottom: 30px; }
+.task-entry-grid { display: flex; gap: 10px; margin-top: 15px; }
+.task-entry-grid input { flex: 1; padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white; }
 
 .hidden { display: none !important; }
-
-/* Light mode text visibility fix */
-body.light-mode .brand-text,
-body.light-mode .time-text,
-body.light-mode .nav-links li {
-    color: #1a1a1a;
-}
