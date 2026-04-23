@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life OS | AI Productivity</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@300;500&family=Orbitron:wght@400;700&family=Playfair+Display&family=JetBrains+Mono&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js" defer></script>
@@ -21,53 +18,22 @@
         <div class="glass-card auth-card">
             <div class="logo-area-branding" style="justify-content: center; margin-bottom: 30px;">
                 <span class="brand-text">Life</span>
-                <div class="globe-container">
-                    <div class="globe">
-                        <div class="axis"></div>
-                    </div>
-                </div>
+                <div class="globe-container"><div class="globe"><div class="axis"></div></div></div>
                 <span class="brand-text">OS</span>
             </div>
-
             <div id="loginForm">
-                <h2>System Access</h2>
+                <h2>Welcome Back</h2>
                 <div class="input-group">
-                    <label for="usernameInput">Username</label>
-                    <input type="text" id="usernameInput" placeholder="Enter Username">
+                    <label>Email Address</label>
+                    <input type="email" id="emailInput" placeholder="Email Address">
                 </div>
                 <div class="input-group">
-                    <label for="passInput">Password</label>
+                    <label>Password</label>
                     <input type="password" id="passInput" placeholder="Password">
                 </div>
                 <div class="auth-buttons">
                     <button class="btn-glow" onclick="handleAuth('login')">Log In</button>
                     <button class="btn-outline" onclick="toggleAuthMode()">Sign Up</button>
-                </div>
-            </div>
-
-            <div id="signupForm" class="hidden">
-                <h2>Initialize System</h2> 
-                <div class="input-group">
-                    <label for="newNameInput">Full Name</label>
-                    <input type="text" id="newNameInput" placeholder="Enter your name">
-                </div>
-                <div id="signupBox">
-                    <div class="input-group">
-                        <label for="regUsername">Username</label>
-                        <input type="text" id="regUsername" placeholder="Username">
-                    </div>
-                    <div class="input-group">
-                        <label for="newEmailInput">Email</label>
-                        <input type="email" id="newEmailInput" placeholder="Email">
-                    </div>
-                    <div class="input-group">
-                        <label for="newPassInput">Password</label>
-                        <input type="password" id="newPassInput" placeholder="Password">
-                    </div>
-                </div>
-                <div class="auth-buttons">
-                    <button class="btn-glow" onclick="handleAuth('signup')">Initialize System</button>
-                    <button class="btn-outline" onclick="toggleAuthMode()">Back to Login</button>
                 </div>
             </div>
         </div>
@@ -78,9 +44,7 @@
             <div class="sidebar-header">
                 <div class="logo-area-branding" onclick="switchPage('home')">
                     <span class="brand-text">Life</span>
-                    <div class="globe-container">
-                        <div class="globe"><div class="axis"></div></div>
-                    </div>
+                    <div class="globe-container"><div class="globe"><div class="axis"></div></div></div>
                     <span class="brand-text">OS</span>
                 </div>
             </div>
@@ -95,7 +59,17 @@
                 <li id="nav-settings" onclick="switchPage('settings')"><i data-lucide="settings"></i><span>Settings</span></li>
             </ul>
 
-            <div id="customSectionsList" class="custom-nav-list"></div>
+            <div id="customSectionsList" class="custom-nav-list">
+                <div class="custom-section-item" id="section-journal">
+                    <li onclick="switchPage('journal')"><i data-lucide="book"></i><span>Journal</span></li>
+                    <div class="item-options">
+                        <button class="three-dots-btn" onclick="toggleDeletePopover('journal')"><i data-lucide="more-vertical"></i></button>
+                        <div id="delete-popover-journal" class="delete-popover hidden">
+                            <button class="delete-btn" onclick="deleteSection('journal')">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="add-section-wrap">
                 <select id="categorySelector" class="glass-select">
@@ -111,9 +85,6 @@
         <main class="main-layout">
             <header class="top-bar">
                 <div class="header-left">
-                    <h1 id="sectionTitle" class="page-header-title">Home</h1>
-                    <div id="systemDate" class="page-header-title" style="font-size: 0.8rem; opacity: 0.7;"></div>
-                    
                     <div class="greeting-block">
                         <h2 id="dynamicGreeting">Initializing...</h2>
                         <p class="sub-text">Welcome to your command center.</p>
@@ -122,81 +93,41 @@
 
                 <div class="header-right">
                     <div class="time-container">
-                        <div id="clockDisplay" class="time-text" onclick="toggleMilitaryTime()" style="cursor: pointer;">--:--:--</div>
+                        <div id="dateDisplay" class="date-text">Thursday, April 23, 2026</div>
+                        <div id="clockDisplay" class="time-text">12:51:03 PM</div>
                     </div>
 
                     <div class="profile-wrapper">
-                        <div id="userAvatar" class="avatar-circle" onclick="toggleProfileDropdown()">
+                        <div id="userAvatar" class="avatar-circle" onclick="toggleProfileMenu()">
                             <span id="userInitials">US</span>
-                            <img id="userAvatarImg" src="" class="hidden" alt="Profile">
                         </div>
                         <div id="profileDropdown" class="profile-dropdown hidden">
-                            <button onclick="switchPage('settings'); toggleProfileDropdown()"><i data-lucide="settings"></i> Settings</button>
-                            <button onclick="openRecentlyDeleted(); toggleProfileDropdown()"><i data-lucide="trash-2"></i> Recently Deleted</button>
-                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 5px 0;">
-                            <button onclick="handleLogout()" style="color: #ff4d4d;"><i data-lucide="log-out"></i> Logout</button>
+                            <button onclick="switchPage('settings')"><i data-lucide="settings"></i> System Settings</button>
+                            <button onclick="openRecentlyDeleted()"><i data-lucide="trash-2"></i> Recently Deleted</button>
+                            <hr>
+                            <button onclick="handleLogout()"><i data-lucide="log-out"></i> Logout</button>
                         </div>
                     </div>
                 </div>
             </header>
 
             <div id="contentSections" class="content-padding">
-                <section id="home" class="view-section">
-                    <div class="apple-calendar-strip" id="appleCalendar"></div>
-                    <div class="glass-card" style="text-align: center; padding: 50px;">
-                        <h3>System Stable</h3>
-                        <p class="sub-text">Select a module from the sidebar to begin.</p>
-                    </div>
-                </section>
-
                 <section id="tasks" class="view-section hidden">
                     <div class="ai-input-zone glass-card">
                         <h3><i data-lucide="sparkles"></i> AI Personal Assistant</h3>
-                        <div class="task-entry-grid" style="display: flex; gap: 10px; margin-top: 15px;">
-                            <input type="text" id="aiTaskInput" placeholder="What's the plan?..." style="flex: 1;">
+                        <div class="task-entry-grid">
+                            <input type="text" id="aiTaskInput" placeholder="What's the plan?...">
                             <button class="btn-glow" onclick="smartAddTask()">Distribute Task</button>
                         </div>
                     </div>
-
-                    <div class="task-distribution-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                    <div class="task-distribution-grid">
                         <div class="task-column glass-card">
-                            <h3><i data-lucide="zap" style="color:#ff4d4d"></i> High Priority</h3>
-                            <ul id="highTaskList" class="task-sublist"></ul>
+                            <h3><i data-lucide="zap"></i> High Priority</h3>
+                            <ul id="highTaskList"></ul>
                         </div>
                         <div class="task-column glass-card">
-                            <h3><i data-lucide="activity" style="color:#00f2ff"></i> Balanced</h3>
-                            <ul id="midTaskList" class="task-sublist"></ul>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="calendar" class="view-section hidden">
-                    <div class="glass-card calendar-wrapper">
-                        <div class="calendar-controls">
-                            <h2 id="currentMonthYear">-- 2026</h2>
-                            <div class="selector-group">
-                                <select id="monthSelect" onchange="updateCalendar()" class="glass-select-small">
-                                    <option value="0">January</option>
-                                    <option value="1">February</option>
-                                    <option value="2">March</option>
-                                    <option value="3" selected>April</option>
-                                    <option value="4">May</option>
-                                    <option value="5">June</option>
-                                    <option value="6">July</option>
-                                    <option value="7">August</option>
-                                    <option value="8">September</option>
-                                    <option value="9">October</option>
-                                    <option value="10">November</option>
-                                    <option value="11">December</option>
-                                </select>
-                                <select id="yearSelect" onchange="updateCalendar()" class="glass-select-small"></select>
-                            </div>
-                        </div>
-                        <div class="calendar-grid-container">
-                            <div class="calendar-days-header">
-                                <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
-                            </div>
-                            <div id="calendarDays" class="calendar-grid"></div>
+                            <h3><i data-lucide="activity"></i> Balanced</h3>
+                            <ul id="midTaskList"></ul>
                         </div>
                     </div>
                 </section>
@@ -205,12 +136,14 @@
                     <div class="glass-card">
                         <h3>System Customization</h3>
                         
-                        <div class="setting-item theme-toggle-row">
+                        <div class="setting-item">
                             <label>Appearance Mode</label>
-                            <button id="themeToggle" class="btn-outline" onclick="manualThemeToggle()">
-                                <i id="themeIcon" data-lucide="moon"></i>
-                                <span id="themeModeLabel">Dark Mode</span>
-                            </button>
+                            <div class="theme-toggle-container">
+                                <span id="themeLabel">Dark Mode</span>
+                                <button id="embeddedThemeToggle" class="btn-icon" onclick="manualThemeToggle()">
+                                    <i id="themeIcon" data-lucide="moon"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="setting-item">
@@ -221,34 +154,26 @@
                         <div class="setting-item">
                             <label>System Font</label>
                             <select id="fontChoice" class="glass-select-small">
-                                <option value="Papyrus">Papyrus (System Default)</option>
-                                <option value="Inter">Inter (Modern)</option>
-                                <option value="Orbitron">Orbitron (Cyber)</option>
+                                <option value="Papyrus">Papyrus (Forced)</option>
+                                <option value="Inter">Inter (Clean)</option>
                             </select>
                         </div>
-
-                        <div class="setting-item">
-                            <h3>Environment Stimulation</h3>
-                            <div id="stimContainer" class="stim-grid"></div>
-                        </div>
-
-                        <button class="btn-glow" style="width: 100%; margin-top: 20px;" onclick="saveSettings()">Apply and Save Changes</button>
+                        <button class="btn-glow" onclick="saveSettings()">Apply Changes</button>
                     </div>
                 </section>
             </div>
         </main>
     </div>
 
-    <div id="deletedModal" class="auth-container hidden" style="background: rgba(0,0,0,0.9); z-index: 3000;">
-        <div class="glass-card" style="width: 450px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3>Recently Deleted</h3>
-                <button class="btn-outline" style="border-color: #ff4d4d; color: #ff4d4d; padding: 5px 10px;" onclick="clearAllDeleted()">Clear All</button>
+    <div id="deletedModal" class="auth-container hidden" style="z-index: 2000;">
+        <div class="glass-card">
+            <h3>Recently Deleted</h3>
+            <div id="deletedItemsList"></div>
+            <div class="auth-buttons">
+                <button class="btn-glow" onclick="clearAllDeleted()">Clear All</button>
+                <button class="btn-outline" onclick="closeDeletedModal()">Close</button>
             </div>
-            <div id="deletedItemsList" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;"></div>
-            <button class="btn-glow" style="width: 100%;" onclick="closeDeletedModal()">Close</button>
         </div>
     </div>
-
 </body>
 </html>
