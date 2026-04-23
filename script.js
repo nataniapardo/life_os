@@ -51,6 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
     populateStimulations();
     initCalendar();
 
+    // Persistent Background Initialization
+    const lastBg = localStorage.getItem('lifeOS_lastBackground') || 'Nature';
+    setBackground(lastBg);
+
     const saveBtn = document.getElementById('saveSettingsBtn');
     if (saveBtn) {
         saveBtn.addEventListener('click', () => {
@@ -70,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 3. TASK MANAGEMENT SYSTEM (CRUD) - UPDATED FOR AI DISTRIBUTION
+// 3. TASK MANAGEMENT SYSTEM (CRUD)
 // ==========================================
 
 async function loadTasks() {
@@ -80,10 +84,8 @@ async function loadTasks() {
         low: document.getElementById('lowTaskList')
     };
 
-    // Exit if elements don't exist yet
     if (!lists.high) return;
 
-    // Clear existing items
     Object.values(lists).forEach(list => list.innerHTML = '');
 
     const { data: tasks, error } = await db
@@ -110,7 +112,6 @@ async function loadTasks() {
             </div>
         `;
         
-        // Distribute to the correct list based on priority
         const targetList = lists[task.priority] || lists.medium;
         targetList.appendChild(li);
     });
@@ -136,9 +137,6 @@ async function addTask() {
     if (!error) {
         input.value = '';
         loadTasks();
-    } else {
-        alert("Error adding task. Check console.");
-        console.error(error);
     }
 }
 
@@ -159,9 +157,7 @@ async function deleteTask(id) {
 // ==========================================
 function toggleProfileMenu() {
     const menu = document.getElementById('profileDropdown');
-    if (menu) {
-        menu.classList.toggle('hidden');
-    }
+    if (menu) menu.classList.toggle('hidden');
 }
 
 window.addEventListener('click', (e) => {
@@ -252,7 +248,7 @@ function checkThemeSchedule() {
 }
 
 // ==========================================
-// 6. CALENDAR & STIMULATION
+// 6. CALENDAR & BACKGROUND ENGINE
 // ==========================================
 function initCalendar() {
     const monthSelect = document.getElementById('selectMonth');
@@ -310,22 +306,31 @@ function jumpToDate() {
 function populateStimulations() {
     const container = document.getElementById('stimContainer');
     if (!container) return;
+    
+    container.innerHTML = '';
+    
     stimulations.forEach(s => {
         const btn = document.createElement('button');
         btn.className = "btn-outline";
         btn.style.margin = "5px";
         btn.textContent = s;
-        btn.onclick = () => setStimulation(s);
+        btn.onclick = () => setBackground(s);
         container.appendChild(btn);
     });
 }
 
-function setStimulation(type) {
-    const bgOverlay = "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6))";
-    const url = `https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&q=80&w=1920&sig=${Math.random()}&keyword=${type}`;
-    document.body.style.background = `${bgOverlay}, url('${url}')`;
+function setBackground(query) {
+    const bgOverlay = "linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7))";
+    const timestamp = new Date().getTime();
+    const imageUrl = `https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&q=80&w=1920&sig=${timestamp}&keyword=${query}`;
+    
+    document.body.style.backgroundImage = `${bgOverlay}, url('${imageUrl}')`;
     document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundPosition = "center";
     document.body.style.backgroundAttachment = "fixed";
+    document.body.style.backgroundRepeat = "no-repeat";
+
+    localStorage.setItem('lifeOS_lastBackground', query);
 }
 
 // ==========================================
