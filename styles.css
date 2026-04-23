@@ -84,7 +84,7 @@ body.light-mode {
 }
 
 /* ==========================================
-   CALENDAR GRID SYSTEM (100px Dimensions)
+   CALENDAR GRID SYSTEM (Smart Indicators)
    ========================================== */
 .calendar-wrapper {
     padding: 20px;
@@ -111,9 +111,9 @@ body.light-mode {
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-auto-rows: minmax(100px, auto); /* Strict vertical dimensions */
+    grid-auto-rows: minmax(100px, auto);
     gap: 1px;
-    background: rgba(255, 255, 255, 0.1); /* Visible grid lines */
+    background: rgba(255, 255, 255, 0.1);
     border: 1px solid var(--accent);
 }
 
@@ -124,8 +124,9 @@ body.light-mode {
     flex-direction: column;
     justify-content: flex-start;
     transition: var(--transition);
-    border: 0.5px solid rgba(255, 255, 255, 0.05); /* Grid box outlines */
+    border: 0.5px solid rgba(255, 255, 255, 0.05);
     min-height: 100px;
+    position: relative;
 }
 
 .calendar-day-box:hover {
@@ -137,8 +138,38 @@ body.light-mode {
     box-shadow: inset 0 0 10px var(--accent);
 }
 
+.calendar-day-box .day-num {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Smart Metadata Indicators */
+.day-metadata {
+    display: flex;
+    gap: 4px;
+    margin-top: auto; /* Push indicators to bottom of box */
+    padding-bottom: 5px;
+}
+
+.energy-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.energy-dot.high {
+    background: var(--accent);
+    box-shadow: 0 0 5px var(--accent);
+}
+
+.energy-dot.creative {
+    background: #ff00ea; /* Pink for creative tasks */
+    box-shadow: 0 0 5px #ff00ea;
+}
+
 /* ==========================================
-   THREE DOTS & DELETE SYSTEM
+   UI COMPONENTS (Sidebar & Actions)
    ========================================== */
 .custom-section-item {
     display: flex;
@@ -146,7 +177,6 @@ body.light-mode {
     position: relative;
     padding-right: 10px;
 }
-.custom-section-item li { flex-grow: 1; margin-bottom: 0 !important; }
 
 .three-dots-btn {
     background: transparent;
@@ -155,7 +185,6 @@ body.light-mode {
     cursor: pointer;
     opacity: 0.5;
 }
-.three-dots-btn:hover { opacity: 1; color: var(--accent); }
 
 .delete-popover {
     position: absolute;
@@ -167,11 +196,7 @@ body.light-mode {
     border-radius: 4px;
     z-index: 200;
 }
-.delete-btn { background: none; border: none; color: white; cursor: pointer; font-size: 0.8rem; }
 
-/* ==========================================
-   UI COMPONENTS (Profile, Sidebar, etc.)
-   ========================================== */
 .top-bar {
     display: flex;
     justify-content: space-between;
@@ -180,7 +205,6 @@ body.light-mode {
     border-bottom: 1px solid var(--border-color);
 }
 
-.profile-wrapper { position: relative; }
 .profile-dropdown {
     position: absolute;
     top: 60px;
@@ -195,20 +219,6 @@ body.light-mode {
     z-index: 1000;
 }
 
-/* SETTINGS EMBEDDED TOGGLE */
-.theme-toggle-container {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background: rgba(255,255,255,0.05);
-    padding: 10px 15px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
-.hidden { display: none !important; }
-
-/* AI Task Section */
 .ai-input-zone { margin-bottom: 30px; }
 .task-entry-grid { display: flex; gap: 10px; margin-top: 15px; }
 .task-entry-grid input { 
@@ -219,3 +229,5 @@ body.light-mode {
     border: 1px solid var(--border-color); 
     color: white; 
 }
+
+.hidden { display: none !important; }
