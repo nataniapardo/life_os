@@ -30,10 +30,10 @@
             </div>
 
             <div id="loginForm">
-                <h2>Welcome Back</h2>
+                <h2>System Access</h2>
                 <div class="input-group">
-                    <label for="emailInput">Email Address</label>
-                    <input type="email" id="emailInput" placeholder="Email Address">
+                    <label for="usernameInput">Username</label>
+                    <input type="text" id="usernameInput" placeholder="Enter Username">
                 </div>
                 <div class="input-group">
                     <label for="passInput">Password</label>
@@ -95,8 +95,7 @@
                 <li id="nav-settings" onclick="switchPage('settings')"><i data-lucide="settings"></i><span>Settings</span></li>
             </ul>
 
-            <div id="customSectionsList" class="custom-nav-list">
-                </div>
+            <div id="customSectionsList" class="custom-nav-list"></div>
 
             <div class="add-section-wrap">
                 <select id="categorySelector" class="glass-select">
@@ -112,6 +111,7 @@
         <main class="main-layout">
             <header class="top-bar">
                 <div class="header-left">
+                    <h1 id="sectionTitle" class="page-header-title">Home</h1>
                     <div class="greeting-block">
                         <h2 id="dynamicGreeting">Initializing...</h2>
                         <p class="sub-text">Welcome to your command center.</p>
@@ -169,13 +169,46 @@
                     </div>
                 </section>
 
+                <section id="calendar" class="view-section hidden">
+                    <div class="glass-card calendar-wrapper">
+                        <div class="calendar-controls">
+                            <h2 id="currentMonthYear">April 2026</h2>
+                            <div class="selector-group">
+                                <select id="monthSelect" onchange="updateCalendar()" class="glass-select-small">
+                                    <option value="0">January</option>
+                                    <option value="1">February</option>
+                                    <option value="2">March</option>
+                                    <option value="3" selected>April</option>
+                                    <option value="4">May</option>
+                                    <option value="5">June</option>
+                                    <option value="6">July</option>
+                                    <option value="7">August</option>
+                                    <option value="8">September</option>
+                                    <option value="9">October</option>
+                                    <option value="10">November</option>
+                                    <option value="11">December</option>
+                                </select>
+                                <select id="yearSelect" onchange="updateCalendar()" class="glass-select-small">
+                                    </select>
+                            </div>
+                        </div>
+                        <div class="calendar-grid-container">
+                            <div class="calendar-days-header">
+                                <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
+                            </div>
+                            <div id="calendarDays" class="calendar-grid">
+                                </div>
+                        </div>
+                    </div>
+                </section>
+
                 <section id="settings" class="view-section hidden">
                     <div class="glass-card">
                         <h3>System Customization</h3>
                         
-                        <div class="setting-item theme-toggle-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.03);">
+                        <div class="setting-item theme-toggle-row">
                             <label>Appearance Mode</label>
-                            <button id="themeToggle" class="btn-outline" onclick="manualThemeToggle()" style="display: flex; align-items: center; gap: 10px; min-width: 140px; justify-content: center;">
+                            <button id="themeToggle" class="btn-outline" onclick="manualThemeToggle()">
                                 <i id="themeIcon" data-lucide="moon"></i>
                                 <span id="themeModeLabel">Dark Mode</span>
                             </button>
@@ -202,24 +235,6 @@
 
                         <button class="btn-glow" style="width: 100%; margin-top: 20px;" onclick="saveSettings()">Apply and Save Changes</button>
                     </div>
-
-                    <div class="glass-card">
-                        <h3>Theme Auto-Schedule</h3>
-                        <div class="flex-row" style="display: flex; align-items: center; gap: 10px;">
-                            <input type="checkbox" id="enableSchedule" onchange="toggleSchedule()">
-                            <label for="enableSchedule">Enable Auto-Schedule</label>
-                        </div>
-                        <div id="scheduleInputs" class="hidden" style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div>
-                                <label>Light Mode At:</label>
-                                <input type="time" id="lightTime" value="07:00">
-                            </div>
-                            <div>
-                                <label>Dark Mode At:</label>
-                                <input type="time" id="darkTime" value="19:00">
-                            </div>
-                        </div>
-                    </div>
                 </section>
             </div>
         </main>
@@ -231,8 +246,7 @@
                 <h3>Recently Deleted</h3>
                 <button class="btn-outline" style="border-color: #ff4d4d; color: #ff4d4d; padding: 5px 10px;" onclick="clearAllDeleted()">Clear All</button>
             </div>
-            <div id="deletedItemsList" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
-                </div>
+            <div id="deletedItemsList" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;"></div>
             <button class="btn-glow" style="width: 100%;" onclick="closeDeletedModal()">Close</button>
         </div>
     </div>
