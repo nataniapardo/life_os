@@ -76,12 +76,14 @@
     <div id="appContainer" class="app-container hidden">
         
         <nav class="sidebar">
-            <div class="logo-area-branding" onclick="switchPage('home')">
-                <span class="brand-text">Life</span>
-                <div class="globe-container">
-                    <div class="globe"><div class="axis"></div></div>
+            <div class="sidebar-header">
+                <div class="logo-area-branding" onclick="switchPage('home')">
+                    <span class="brand-text">Life</span>
+                    <div class="globe-container">
+                        <div class="globe"><div class="axis"></div></div>
+                    </div>
+                    <span class="brand-text">OS</span>
                 </div>
-                <span class="brand-text">OS</span>
             </div>
             
             <ul class="nav-links" id="mainNav">
@@ -115,9 +117,11 @@
                 </div>
 
                 <div class="header-right">
-                    <button id="themeToggle" class="btn-icon" onclick="manualThemeToggle()">
-                        <i id="themeIcon" data-lucide="moon"></i>
-                    </button>
+                    <div class="status-indicators">
+                        <button id="themeToggle" class="btn-icon" onclick="manualThemeToggle()">
+                            <i id="themeIcon" data-lucide="moon"></i>
+                        </button>
+                    </div>
                     
                     <div class="time-container">
                         <div id="dateDisplay" class="date-text">Thursday, April 23, 2026</div>
@@ -131,7 +135,7 @@
                 </div>
             </header>
 
-            <div id="contentSections">
+            <div id="contentSections" class="content-padding">
                 <section id="home" class="view-section">
                     <div class="apple-calendar-strip" id="appleCalendar"></div>
                     
@@ -168,8 +172,7 @@
                         </div>
                         <div class="setting-item">
                             <h3>Environment Stimulation</h3>
-                            <div id="stimContainer" class="stim-grid">
-                                </div>
+                            <div id="stimContainer" class="stim-grid"></div>
                         </div>
                         <button class="btn-glow" style="width: 100%; margin-top: 20px;" onclick="saveSettings()">Apply and Save Changes</button>
                     </div>
