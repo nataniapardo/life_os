@@ -1,117 +1,93 @@
-// --- GLOBAL STATE ---
 let isMilitaryTime = false;
-let userName = localStorage.getItem('lifeOS_name') || "Seeker";
+let userName = localStorage.getItem('lifeOS_name') || "Operator";
 
-// --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
-    updateTimeAndGreeting();
-    setInterval(updateTimeAndGreeting, 1000);
-    loadSettings();
-    attachCheckboxListeners();
+    initClock();
+    loadCustomization();
 });
 
-// --- TIME & GREETING ---
-function updateTimeAndGreeting() {
+// Clock Logic
+function initClock() {
+    updateTime();
+    setInterval(updateTime, 1000);
+}
+
+function updateTime() {
     const now = new Date();
     const hours = now.getHours();
-    const greetingEl = document.getElementById('dynamicGreeting');
+    
+    // Dynamic Greeting
+    let greet = "System Online";
+    if (hours < 12) greet = "Morning Protocol";
+    else if (hours < 18) greet = "Afternoon Active";
+    else greet = "Evening Standby";
+    document.getElementById('dynamicGreeting').innerText = `${greet}, ${userName}`;
+
+    // Clock Display
     const clockEl = document.getElementById('clockDisplay');
-    const dateEl = document.getElementById('dateDisplay');
-
-    // Greeting Logic
-    let status = "Day";
-    if (hours < 12) status = "Morning";
-    else if (hours < 17) status = "Afternoon";
-    else if (hours < 21) status = "Evening";
-    else status = "Night";
-    greetingEl.innerText = `Good ${status}, ${userName}`;
-
-    // Clock Logic
     clockEl.innerText = isMilitaryTime ? now.toLocaleTimeString('en-GB') : now.toLocaleTimeString('en-US');
-    dateEl.innerText = now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-
-    checkThemeSchedule(now);
+    
+    document.getElementById('dateDisplay').innerText = now.toLocaleDateString(undefined, { 
+        weekday: 'short', month: 'short', day: 'numeric' 
+    });
 }
 
 function toggleMilitaryTime() { isMilitaryTime = !isMilitaryTime; }
 
-function updateUserName() {
-    const input = document.getElementById('userNameInput');
-    if (input.value.trim()) {
-        userName = input.value.trim();
-        localStorage.setItem('lifeOS_name', userName);
-        updateTimeAndGreeting();
-    }
-}
-
-// --- THEME ENGINE ---
-function manualThemeToggle() {
-    const body = document.body;
-    const icon = document.getElementById('themeIcon');
-    body.classList.toggle('light-mode');
-    body.classList.toggle('dark-mode');
+// View Switching
+function switchView(viewId) {
+    document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+    document.getElementById(viewId + 'View').classList.remove('hidden');
     
-    const isLight = body.classList.contains('light-mode');
-    icon.setAttribute('data-lucide', isLight ? 'sun' : 'moon');
-    lucide.createIcons();
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    event.currentTarget.classList.add('active');
 }
 
-function toggleSchedule() {
-    const isEnabled = document.getElementById('enableSchedule').checked;
-    document.getElementById('scheduleInputs').style.display = isEnabled ? 'grid' : 'none';
-}
-
-function checkThemeSchedule(now) {
-    if (!document.getElementById('enableSchedule').checked) return;
-    const current = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
-    const light = document.getElementById('lightTime').value;
-    const dark = document.getElementById('darkTime').value;
-
-    if (current === light) {
-        document.body.classList.replace('dark-mode', 'light-mode');
-    } else if (current === dark) {
-        document.body.classList.replace('light-mode', 'dark-mode');
-    }
-}
-
+// Customization
 function changeAccent(color) {
     document.documentElement.style.setProperty('--accent', color);
-    const globe = document.querySelector('.globe');
-    if(globe) globe.style.background = color;
-    localStorage.setItem('zen_accent', color);
+    document.documentElement.style.setProperty('--border', color + '33'); // Transparent border
+    localStorage.setItem('lifeOS_accent', color);
 }
 
-// --- NAVIGATION ---
-function switchView(viewId) {
-    document.getElementById('dashboardView').classList.add('hidden');
-    document.getElementById('settingsView').classList.add('hidden');
-    document.getElementById(viewId + 'View').classList.remove('hidden');
+function changeFont(font) {
+    document.body.style.fontFamily = font;
+    localStorage.setItem('lifeOS_font', font);
 }
 
-const profileBtn = document.getElementById('profileBtn');
-const profileMenu = document.getElementById('profileMenu');
-profileBtn.addEventListener('click', (e) => { e.stopPropagation(); profileMenu.classList.toggle('hidden'); });
-window.addEventListener('click', () => profileMenu.classList.add('hidden'));
+function updateUserName() {
+    const val = document.getElementById('userNameInput').value;
+    if(val) {
+        userName = val;
+        localStorage.setItem('lifeOS_name', val);
+        updateTime();
+    }
+}
 
-// --- SECTION ADDER ---
+function loadCustomization() {
+    const font = localStorage.getItem('lifeOS_font');
+    if(font) {
+        changeFont(font);
+        document.getElementById('fontSelector').value = font;
+    }
+    const accent = localStorage.getItem('lifeOS_accent');
+    if(accent) changeAccent(accent);
+}
+
+// Profile Menu
+function toggleProfileMenu(e) {
+    e.stopPropagation();
+    document.getElementById('profileMenu').classList.toggle('hidden');
+}
+
+window.onclick = () => document.getElementById('profileMenu').classList.add('hidden');
+
+// Modal Logic
+function openModal() { document.getElementById('quickModal').classList.remove('hidden'); }
+function closeModal() { document.getElementById('quickModal').classList.add('hidden'); }
+
 function addNewCategorizedSection() {
-    const cat = document.getElementById('categorySelector').value;
-    if (!cat) return alert("Select a category.");
-    alert("System expansion initiated for: " + cat);
-    // Here you would append new HTML to the sidebar
-}
-
-function loadSettings() {
-    const savedAccent = localStorage.getItem('zen_accent');
-    if (savedAccent) changeAccent(savedAccent);
-}
-
-function attachCheckboxListeners() {
-    document.querySelectorAll('input[type="checkbox"]').forEach(i => {
-        i.addEventListener('change', () => {
-            const count = [...document.querySelectorAll('#taskList input[type="checkbox"]')].filter(x => !x.checked).length;
-            document.getElementById('taskCount').textContent = count;
-        });
-    });
+    const val = document.getElementById('categorySelector').value;
+    if(val) alert(`Initializing module: ${val.toUpperCase()}`);
 }
