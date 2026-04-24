@@ -49,20 +49,20 @@
 
         <main class="main-content">
             <header class="topbar">
-                <div class="header-left">
-                    <h1 id="dynamicGreeting">System Active</h1>
+                <div class="header-left"></div>
+
+                <div class="header-center">
+                    <h1 id="dynamicGreeting">Good Afternoon, Operator</h1>
+                    <div class="chrono-unit">
+                        <div id="clockDisplay" onclick="toggleMilitaryTime()">00:00:00 PM</div>
+                        <div id="dateDisplay">Fri, Apr 24</div>
+                    </div>
                 </div>
 
                 <div class="header-right">
-                    <div class="chrono-unit">
-                        <div id="clockDisplay" onclick="toggleMilitaryTime()">00:00:00</div>
-                        <div id="dateDisplay">Syncing...</div>
-                    </div>
-                    
                     <button id="themeToggleBtn" class="icon-btn" onclick="manualThemeToggle()">
                         <i id="themeIcon" data-lucide="moon"></i>
                     </button>
-
                     <div class="profile-group">
                         <div class="avatar-trigger" onclick="toggleProfileMenu(event)">
                             <i data-lucide="user"></i>
