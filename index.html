@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zen OS | Cyber-Interface</title>
+    <title> Life OS | AI Productivity </title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -39,6 +39,7 @@
                         <option value="finances">Finances</option>
                         <option value="journal">Journal</option>
                         <option value="mood">Mood Tracker</option>
+                        <option value="planner">Planner</option>
                     </select>
                 </div>
             </nav>
@@ -66,7 +67,7 @@
                         </div>
                         <div class="dropdown-menu hidden" id="profileMenu">
                             <button onclick="switchView('settings')"><i data-lucide="settings"></i> Settings</button>
-                            <button onclick="handleLogout()"><i data-lucide="log-out"></i> Disconnect</button>
+                            <button onclick="handleLogout()"><i data-lucide="log-out"></i> Log Out</button>
                         </div>
                     </div>
                 </div>
@@ -74,8 +75,8 @@
 
             <section id="dashboardView" class="view-section">
                 <div class="glass-card">
-                    <h3>AI Personal Assistant (Smart Parser)</h3>
-                    <p class="subtitle">Type naturally: "Urgent meeting tomorrow morning" or "Buy milk tonight"</p>
+                    <h3>AI Personal Assistant</h3>
+                    <p class="subtitle">Type naturally: "Urgent meeting tomorrow morning" or "Buy groceries tonight"</p>
                     <textarea id="aiInput" placeholder="URGENT meeting April 30 at 2pm&#10;Study tomorrow morning&#10;Buy groceries tonight"></textarea>
                     <button class="btn-neon" onclick="organizeWithAI()">Organize Priority</button>
                 </div>
@@ -140,7 +141,7 @@
             <input type="text" id="taskNameInput" placeholder="Objective name...">
             <input type="date" id="taskDateInput">
             <div class="modal-actions">
-                <button class="btn-ghost" onclick="closeModal()">Abort</button>
+                <button class="btn-ghost" onclick="closeModal()">Cancel</button>
                 <button class="btn-neon" onclick="saveNewTask()">Commit</button>
             </div>
         </div>
