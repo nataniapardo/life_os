@@ -3,92 +3,99 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Life OS | Productivity Center</title>
+  <title>Zen OS | Command Center</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="dark-mode"> <div class="app-container">
+<body class="dark-mode">
+  <div class="app-container">
     
     <aside class="sidebar">
       <div class="sidebar-header">
-        <div class="logo">Life OS</div>
-        <div class="date-time-block">
-            <div id="currentTime">00:00:00</div>
-            <div id="currentDate">Date Loading...</div>
+        <div class="logo-wrap">
+            <span class="logo-text">Life</span>
+            <div class="globe-container">
+                <div class="globe"></div>
+            </div>
+            <span class="logo-text">OS</span>
         </div>
       </div>
 
       <nav class="nav-menu">
-        <a href="#" class="nav-item active">📋 Dashboard</a>
-        <a href="#" class="nav-item">⚙️ Settings</a>
-        <div class="nav-divider"></div>
-        <div class="profile-section">
-            <div class="profile-info">
-                <div class="profile-icon" id="profileIcon">👤</div>
-                <span>User Account</span>
-            </div>
-            <button class="logout-btn" onclick="handleLogout()">Log Out</button>
-        </div>
+        <a href="#" class="nav-item active">Dashboard</a>
+        <a href="#" class="nav-item">Journal</a>
+        <a href="#" class="nav-item">Blueprint</a>
       </nav>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
-        <div class="welcome-text">
-          <h1>Welcome back 👋</h1>
-          <p>Prioritize your day with Papyrus precision.</p>
+        <div class="welcome-area">
+          <h1>Peaceful Productivity</h1>
+          <p>Flow through your objectives with intention.</p>
         </div>
-        <div class="header-actions">
-            <button class="theme-toggle" id="themeToggle">Toggle Light/Dark</button>
-            <button class="primary-btn" id="openQuickAction">+ Quick Add</button>
+
+        <div class="utility-cluster">
+            <div class="date-time-cluster">
+                <span id="currentTime">00:00:00</span>
+                <span id="currentDate">Loading Date...</span>
+            </div>
+            
+            <button class="theme-toggle" id="themeToggle" title="Switch Theme">
+                <span class="icon-sun">☀️</span>
+                <span class="icon-moon">🌙</span>
+            </button>
+
+            <div class="profile-wrapper">
+                <div class="profile-trigger" id="profileBtn">
+                    <div class="profile-avatar">👤</div>
+                    <div class="profile-menu hidden" id="profileMenu">
+                        <div class="menu-header">Settings & Profile</div>
+                        <button onclick="toggleSettings()">🎨 System Customization</button>
+                        <button onclick="handleLogout()">🚪 Log Out</button>
+                    </div>
+                </div>
+            </div>
         </div>
       </header>
 
-      <section class="stats-grid">
-        <div class="card stat-card">
-          <h3>Pending Tasks</h3>
-          <p class="stat-number" id="taskCount">0</p>
-        </div>
-        <div class="card stat-card">
-          <h3>Completed Habits</h3>
-          <p class="stat-number" id="habitCount">0/0</p>
-        </div>
-      </section>
-
-      <section class="checklist-section">
-        <div class="card checklist-card">
+      <section class="zen-grid">
+        <div class="card main-checklist">
           <div class="card-header">
-            <h2>Primary Productivity Checklist</h2>
-            <button class="secondary-btn" id="addTaskBtn">+ New Entry</button>
+            <h2>Primary Objectives</h2>
+            <button class="add-task-btn" id="openQuickAction">+</button>
           </div>
-          <div class="checklist-wrapper">
-            <ul class="check-list" id="taskList">
-              <li><label><input type="checkbox" /> Review morning plan</label></li>
-              <li><label><input type="checkbox" /> Update daily progress report</label></li>
-              <li><label><input type="checkbox" /> Sync neural processor nodes</label></li>
-            </ul>
-          </div>
+          <ul class="check-list" id="taskList">
+            <li><label><input type="checkbox" /> Deep work: Strategic planning</label></li>
+            <li><label><input type="checkbox" /> Networking: Media Outreach</label></li>
+            <li><label><input type="checkbox" /> Skill building: Design block</label></li>
+          </ul>
         </div>
 
-        <div class="card checklist-card">
-            <h2>Habit Tracker</h2>
-            <ul class="check-list" id="habitList">
-              <li><label><input type="checkbox" checked /> Morning reflection</label></li>
-              <li><label><input type="checkbox" /> Workout session</label></li>
-              <li><label><input type="checkbox" /> Evening log</label></li>
-            </ul>
+        <div class="card stats-card">
+            <h3>Focus Energy</h3>
+            <div class="stat-circle">
+                <span id="taskCount">0</span>
+                <small>Tasks Left</small>
+            </div>
         </div>
       </section>
     </main>
   </div>
 
-  <div class="modal hidden" id="quickModal">
-    <div class="modal-content">
-      <h2>Add New Task</h2>
-      <input type="text" id="quickTaskInput" placeholder="Enter task name..." />
-      <div class="modal-actions">
-        <button class="secondary-btn" id="closeModal">Cancel</button>
-        <button class="primary-btn" id="saveTaskBtn">Save Task</button>
+  <div class="modal hidden" id="settingsModal">
+    <div class="modal-content zen-modal">
+      <h2>System Customization</h2>
+      <div class="setting-group">
+        <label>Primary Accent Color</label>
+        <div class="color-options">
+            <button class="color-swatch" style="background: #a3b18a;" onclick="changeAccent('#a3b18a')"></button>
+            <button class="color-swatch" style="background: #e9edc9;" onclick="changeAccent('#e9edc9')"></button>
+            <button class="color-swatch" style="background: #606c38;" onclick="changeAccent('#606c38')"></button>
+            <button class="color-swatch" style="background: #00f2ff;" onclick="changeAccent('#00f2ff')"></button>
+            <input type="color" id="customColor" onchange="changeAccent(this.value)">
+        </div>
       </div>
+      <button class="close-btn" onclick="toggleSettings()">Done</button>
     </div>
   </div>
 
