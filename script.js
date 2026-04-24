@@ -1,120 +1,260 @@
-document.addEventListener('DOMContentLoaded', () => {
-    lucide.createIcons();
-    initClock();
-    renderAppleStrip();
+// 🔑 SUPABASE SETUP
+const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
+const SUPABASE_KEY = ‘sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl’;
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// GLOBAL STATE
+let pages = [];
+let currentPageId = null;
+
+// ELEMENTS
+const pagesList = document.getElementById("pagesList");
+const newPageBtn = document.getElementById("newPageBtn");
+const notesEl = document.getElementById("notes");
+const tasksContainer = document.getElementById("tasks");
+
+// =======================
+// 👤 NAME + GREETING
+// =======================
+function saveName() {
+  const name = document.getElementById("nameInput").value;
+  localStorage.setItem("username", name);
+  updateGreeting();
+}
+
+function updateGreeting() {
+  const name = localStorage.getItem("username") || "User";
+  const hour = new Date().getHours();
+
+  let greeting = "Hello";
+  if (hour < 12) greeting = "Good morning";
+  else if (hour < 18) greeting = "Good afternoon";
+  else greeting = "Good evening";
+
+  document.getElementById("greeting").textContent =
+    `${greeting}, ${name} 👋`;
+}
+updateGreeting();
+
+// =======================
+// 🌗 THEME
+// =======================
+const themeToggle = document.getElementById("themeToggle");
+
+themeToggle.onclick = () => {
+  const isDark = document.body.classList.toggle("dark");
+  localStorage.setItem("theme", isDark ? "dark" : "light");
+};
+
+// =======================
+// 🔔 NOTIFICATIONS
+// =======================
+let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
+
+document.getElementById("profileIcon").onclick = () => {
+  document.getElementById("notificationPanel").classList.toggle("hidden");
+  renderNotifications();
+};
+
+function addNotification(msg) {
+  notifications.push(msg);
+  localStorage.setItem("notifications", JSON.stringify(notifications));
+}
+
+function renderNotifications() {
+  const container = document.getElementById("notifications");
+  container.innerHTML = "";
+  notifications.forEach(n => {
+    const div = document.createElement("div");
+    div.textContent = n;
+    container.appendChild(div);
+  });
+}
+
+document.getElementById("clearNotifications").onclick = () => {
+  notifications = [];
+  localStorage.setItem("notifications", "[]");
+  renderNotifications();
+};
+
+// =======================
+// 📄 PAGES (SUPABASE)
+// =======================
+async function loadPages() {
+  const { data } = await supabase.from("pages").select("*");
+  pages = data || [];
+  renderPages();
+}
+loadPages();
+
+newPageBtn.onclick = async () => {
+  await supabase.from("pages").insert([{ title: "New Page" }]);
+  loadPages();
+};
+
+function renderPages() {
+  pagesList.innerHTML = "";
+
+  pages.forEach(page => {
+    const div = document.createElement("div");
+    div.textContent = page.title;
+    div.className = "page-item";
+
+    div.onclick = () => selectPage(page.id);
+
+    pagesList.appendChild(div);
+  });
+}
+
+async function selectPage(id) {
+  currentPageId = id;
+  const page = pages.find(p => p.id === id);
+
+  document.getElementById("pageTitle").textContent = page.title;
+  notesEl.value = page.notes || "";
+
+  loadTasks(id);
+}
+
+// =======================
+// 📝 NOTES SAVE
+// =======================
+notesEl.addEventListener("input", async () => {
+  if (!currentPageId) return;
+
+  await supabase
+    .from("pages")
+    .update({ notes: notesEl.value })
+    .eq("id", currentPageId);
 });
 
-// Authentication System
-function toggleAuthMode() {
-    const title = document.querySelector('#loginForm h2');
-    title.innerText = title.innerText === "Welcome Back" ? "Initialize System" : "Welcome Back";
+// =======================
+// ✅ TASKS (SUPABASE)
+// =======================
+async function loadTasks(pageId) {
+  const { data } = await supabase
+    .from("tasks")
+    .select("*")
+    .eq("page_id", pageId);
+
+  renderTasks(data || []);
 }
 
-function handleAuth(type) {
-    // Simulation: In production, use Supabase here
-    document.getElementById('authPage').classList.add('hidden');
-    document.getElementById('appContainer').classList.remove('hidden');
-}
+function renderTasks(tasks) {
+  tasksContainer.innerHTML = "";
 
-// Clock Logic
-function initClock() {
-    const update = () => {
-        const now = new Date();
-        document.getElementById('clockDisplay').innerText = now.toLocaleTimeString();
-        document.getElementById('dateDisplay').innerText = now.toLocaleDateString(undefined, {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-        });
+  tasks.forEach(task => {
+    const div = document.createElement("div");
+    div.className = "task";
+
+    const left = document.createElement("div");
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = task.completed;
+
+    checkbox.onchange = async () => {
+      await supabase
+        .from("tasks")
+        .update({ completed: checkbox.checked })
+        .eq("id", task.id);
+
+      loadTasks(currentPageId);
     };
-    setInterval(update, 1000);
-    update();
+
+    const span = document.createElement("span");
+    span.textContent = task.text;
+
+    if (task.completed) div.classList.add("completed");
+
+    left.appendChild(checkbox);
+    left.appendChild(span);
+
+    const priority = document.createElement("div");
+    priority.className = `priority ${task.priority}`;
+    priority.textContent = task.priority;
+
+    div.appendChild(left);
+    div.appendChild(priority);
+
+    tasksContainer.appendChild(div);
+  });
 }
 
-// Apple Calendar Strip Logic
-function renderAppleStrip() {
-    const strip = document.getElementById('appleCalendar');
-    const today = new Date();
-    strip.innerHTML = '';
+// =======================
+// 🤖 AI ORGANIZER
+// =======================
+document.getElementById("aiBtn").onclick = async () => {
+  const page = pages.find(p => p.id === currentPageId);
+  if (!page) return;
 
-    for (let i = -2; i < 12; i++) {
-        const d = new Date();
-        d.setDate(today.getDate() + i);
-        const card = document.createElement('div');
-        card.className = `calendar-day-card ${i === 0 ? 'active' : ''}`;
-        card.innerHTML = `
-            <span style="font-size: 0.7rem; opacity: 0.6;">${d.toLocaleDateString('en-US', { weekday: 'short' })}</span>
-            <span style="font-size: 1.2rem; font-weight: bold; margin-top: 5px;">${d.getDate()}</span>
-        `;
-        strip.appendChild(card);
-    }
-}
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer YOUR_OPENAI_API_KEY"
+    },
+    body: JSON.stringify({
+      model: "gpt-4.1-mini",
+      messages: [{
+        role: "user",
+        content: `
+Turn these notes into tasks:
+${page.notes}
+Return JSON.
+        `
+      }]
+    })
+  });
 
-// Profile System
-function toggleProfileMenu() {
-    document.getElementById('profileDropdown').classList.toggle('hidden');
-}
+  const data = await res.json();
+  let text = data.choices[0].message.content;
 
-function openProfileSettings() {
-    document.getElementById('settingsModal').classList.remove('hidden');
-}
+  text = text.replace(/```json|```/g, "").trim();
+  const parsed = JSON.parse(text);
 
-function closeProfileSettings() {
-    document.getElementById('settingsModal').classList.add('hidden');
-}
+  for (let t of parsed) {
+    await supabase.from("tasks").insert([{
+      page_id: currentPageId,
+      text: t.task,
+      priority: t.priority,
+      completed: false
+    }]);
+  }
 
-function previewImage(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = document.createElement('img');
-            preview.src = e.target.result;
-            preview.id = "tempPreview";
-            // Store it globally for the "Save" function
-            window.tempAvatar = e.target.result;
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
+  loadTasks(currentPageId);
+};
 
-function saveProfileChanges() {
-    const name = document.getElementById('editFullName').value;
-    if (name) {
-        document.getElementById('dynamicGreeting').innerText = `Good Afternoon, ${name}`;
-        document.getElementById('userNameDisplay').innerText = name;
-    }
-    if (window.tempAvatar) {
-        const img = document.getElementById('userAvatarImg');
-        img.src = window.tempAvatar;
-        img.classList.remove('hidden');
-        document.getElementById('userInitials').classList.add('hidden');
-    }
-    closeProfileSettings();
-}
+// =======================
+// 📅 DAILY AI PLANNER
+// =======================
+document.getElementById("planBtn").onclick = async () => {
+  const { data } = await supabase
+    .from("tasks")
+    .select("*")
+    .eq("page_id", currentPageId);
 
-// Navigation Logic
-function switchPage(pageId) {
-    document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
-    document.getElementById(pageId).classList.remove('hidden');
-    
-    // Update active state in sidebar
-    document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
-    // (In real use, you'd add logic to find the specific LI clicked)
-}
+  const tasksText = data.map(t => t.text).join(", ");
 
-// AI Task Distribution Simulation
-function smartAddTask() {
-    const input = document.getElementById('aiTaskInput');
-    if (!input.value) return;
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer YOUR_OPENAI_API_KEY"
+    },
+    body: JSON.stringify({
+      model: "gpt-4.1-mini",
+      messages: [{
+        role: "user",
+        content: `Create a daily schedule: ${tasksText}`
+      }]
+    })
+  });
 
-    const li = document.createElement('li');
-    li.style.padding = "10px";
-    li.style.borderBottom = "1px solid var(--border)";
-    li.innerText = input.value;
+  const result = await res.json();
+  document.getElementById("planOutput").textContent =
+    result.choices[0].message.content;
 
-    // Simulate AI "sorting"
-    if (input.value.toLowerCase().includes('urgent') || input.value.toLowerCase().includes('priority')) {
-        document.getElementById('highTaskList').appendChild(li);
-    } else {
-        document.getElementById('midTaskList').appendChild(li);
-    }
-    input.value = '';
-}
+  addNotification("Daily plan created ✅");
+};
