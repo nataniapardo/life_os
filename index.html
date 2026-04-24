@@ -34,7 +34,7 @@
                 <div class="nav-divider"></div>
                 
                 <div class="add-section-wrap">
-                    <label class="nav-label">Modules</label>
+                    <label class="nav-label" for="categorySelector">Modules</label>
                     <select id="categorySelector" class="neon-select" onchange="handleModuleSelect()">
                         <option value="" disabled selected>View Modules</option>
                         <option value="groceries">Groceries</option>
@@ -123,7 +123,7 @@
                     <h2>System Customization</h2>
                     
                     <div class="setting-item">
-                        <label>Identity Tag</label>
+                        <label for="userNameInput">Identity Tag</label>
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
                             <input type="text" id="userNameInput" placeholder="Enter your name...">
                             <button class="btn-neon" onclick="updateUserName()">Save</button>
@@ -131,7 +131,7 @@
                     </div>
 
                     <div class="setting-item" style="margin-top: 25px;">
-                        <label>System Accent Color</label>
+                        <label for="themeColorInput">System Accent Color</label>
                         <div class="color-picker-container">
                             <input type="color" id="themeColorInput" onchange="changeSystemColor(this.value)" value="#00f2ff">
                             <span>Select Neon Hue</span>
@@ -139,7 +139,7 @@
                     </div>
 
                     <div class="setting-item" style="margin-top: 25px;">
-                        <label>Interface Typography</label>
+                        <label for="fontSelector">Interface Typography</label>
                         <select id="fontSelector" class="neon-select" onchange="changeFont(this.value)" style="width: 100%; margin-top: 10px;">
                             <option value="'Inter', sans-serif">Modern Sans</option>
                             <option value="'Papyrus', serif">Ancient Papyrus</option>
