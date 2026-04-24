@@ -48,6 +48,8 @@ window.switchView = function(viewId) {
     navItems.forEach(item => {
         if (item.getAttribute('onclick')?.includes(`'${viewId}'`)) item.classList.add('active');
     });
+
+    if(viewId === 'calendar') renderCalendar();
 };
 
 window.handleModuleSelect = function() {
@@ -94,10 +96,12 @@ window.organizeWithAI = function() {
         const text = line.trim();
         if (!text) return;
 
+        const detectedDate = extractDate(text); // Extracts dates like "tomorrow" or "April 30"
+
         tasks.push({
             id: Date.now() + Math.random(),
             name: text,
-            date: extractDate(text),
+            date: detectedDate, // Documented for calendar visibility
             time: extractTime(text),
             priority: detectPriority(text),
             completed: false
@@ -105,31 +109,19 @@ window.organizeWithAI = function() {
     });
 
     saveAndRender();
+    renderCalendar(); // Refresh calendar to show new documented tasks
     document.getElementById("aiInput").value = "";
-    alert("AI has parsed your objectives.");
+    alert("AI has documented your objectives in the calendar.");
 };
 
 /**
  * UPDATED PRIORITY LOGIC
- * High (Red): Meetings, Appointments
- * Medium (Yellow): Errands, Buying, Tasks
- * Low (Green): Leisure, Hobbies, Cleaning, Walking
  */
 function detectPriority(text) {
     const lower = text.toLowerCase();
-    
-    // HIGH PRIORITY: Meetings/Appointments
-    if (lower.includes("meeting") || lower.includes("appointment") || lower.includes("urgent")) {
-        return "high";
-    }
-    
-    // LOW PRIORITY: Leisure, Hobbies, Cleaning, Walking
+    if (lower.includes("meeting") || lower.includes("appointment") || lower.includes("urgent")) return "high";
     if (lower.includes("walk") || lower.includes("hobby") || lower.includes("cleaning") || 
-        lower.includes("leisure") || lower.includes("game") || lower.includes("relax")) {
-        return "low";
-    }
-    
-    // MEDIUM PRIORITY: Default for errands/buying
+        lower.includes("leisure") || lower.includes("game") || lower.includes("relax")) return "low";
     return "medium";
 }
 
@@ -138,28 +130,73 @@ function extractTime(text) {
     return match ? match[0] : "";
 }
 
+// Date extraction helper
 function extractDate(text) {
     const lower = text.toLowerCase();
     const today = new Date();
+    
     if (lower.includes("today")) return today.toISOString().split('T')[0];
     if (lower.includes("tomorrow")) {
         today.setDate(today.getDate() + 1);
         return today.toISOString().split('T')[0];
     }
+    
+    const months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+    for (let i = 0; i < months.length; i++) {
+        if (lower.includes(months[i])) {
+            const dayMatch = text.match(/\d+/);
+            if (dayMatch) {
+                const year = today.getFullYear();
+                return `${year}-${String(i + 1).padStart(2, '0')}-${String(dayMatch[0]).padStart(2, '0')}`;
+            }
+        }
+    }
     return "";
+}
+
+// --- CALENDAR & AI DETECTION ---
+function renderCalendar() {
+    const grid = document.getElementById('calendarGrid');
+    const monthEl = document.getElementById('currentMonthName');
+    if(!grid || !monthEl) return;
+
+    const now = new Date();
+    monthEl.innerText = now.toLocaleString('default', { month: 'long', year: 'numeric' });
+    
+    grid.innerHTML = '';
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+
+    for (let i = 1; i <= daysInMonth; i++) {
+        const d = document.createElement('div');
+        d.className = 'day-box';
+        d.innerHTML = `<span class="day-num">${i}</span>`;
+        
+        // Check if any AI-detected tasks belong to this day
+        const dateString = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+        const hasTask = tasks.some(t => t.date === dateString);
+        
+        if (hasTask) {
+            d.innerHTML += `<div class="calendar-event-dot"></div>`;
+        }
+        
+        grid.appendChild(d);
+    }
 }
 
 // --- TASK LOGIC (CRUD) ---
 window.saveNewTask = function() {
     const nameInput = document.getElementById('taskNameInput');
+    const dateInput = document.getElementById('taskDateInput');
     if (nameInput?.value.trim()) {
         tasks.push({ 
             id: Date.now(), 
             name: nameInput.value.trim(), 
+            date: dateInput.value,
             completed: false,
             priority: detectPriority(nameInput.value.trim())
         });
         saveAndRender();
+        renderCalendar();
         closeModal();
         nameInput.value = '';
     }
@@ -174,6 +211,7 @@ window.toggleTask = function(id) {
 window.deleteTask = function(id) {
     tasks = tasks.filter(t => t.id !== id);
     saveAndRender();
+    renderCalendar();
 };
 
 function saveAndRender() {
@@ -190,7 +228,6 @@ function renderTasks() {
     tasks.forEach(task => {
         if (task.completed) completedCount++;
         const li = document.createElement('li');
-        
         const priorityClass = `priority-${task.priority || 'medium'}`;
         li.classList.add(priorityClass);
 
@@ -228,14 +265,3 @@ window.openModal = () => document.getElementById('quickModal').classList.remove(
 window.closeModal = () => document.getElementById('quickModal').classList.add('hidden');
 window.toggleProfileMenu = (e) => { e.stopPropagation(); document.getElementById('profileMenu').classList.toggle('hidden'); };
 window.toggleMilitaryTime = () => { isMilitaryTime = !isMilitaryTime; };
-
-window.renderCalendar = () => {
-    const grid = document.getElementById('calendarGrid');
-    if(!grid) return;
-    grid.innerHTML = '';
-    for (let i = 1; i <= 31; i++) {
-        const d = document.createElement('div');
-        d.className = 'day-box'; d.innerText = i;
-        grid.appendChild(d);
-    }
-};
