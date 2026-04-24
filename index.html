@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zen OS | Command Center</title>
+  <title>Zen OS | Advanced Command Center</title>
   <link rel="stylesheet" href="styles.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="dark-mode">
   <div class="app-container">
@@ -13,44 +14,55 @@
       <div class="sidebar-header">
         <div class="logo-wrap">
             <span class="logo-text">Life</span>
-            <div class="globe-container">
-                <div class="globe"></div>
-            </div>
+            <div class="globe-container"><div class="globe"></div></div>
             <span class="logo-text">OS</span>
         </div>
       </div>
 
       <nav class="nav-menu">
-        <a href="#" class="nav-item active">Dashboard</a>
-        <a href="#" class="nav-item">Journal</a>
-        <a href="#" class="nav-item">Blueprint</a>
+        <a href="#" class="nav-item active" onclick="switchView('dashboard')">Dashboard</a>
+        <a href="#" class="nav-item" onclick="switchView('settings')">System Config</a>
+        
+        <div class="nav-divider"></div>
+        
+        <div class="add-section-wrap">
+            <select id="categorySelector" class="glass-select">
+                <option value="" disabled selected>+ Add Section</option>
+                <option value="groceries">Groceries</option>
+                <option value="budget">Budget Tracker</option>
+                <option value="finances">Finances</option>
+                <option value="notes">Notes</option>
+                <option value="journal">Journal</option>
+                <option value="mood">Mood Tracker</option>
+            </select>
+            <button class="btn-outline-sm" onclick="addNewCategorizedSection()">Confirm</button>
+        </div>
       </nav>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
-        <div class="welcome-area">
-          <h1>Peaceful Productivity</h1>
-          <p>Flow through your objectives with intention.</p>
+        <div class="header-left">
+            <h1 id="dynamicGreeting">Initializing...</h1>
+            <p id="subGreeting">Flow through your objectives with intention.</p>
         </div>
 
         <div class="utility-cluster">
             <div class="date-time-cluster">
-                <span id="currentTime">00:00:00</span>
-                <span id="currentDate">Loading Date...</span>
+                <div id="clockDisplay" class="time-text" onclick="toggleMilitaryTime()">00:00:00</div>
+                <div id="dateDisplay" class="date-text">Loading Date...</div>
             </div>
             
-            <button class="theme-toggle" id="themeToggle" title="Switch Theme">
-                <span class="icon-sun">☀️</span>
-                <span class="icon-moon">🌙</span>
+            <button id="themeToggle" class="btn-icon-theme" onclick="manualThemeToggle()">
+                <i id="themeIcon" data-lucide="moon"></i>
             </button>
 
             <div class="profile-wrapper">
                 <div class="profile-trigger" id="profileBtn">
                     <div class="profile-avatar">👤</div>
                     <div class="profile-menu hidden" id="profileMenu">
-                        <div class="menu-header">Settings & Profile</div>
-                        <button onclick="toggleSettings()">🎨 System Customization</button>
+                        <div class="menu-header">Quick Access</div>
+                        <button onclick="switchView('settings')">🎨 Customization</button>
                         <button onclick="handleLogout()">🚪 Log Out</button>
                     </div>
                 </div>
@@ -58,45 +70,71 @@
         </div>
       </header>
 
-      <section class="zen-grid">
-        <div class="card main-checklist">
-          <div class="card-header">
-            <h2>Primary Objectives</h2>
-            <button class="add-task-btn" id="openQuickAction">+</button>
-          </div>
-          <ul class="check-list" id="taskList">
-            <li><label><input type="checkbox" /> Deep work: Strategic planning</label></li>
-            <li><label><input type="checkbox" /> Networking: Media Outreach</label></li>
-            <li><label><input type="checkbox" /> Skill building: Design block</label></li>
-          </ul>
-        </div>
-
-        <div class="card stats-card">
-            <h3>Focus Energy</h3>
-            <div class="stat-circle">
-                <span id="taskCount">0</span>
-                <small>Tasks Left</small>
+      <section id="dashboardView" class="view-section">
+          <section class="zen-grid">
+            <div class="card main-checklist">
+              <div class="card-header">
+                <h2>Primary Objectives</h2>
+                <button class="add-task-btn" onclick="openModal()">+</button>
+              </div>
+              <ul class="check-list" id="taskList">
+                <li><label><input type="checkbox" /> Deep work: Strategic planning</label></li>
+                <li><label><input type="checkbox" /> Skill building: Design block</label></li>
+              </ul>
             </div>
+
+            <div class="card stats-card">
+                <h3>Focus Energy</h3>
+                <div class="stat-circle">
+                    <span id="taskCount">0</span>
+                    <small>Left</small>
+                </div>
+            </div>
+          </section>
+      </section>
+
+      <section id="settingsView" class="view-section hidden">
+        <div class="card zen-modal">
+          <h2>System Customization</h2>
+          
+          <div class="setting-item">
+              <label>User Identity</label>
+              <div class="flex-row">
+                  <input type="text" id="userNameInput" placeholder="Enter your name...">
+                  <button class="primary-btn" onclick="updateUserName()">Update</button>
+              </div>
+          </div>
+
+          <div class="setting-item">
+            <label>Theme Scheduling</label>
+            <div class="flex-row">
+                <input type="checkbox" id="enableSchedule" onchange="toggleSchedule()">
+                <span>Enable Auto-Switching</span>
+            </div>
+            <div id="scheduleInputs" class="schedule-grid" style="display: none; margin-top: 15px;">
+                <div class="input-group">
+                    <label>☀️ Light At:</label>
+                    <input type="time" id="lightTime" value="07:00">
+                </div>
+                <div class="input-group">
+                    <label>🌙 Dark At:</label>
+                    <input type="time" id="darkTime" value="19:00">
+                </div>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <label>Interface Color</label>
+            <div class="color-options">
+                <button class="color-swatch" style="background: #a3b18a;" onclick="changeAccent('#a3b18a')"></button>
+                <button class="color-swatch" style="background: #606c38;" onclick="changeAccent('#606c38')"></button>
+                <button class="color-swatch" style="background: #00f2ff;" onclick="changeAccent('#00f2ff')"></button>
+                <input type="color" id="customColor" onchange="changeAccent(this.value)">
+            </div>
+          </div>
         </div>
       </section>
     </main>
-  </div>
-
-  <div class="modal hidden" id="settingsModal">
-    <div class="modal-content zen-modal">
-      <h2>System Customization</h2>
-      <div class="setting-group">
-        <label>Primary Accent Color</label>
-        <div class="color-options">
-            <button class="color-swatch" style="background: #a3b18a;" onclick="changeAccent('#a3b18a')"></button>
-            <button class="color-swatch" style="background: #e9edc9;" onclick="changeAccent('#e9edc9')"></button>
-            <button class="color-swatch" style="background: #606c38;" onclick="changeAccent('#606c38')"></button>
-            <button class="color-swatch" style="background: #00f2ff;" onclick="changeAccent('#00f2ff')"></button>
-            <input type="color" id="customColor" onchange="changeAccent(this.value)">
-        </div>
-      </div>
-      <button class="close-btn" onclick="toggleSettings()">Done</button>
-    </div>
   </div>
 
   <script src="script.js"></script>
