@@ -3,20 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | Cyber-Neon Interface</title>
+    <title>Zen OS | Cyber-Interface</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="dark-mode">
     <div class="app-container">
-        
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo-wrap">
                     <span class="logo-text">LIFE</span>
-                    <div class="globe-outer">
-                        <div class="globe-inner"></div>
-                    </div>
+                    <div class="globe-outer"><div class="globe-inner"></div></div>
                     <span class="logo-text">OS</span>
                 </div>
             </div>
@@ -26,22 +23,23 @@
                     <i data-lucide="home"></i> <span>Home</span>
                 </a>
                 <a href="#" class="nav-item" onclick="switchView('todo')">
-                    <i data-lucide="check-square"></i> <span>Todo</span>
+                    <i data-lucide="list-checks"></i> <span>Todo List</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchView('calendar')">
+                    <i data-lucide="calendar"></i> <span>Calendar</span>
                 </a>
                 
                 <div class="nav-divider"></div>
                 
                 <div class="add-section-wrap">
                     <label class="nav-label">Modules</label>
-                    <select id="categorySelector" class="neon-select">
-                        <option value="" disabled selected>Select View</option>
-                        <option value="tasks">Tasks List</option>
+                    <select id="categorySelector" class="neon-select" onchange="handleModuleSelect()">
+                        <option value="" disabled selected>View Modules</option>
                         <option value="groceries">Groceries</option>
                         <option value="finances">Finances</option>
                         <option value="journal">Journal</option>
                         <option value="mood">Mood Tracker</option>
                     </select>
-                    <button class="btn-neon-small" onclick="addNewCategorizedSection()">Initialize</button>
                 </div>
             </nav>
         </aside>
@@ -49,24 +47,21 @@
         <main class="main-content">
             <header class="topbar">
                 <div class="header-left">
-                    <h1 id="dynamicGreeting">System Booting...</h1>
-                    <div class="system-status">
-                        <span class="pulse-dot"></span> Status: Optimal
-                    </div>
+                    <h1 id="dynamicGreeting">System Active</h1>
                 </div>
 
                 <div class="header-right">
                     <div class="chrono-unit">
                         <div id="clockDisplay" onclick="toggleMilitaryTime()">00:00:00</div>
-                        <div id="dateDisplay">Date Syncing...</div>
+                        <div id="dateDisplay">Syncing...</div>
                     </div>
                     
-                    <button id="themeToggle" class="icon-btn" onclick="manualThemeToggle()">
+                    <button id="themeToggleBtn" class="icon-btn" onclick="manualThemeToggle()">
                         <i id="themeIcon" data-lucide="moon"></i>
                     </button>
 
                     <div class="profile-group">
-                        <div class="avatar-trigger" id="profileBtn" onclick="toggleProfileMenu(event)">
+                        <div class="avatar-trigger" onclick="toggleProfileMenu(event)">
                             <i data-lucide="user"></i>
                         </div>
                         <div class="dropdown-menu hidden" id="profileMenu">
@@ -78,57 +73,63 @@
             </header>
 
             <section id="dashboardView" class="view-section">
+                <div class="glass-card">
+                    <h3>AI Personal Assistant</h3>
+                    <p class="subtitle">Enter tasks with dates to organize by priority.</p>
+                    <textarea id="aiInput" placeholder="Ex: Finish report by tomorrow, Call mom on Friday, Gym tonight..."></textarea>
+                    <button class="btn-neon" onclick="organizeWithAI()">Organize Priority</button>
+                </div>
+            </section>
+
+            <section id="todoView" class="view-section hidden">
+                <h2 class="view-title">Objective Management</h2>
                 <div class="grid-layout">
                     <div class="glass-card">
                         <div class="card-header">
-                            <h2><i data-lucide="zap"></i> Critical Objectives</h2>
+                            <h3>Checklist</h3>
                             <button class="add-btn" onclick="openModal()">+</button>
                         </div>
-                        <ul class="neon-list" id="taskList">
-                            <li><label><input type="checkbox"> Update core architecture</label></li>
-                            <li><label><input type="checkbox"> Calibrate neural interface</label></li>
-                        </ul>
+                        <ul class="neon-list" id="todoListElement">
+                            </ul>
                     </div>
-                    <div class="glass-card center-align">
-                        <h3>Task Load</h3>
-                        <div class="neon-gauge">
-                            <span id="taskCount">0</span>
+                    <div class="glass-card">
+                        <h3>Load Chart</h3>
+                        <div class="chart-container">
+                            <div id="taskBar" class="progress-bar"></div>
+                            <p id="taskStatus">0% Complete</p>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <section id="calendarView" class="view-section hidden">
+                <h2 class="calendar-title">Calendar</h2>
+                <div class="glass-card calendar-grid" id="calendarGrid">
+                    </div>
+            </section>
+
+            <section id="moduleView" class="view-section hidden">
+                <h2 id="moduleTitle" class="view-title">Module</h2>
+                <div class="glass-card">
+                    <p>System content for this module is currently initializing.</p>
                 </div>
             </section>
 
             <section id="settingsView" class="view-section hidden">
                 <div class="glass-card settings-panel">
                     <h2>System Customization</h2>
-                    
                     <div class="setting-item">
                         <label>Identity Tag</label>
-                        <div class="input-row">
-                            <input type="text" id="userNameInput" placeholder="Enter name...">
-                            <button class="btn-neon" onclick="updateUserName()">Update</button>
-                        </div>
+                        <input type="text" id="userNameInput" placeholder="Change name...">
+                        <button class="btn-neon" onclick="updateUserName()">Save</button>
                     </div>
-
                     <div class="setting-item">
-                        <label>Typography</label>
+                        <label>Interface Typography</label>
                         <select id="fontSelector" class="neon-select" onchange="changeFont(this.value)">
                             <option value="'Inter', sans-serif">Modern Sans</option>
                             <option value="'Papyrus', serif">Ancient Papyrus</option>
                             <option value="'Courier New', monospace">Data Mono</option>
-                            <option value="'Georgia', serif">Classic Serif</option>
                         </select>
-                    </div>
-
-                    <div class="setting-item">
-                        <label>Interface Hue</label>
-                        <div class="color-grid">
-                            <button class="swatch" style="background: #00f2ff;" onclick="changeAccent('#00f2ff')"></button>
-                            <button class="swatch" style="background: #7000ff;" onclick="changeAccent('#7000ff')"></button>
-                            <button class="swatch" style="background: #ff00c3;" onclick="changeAccent('#ff00c3')"></button>
-                            <button class="swatch" style="background: #00ff41;" onclick="changeAccent('#00ff41')"></button>
-                            <input type="color" id="customPicker" onchange="changeAccent(this.value)">
-                        </div>
                     </div>
                 </div>
             </section>
@@ -137,11 +138,12 @@
 
     <div class="modal hidden" id="quickModal">
         <div class="modal-content">
-            <h3>New Entry</h3>
-            <input type="text" id="quickTaskInput" placeholder="Initialize task name...">
+            <h3>New Task</h3>
+            <input type="text" id="taskNameInput" placeholder="Objective name...">
+            <input type="date" id="taskDateInput">
             <div class="modal-actions">
                 <button class="btn-ghost" onclick="closeModal()">Abort</button>
-                <button class="btn-neon" id="saveTaskBtn">Commit</button>
+                <button class="btn-neon" onclick="saveNewTask()">Commit</button>
             </div>
         </div>
     </div>
