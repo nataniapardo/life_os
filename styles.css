@@ -1,5 +1,5 @@
 :root {
-    --accent: #00f2ff; /* This will be overridden by the JS color picker */
+    --accent: #00f2ff; /* Overridden by JS color picker */
     --neon-color: #00f2ff; 
     --bg: #050b18;
     --sidebar: #081226;
@@ -36,46 +36,117 @@ body {
 .app-container { display: flex; height: 100vh; flex-direction: column; }
 .main-content { display: flex; flex: 1; overflow: hidden; }
 
-/* --- HEADER & LOGO STYLING --- */
+/* --- HEADER & TOPBAR LAYOUT --- */
 .topbar {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-between; /* Greeting on left, Info on right */
+    align-items: flex-start;
     padding: 20px 40px;
+    width: 100%;
+    position: relative;
     background: var(--sidebar);
     border-bottom: 1px solid var(--border);
+    z-index: 10;
+}
+
+.header-left {
+    flex: 1;
+}
+
+#dynamicGreeting {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    text-align: right;
+}
+
+/* Clock and Date Alignment */
+.chrono-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+#clockDisplay {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--neon-color);
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+#dateDisplay {
+    font-size: 1rem;
+    opacity: 0.7;
+}
+
+/* Icon Buttons Alignment */
+#themeToggleBtn, .avatar-trigger {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: 0.2s;
+}
+
+#themeToggleBtn:hover, .avatar-trigger:hover {
+    background: var(--neon-color);
+    color: white;
+}
+
+/* --- LOGO & GLOBE --- */
+.logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 30px;
 }
 
 .logo-text {
-    font-size: 2.2rem; /* Enlarged Life OS */
+    font-size: 2.2rem;
     font-weight: 800;
     letter-spacing: 2px;
     color: var(--neon-color);
     text-transform: uppercase;
 }
 
-.header-right {
+.globe-outer {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--neon-color);
+    border-radius: 50%;
     display: flex;
     align-items: center;
-    gap: 25px;
-    margin-left: auto; /* Pushes time and profile to the right */
+    justify-content: center;
 }
 
-.chrono-unit {
-    text-align: right;
-    font-family: 'JetBrains Mono', monospace;
+.globe-inner {
+    width: 10px;
+    height: 10px;
+    background: var(--neon-color);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--neon-color);
+    animation: pulse 2s infinite;
 }
 
-#clockDisplay {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: var(--neon-color);
-    display: block;
-}
-
-#dateDisplay {
-    font-size: 0.9rem;
-    opacity: 0.8;
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.6; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 /* --- SIDEBAR --- */
@@ -98,7 +169,7 @@ body {
     box-shadow: 0 0 15px var(--neon-color);
 }
 
-/* --- PRIORITY HIGHLIGHTING --- */
+/* --- PRIORITY LISTS --- */
 .neon-list { list-style: none; }
 
 .neon-list li {
@@ -113,19 +184,16 @@ body {
     border-radius: 4px;
 }
 
-/* Red: High Priority */
 .priority-high {
     border-left-color: #ff4d4d !important;
     box-shadow: inset 5px 0 10px -5px rgba(255, 77, 77, 0.5);
 }
 
-/* Yellow: Medium Priority */
 .priority-medium {
     border-left-color: #ffeb3b !important;
     box-shadow: inset 5px 0 10px -5px rgba(255, 235, 59, 0.5);
 }
 
-/* Green: Low Priority */
 .priority-low {
     border-left-color: #4caf50 !important;
     box-shadow: inset 5px 0 10px -5px rgba(76, 175, 80, 0.5);
@@ -134,7 +202,7 @@ body {
 .strikethrough { text-decoration: line-through; opacity: 0.5; }
 .delete-btn { background: none; border: none; color: #ff4444; cursor: pointer; font-weight: bold; }
 
-/* --- COLOR PICKER STYLING --- */
+/* --- COMPONENTS & UTILS --- */
 .color-picker-container {
     display: flex;
     align-items: center;
@@ -150,7 +218,6 @@ body {
     background: none;
 }
 
-/* --- CALENDAR & PROGRESS --- */
 .calendar-grid { 
     display: grid; 
     grid-template-columns: repeat(7, 1fr); 
@@ -184,7 +251,6 @@ body {
     box-shadow: var(--neon-glow); 
 }
 
-/* --- UI COMPONENTS --- */
 textarea { 
     width: 100%; 
     height: 100px; 
@@ -217,9 +283,3 @@ textarea {
 }
 
 .hidden { display: none !important; }
-
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.2); opacity: 0.7; }
-    100% { transform: scale(1); opacity: 1; }
-}
