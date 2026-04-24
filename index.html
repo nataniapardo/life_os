@@ -1,65 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Notion Clone</title>
-
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life OS | AI Productivity</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;700&family=Papyrus&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
 </head>
-<body>
+<body class="theme-futuristic">
 
-<div class="app">
+    <audio id="timerAlert" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h2>Pages</h2>
-    <div id="pagesList"></div>
-    <button id="newPageBtn">+ New Page</button>
-  </div>
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="logo-area-branding">
+                <span class="brand-text">Life OS</span>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3>Pages</h3>
+                <div id="pagesList" class="custom-nav-list">
+                    </div>
+                <button id="newPageBtn" class="btn-outline-dash" style="width: 100%; margin-top: 10px;">
+                    <i data-lucide="plus"></i> New Page
+                </button>
+            </div>
+            
+            <ul class="nav-links">
+                <li class="active" onclick="switchPage('home')"><i data-lucide="home"></i><span>Dashboard</span></li>
+                <li onclick="switchPage('settings')"><i data-lucide="settings"></i><span>Settings</span></li>
+            </ul>
+        </nav>
 
-  <!-- Main -->
-  <div class="main">
+        <main class="main-layout">
+            <header class="top-bar">
+                <div class="header-left">
+                    <div id="greeting" class="greeting-text">Initializing System...</div>
+                    <div class="input-inline">
+                        <input id="nameInput" placeholder="Enter name..." class="glass-input-small">
+                        <button class="btn-glow-small" onclick="saveName()">Set Name</button>
+                    </div>
+                </div>
 
-    <div class="top-bar">
-      <div id="greeting"></div>
+                <div class="header-right">
+                    <button id="themeToggle" class="theme-icon-btn">🌙</button>
+                    
+                    <div class="profile-wrapper">
+                        <div id="profileIcon" class="avatar-circle" onclick="toggleNotifications()">👤</div>
+                        <div id="notificationPanel" class="notification-dropdown glass-card hidden">
+                            <h4>Notifications</h4>
+                            <div id="notifications"></div>
+                            <button id="clearNotifications" class="btn-outline-small">Clear All</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
 
-      <div class="profile">
-        <span id="profileIcon">👤</span>
-        <div id="notificationPanel" class="hidden">
-          <h4>Notifications</h4>
-          <div id="notifications"></div>
-          <button id="clearNotifications">Clear All</button>
-        </div>
-      </div>
+            <div class="content-padding">
+                <section id="home" class="view-section">
+                    <h1 id="pageTitle">Command Center</h1>
+                    
+                    <div class="workspace-grid">
+                        <div class="glass-card editor-zone">
+                            <textarea id="notes" placeholder="Start writing your thoughts or notes here..."></textarea>
+                            <div class="action-bar">
+                                <button id="aiBtn" class="btn-glow"><i data-lucide="sparkles"></i> Organize with AI</button>
+                            </div>
+                        </div>
 
-      <button id="themeToggle">🌙</button>
+                        <div class="glass-card planner-zone">
+                            <h2>Daily Plan</h2>
+                            <button id="planBtn" class="btn-outline"><i data-lucide="calendar"></i> Generate Plan</button>
+                            <pre id="planOutput" class="ai-output-box">Your daily schedule will appear here...</pre>
+                        </div>
+                    </div>
+
+                    <div class="task-section">
+                        <h2>Objectives</h2>
+                        <div id="tasks" class="task-list-grid">
+                            </div>
+                    </div>
+                </section>
+            </div>
+        </main>
     </div>
 
-    <input id="nameInput" placeholder="Enter your name..." />
-    <button onclick="saveName()">Save Name</button>
-
-    <h1 id="pageTitle">Select a page</h1>
-
-    <textarea id="notes" placeholder="Write notes..."></textarea>
-    <button id="aiBtn">Organize with AI</button>
-
-    <div class="planner">
-      <h2>Daily Plan</h2>
-      <button id="planBtn">Generate Plan</button>
-      <pre id="planOutput"></pre>
-    </div>
-
-    <h2>Tasks</h2>
-    <div id="tasks"></div>
-
-  </div>
-
-</div>
-
-<script src="script.js"></script>
 </body>
 </html>
