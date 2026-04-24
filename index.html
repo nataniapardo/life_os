@@ -14,7 +14,8 @@
     
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <script src="script.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <script src="script.js" defer></script>
 </head>
 <body class="theme-futuristic">
 
@@ -29,43 +30,63 @@
                 <h3>System Configuration</h3>
                 <button class="btn-icon" onclick="closeSettings()"><i data-lucide="x"></i></button>
             </div>
-            <div class="modal-body">
-                </div>
+            <div class="modal-body"></div>
         </div>
     </div>
 
     <section id="authPage" class="auth-container">
-        <div class="auth-grid-bg"></div>
-        <div class="glass-card auth-card">
-            <div class="logo-area-branding">
-                <span class="brand-text">Life</span>
-                <div class="globe-container">
-                    <div class="globe"><div class="axis"></div></div>
+        <div class="productivity-simulation">
+            <div class="sim-column" id="simTasks"></div>
+            <div class="sim-column" id="simCalendar"></div>
+            <div class="sim-column" id="simAccomplishments"></div>
+        </div>
+
+        <div class="glass-card auth-card animate-in">
+            <div class="branding-hero">
+                <h1 class="brand-large">Life OS</h1>
+                <div class="globe-wrapper">
+                    <div class="globe-orbit"></div>
+                    <div class="globe-core"></div>
                 </div>
-                <span class="brand-text">OS</span>
             </div>
 
-            <div id="loginForm" class="auth-form-wrapper">
+            <div id="loginForm" class="auth-form-active">
                 <div class="auth-header">
-                    <h2>Neural Link Established</h2>
+                    <h2>System Access</h2>
                     <p>Enter credentials to access Bio-ID</p>
                 </div>
                 <div class="input-group">
-                    <label for="emailInput"><i data-lucide="mail"></i> Email Address</label>
-                    <input type="email" id="emailInput" placeholder="identity@neural.link" autocomplete="off">
+                    <label for="emailInput"><i data-lucide="mail"></i> Neural ID</label>
+                    <input type="email" id="emailInput" placeholder="identity@neural.link" required autocomplete="off">
                 </div>
                 <div class="input-group">
                     <label for="passInput"><i data-lucide="lock"></i> Access Key</label>
-                    <input type="password" id="passInput" placeholder="••••••••">
+                    <input type="password" id="passInput" placeholder="••••••••" required>
                 </div>
-                <div class="auth-footer">
-                    <button class="btn-glow full-width" onclick="handleAuth('login')">Initialize System</button>
-                    <p class="toggle-text">New Entity? <span onclick="toggleAuthMode()">Register Bio-Signature</span></p>
-                </div>
+                <button class="btn-glow-large" onclick="handleAuth('login')">Initialize</button>
+                <p class="auth-toggle">New user? <span onclick="toggleAuthMode()">Create an Account</span></p>
             </div>
 
-            <div id="signupForm" class="auth-form-wrapper hidden">
+            <div id="signupForm" class="hidden">
+                <div class="auth-header">
+                    <h2>Initialize New ID</h2>
+                    <p>Register your neural signature</p>
                 </div>
+                <div class="input-group">
+                    <label for="newNameInput"><i data-lucide="user"></i> Full Name</label>
+                    <input type="text" id="newNameInput" placeholder="Entity Name">
+                </div>
+                <div class="input-group">
+                    <label for="newEmailInput"><i data-lucide="mail"></i> Email Address</label>
+                    <input type="email" id="newEmailInput" placeholder="new-identity@neural.link">
+                </div>
+                <div class="input-group">
+                    <label for="newPassInput"><i data-lucide="lock"></i> Create Password</label>
+                    <input type="password" id="newPassInput" placeholder="••••••••">
+                </div>
+                <button class="btn-glow-large" onclick="handleAuth('signup')">Create Account</button>
+                <p class="auth-toggle">Already have an ID? <span onclick="toggleAuthMode()">Sign In</span></p>
+            </div>
         </div>
     </section>
 
@@ -100,8 +121,7 @@
                         <span class="section-label">Fragments</span>
                         <button class="btn-tiny" onclick="createNewFragment()"><i data-lucide="plus"></i></button>
                     </div>
-                    <div id="pagesList" class="custom-nav-list">
-                        </div>
+                    <div id="pagesList" class="custom-nav-list"></div>
                 </div>
 
                 <div class="nav-section">
@@ -126,7 +146,6 @@
         </nav>
 
         <main class="main-layout">
-            
             <header class="top-bar">
                 <div class="header-left">
                     <div class="breadcrumb">
@@ -145,7 +164,7 @@
 
                 <div class="header-right">
                     <div class="system-controls">
-                        <button id="themeToggle" class="btn-icon-alt" onclick="manualThemeToggle()" title="Switch Theme Mode">
+                        <button id="themeToggle" class="btn-icon-alt" onclick="manualThemeToggle()" title="Switch Theme">
                             <i id="themeIcon" data-lucide="moon"></i>
                         </button>
                         <button class="btn-icon-alt" onclick="toggleNotifications()" title="Alert Logs">
@@ -168,15 +187,13 @@
             </header>
 
             <div class="content-padding">
-
                 <section id="home" class="view-section animate-in">
                     <div class="view-header">
                         <h1 class="glitch-text" id="dynamicGreeting">Good Evening, User</h1>
                         <p class="sub-text">Neural node synchronization complete. All systems nominal.</p>
                     </div>
 
-                    <div class="apple-calendar-strip" id="appleCalendar">
-                        </div>
+                    <div class="apple-calendar-strip" id="appleCalendar"></div>
 
                     <div class="dashboard-grid">
                         <div class="glass-card ai-input-zone span-2">
@@ -185,7 +202,7 @@
                                 <div class="badge-ai">GPT-4 Turbo</div>
                             </div>
                             <div class="editor-container">
-                                <textarea id="notes" placeholder="Stream of consciousness... (Enter notes here for AI processing)"></textarea>
+                                <textarea id="notes" placeholder="Stream of consciousness..."></textarea>
                                 <div class="editor-footer">
                                     <div class="formatting-tools">
                                         <button class="btn-tool"><i data-lucide="bold"></i></button>
@@ -208,11 +225,11 @@
                             </div>
                             <div class="stats-row">
                                 <div class="stat-item">
-                                    <span class="label">Tasks Completed</span>
+                                    <span class="label">Completed</span>
                                     <span class="value" id="statsCompleted">0</span>
                                 </div>
                                 <div class="stat-item">
-                                    <span class="label">Focus Score</span>
+                                    <span class="label">Focus</span>
                                     <span class="value">84%</span>
                                 </div>
                             </div>
@@ -227,8 +244,7 @@
                                     <button class="btn-filter">Draft</button>
                                 </div>
                             </div>
-                            <div id="tasks" class="task-list-grid">
-                                </div>
+                            <div id="tasks" class="task-list-grid"></div>
                             <div class="task-entry-manual">
                                 <input type="text" id="manualTaskInput" placeholder="Add manual objective...">
                                 <button class="btn-add" onclick="addManualTask()"><i data-lucide="plus"></i></button>
@@ -251,12 +267,10 @@
                         <div class="settings-content glass-card">
                             <div class="settings-pane" id="pane-chronos">
                                 <h3><i data-lucide="clock"></i> Chronos Theme Sync</h3>
-                                <p class="pane-description">Automate your environment transitions based on local planetary time.</p>
-                                
                                 <div class="config-row">
                                     <div class="config-info">
                                         <span class="config-title">Enable Bio-Clock Sync</span>
-                                        <span class="config-sub">System theme follows scheduled triggers.</span>
+                                        <span class="config-sub">Theme follows scheduled triggers.</span>
                                     </div>
                                     <div class="switch-toggle">
                                         <input type="checkbox" id="enableSchedule" onchange="toggleScheduleUI()">
@@ -266,31 +280,32 @@
 
                                 <div id="scheduleInputs" class="schedule-grid hidden">
                                     <div class="time-card">
-                                        <label><i data-lucide="sun"></i> Light Mode Activation</label>
+                                        <label><i data-lucide="sun"></i> Light Mode</label>
                                         <input type="time" id="lightTime" class="glass-input" value="07:00">
                                     </div>
                                     <div class="time-card">
-                                        <label><i data-lucide="moon"></i> Dark Mode Activation</label>
+                                        <label><i data-lucide="moon"></i> Dark Mode</label>
                                         <input type="time" id="darkTime" class="glass-input" value="19:00">
                                     </div>
                                 </div>
 
                                 <div class="config-actions">
-                                    <button class="btn-glow" onclick="saveThemeSchedule()">Commit Configuration</button>
+                                    <button class="btn-glow" onclick="saveThemeSchedule()">Commit Settings</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
+            </div>
+        </main>
+    </div>
 
-            </div> </main>
-    </div> <div id="notificationPanel" class="notification-drawer glass-card hidden">
+    <div id="notificationPanel" class="notification-drawer glass-card hidden">
         <div class="drawer-header">
             <h4>Alert Logs</h4>
             <button class="btn-text" onclick="clearNotifications()">Purge All</button>
         </div>
-        <div id="notifications" class="drawer-content">
-            </div>
+        <div id="notifications" class="drawer-content"></div>
     </div>
 
 </body>
