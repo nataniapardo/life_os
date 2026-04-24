@@ -10,9 +10,18 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTasks();
     renderCalendar();
     updateGreeting();
+
+    // Load saved system color
+    const savedColor = localStorage.getItem('system_color') || '#00f2ff';
+    document.documentElement.style.setProperty('--neon-color', savedColor);
 });
 
-// --- THEME ENGINE ---
+// --- THEME & COLOR ENGINE ---
+window.changeSystemColor = function(color) {
+    document.documentElement.style.setProperty('--neon-color', color);
+    localStorage.setItem('system_color', color);
+};
+
 window.manualThemeToggle = function() {
     const body = document.body;
     const icon = document.getElementById('themeIcon');
@@ -22,6 +31,10 @@ window.manualThemeToggle = function() {
     const isLight = body.classList.contains('light-mode');
     if (icon) icon.setAttribute('data-lucide', isLight ? 'sun' : 'moon');
     if (window.lucide) lucide.createIcons();
+};
+
+window.changeFont = function(fontFamily) {
+    document.body.style.fontFamily = fontFamily;
 };
 
 // --- NAVIGATION ---
@@ -50,38 +63,26 @@ window.updateGreeting = function() {
     if (!greetingEl) return;
 
     const hour = new Date().getHours();
-    let welcome;
-
-    if (hour < 12) welcome = "Good Morning";
-    else if (hour < 18) welcome = "Good Afternoon";
-    else welcome = "Good Evening";
-
+    let welcome = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
     greetingEl.innerText = `${welcome}, ${userName}`;
 };
 
 window.updateUserName = function() {
     const input = document.getElementById('userNameInput');
-    if (input && input.value.trim() !== "") {
+    if (input?.value.trim()) {
         userName = input.value.trim();
         localStorage.setItem('zen_name', userName); 
         updateGreeting();
         input.value = ""; 
-        alert("Identity Tag Updated Successfully.");
-    } else {
-        alert("Please enter a valid name.");
+        alert("Identity Tag Updated.");
     }
 };
 
-// --- SETTINGS HELPERS ---
 window.handleLogout = function() {
     if(confirm("Confirm system disconnect?")) {
         localStorage.clear();
         location.reload();
     }
-};
-
-window.changeFont = function(fontFamily) {
-    document.body.style.fontFamily = fontFamily;
 };
 
 // --- SMART AI PARSER ---
@@ -93,23 +94,19 @@ window.organizeWithAI = function() {
         const text = line.trim();
         if (!text) return;
 
-        const priority = detectPriority(text);
-        const date = extractDate(text);
-        const time = extractTime(text);
-
         tasks.push({
             id: Date.now() + Math.random(),
             name: text,
-            date: date === "No date" ? "" : date,
-            time: time === "No time" ? "" : time,
-            priority: priority,
+            date: extractDate(text),
+            time: extractTime(text),
+            priority: detectPriority(text),
             completed: false
         });
     });
 
     saveAndRender();
     document.getElementById("aiInput").value = "";
-    alert("AI has parsed and added your objectives.");
+    alert("AI has parsed your objectives.");
 };
 
 function detectPriority(text) {
@@ -121,12 +118,7 @@ function detectPriority(text) {
 
 function extractTime(text) {
     const match = text.match(/\b(\d{1,2})(:\d{2})?\s?(am|pm)\b/i);
-    if (match) return match[0];
-    const lower = text.toLowerCase();
-    if (lower.includes("morning")) return "9:00 AM";
-    if (lower.includes("afternoon")) return "2:00 PM";
-    if (lower.includes("tonight")) return "8:00 PM";
-    return "No time";
+    return match ? match[0] : "";
 }
 
 function extractDate(text) {
@@ -137,13 +129,13 @@ function extractDate(text) {
         today.setDate(today.getDate() + 1);
         return today.toISOString().split('T')[0];
     }
-    return "No date";
+    return "";
 }
 
 // --- TASK LOGIC (CRUD) ---
 window.saveNewTask = function() {
     const nameInput = document.getElementById('taskNameInput');
-    if (nameInput && nameInput.value.trim()) {
+    if (nameInput?.value.trim()) {
         tasks.push({ 
             id: Date.now(), 
             name: nameInput.value.trim(), 
@@ -181,11 +173,17 @@ function renderTasks() {
     tasks.forEach(task => {
         if (task.completed) completedCount++;
         const li = document.createElement('li');
-        li.className = task.priority || 'medium';
+        
+        // --- PRIORITY HIGHLIGHTING ---
+        const priorityClass = `priority-${task.priority || 'medium'}`;
+        li.classList.add(priorityClass);
+
         li.innerHTML = `
-            <div>
+            <div style="display:flex; align-items:center; gap:10px;">
                 <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})">
-                <span class="${task.completed ? 'strikethrough' : ''}">[${(task.priority || 'MED').toUpperCase()}] ${task.name}</span>
+                <span class="${task.completed ? 'strikethrough' : ''}">
+                    [${(task.priority || 'MED').toUpperCase()}] ${task.name}
+                </span>
             </div>
             <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
         `;
