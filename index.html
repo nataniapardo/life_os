@@ -1,142 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zen OS | Advanced Command Center</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="https://unpkg.com/lucide@latest"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life OS | Cyber-Neon Interface</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="dark-mode">
-  <div class="app-container">
-    
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="logo-wrap">
-            <span class="logo-text">Life</span>
-            <div class="globe-container"><div class="globe"></div></div>
-            <span class="logo-text">OS</span>
-        </div>
-      </div>
-
-      <nav class="nav-menu">
-        <a href="#" class="nav-item active" onclick="switchView('dashboard')">Dashboard</a>
-        <a href="#" class="nav-item" onclick="switchView('settings')">System Config</a>
+    <div class="app-container">
         
-        <div class="nav-divider"></div>
-        
-        <div class="add-section-wrap">
-            <select id="categorySelector" class="glass-select">
-                <option value="" disabled selected>+ Add Section</option>
-                <option value="groceries">Groceries</option>
-                <option value="budget">Budget Tracker</option>
-                <option value="finances">Finances</option>
-                <option value="notes">Notes</option>
-                <option value="journal">Journal</option>
-                <option value="mood">Mood Tracker</option>
-            </select>
-            <button class="btn-outline-sm" onclick="addNewCategorizedSection()">Confirm</button>
-        </div>
-      </nav>
-    </aside>
-
-    <main class="main-content">
-      <header class="topbar">
-        <div class="header-left">
-            <h1 id="dynamicGreeting">Initializing...</h1>
-            <p id="subGreeting">Flow through your objectives with intention.</p>
-        </div>
-
-        <div class="utility-cluster">
-            <div class="date-time-cluster">
-                <div id="clockDisplay" class="time-text" onclick="toggleMilitaryTime()">00:00:00</div>
-                <div id="dateDisplay" class="date-text">Loading Date...</div>
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-wrap">
+                    <span class="logo-text">LIFE</span>
+                    <div class="globe-outer">
+                        <div class="globe-inner"></div>
+                    </div>
+                    <span class="logo-text">OS</span>
+                </div>
             </div>
-            
-            <button id="themeToggle" class="btn-icon-theme" onclick="manualThemeToggle()">
-                <i id="themeIcon" data-lucide="moon"></i>
-            </button>
 
-            <div class="profile-wrapper">
-                <div class="profile-trigger" id="profileBtn">
-                    <div class="profile-avatar">👤</div>
-                    <div class="profile-menu hidden" id="profileMenu">
-                        <div class="menu-header">Quick Access</div>
-                        <button onclick="switchView('settings')">🎨 Customization</button>
-                        <button onclick="handleLogout()">🚪 Log Out</button>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" onclick="switchView('dashboard')">
+                    <i data-lucide="home"></i> <span>Home</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchView('todo')">
+                    <i data-lucide="check-square"></i> <span>Todo</span>
+                </a>
+                
+                <div class="nav-divider"></div>
+                
+                <div class="add-section-wrap">
+                    <label class="nav-label">Modules</label>
+                    <select id="categorySelector" class="neon-select">
+                        <option value="" disabled selected>Select View</option>
+                        <option value="tasks">Tasks List</option>
+                        <option value="groceries">Groceries</option>
+                        <option value="finances">Finances</option>
+                        <option value="journal">Journal</option>
+                        <option value="mood">Mood Tracker</option>
+                    </select>
+                    <button class="btn-neon-small" onclick="addNewCategorizedSection()">Initialize</button>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="header-left">
+                    <h1 id="dynamicGreeting">System Booting...</h1>
+                    <div class="system-status">
+                        <span class="pulse-dot"></span> Status: Optimal
                     </div>
                 </div>
+
+                <div class="header-right">
+                    <div class="chrono-unit">
+                        <div id="clockDisplay" onclick="toggleMilitaryTime()">00:00:00</div>
+                        <div id="dateDisplay">Date Syncing...</div>
+                    </div>
+                    
+                    <button id="themeToggle" class="icon-btn" onclick="manualThemeToggle()">
+                        <i id="themeIcon" data-lucide="moon"></i>
+                    </button>
+
+                    <div class="profile-group">
+                        <div class="avatar-trigger" id="profileBtn" onclick="toggleProfileMenu(event)">
+                            <i data-lucide="user"></i>
+                        </div>
+                        <div class="dropdown-menu hidden" id="profileMenu">
+                            <button onclick="switchView('settings')"><i data-lucide="settings"></i> Settings</button>
+                            <button onclick="handleLogout()"><i data-lucide="log-out"></i> Disconnect</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <section id="dashboardView" class="view-section">
+                <div class="grid-layout">
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h2><i data-lucide="zap"></i> Critical Objectives</h2>
+                            <button class="add-btn" onclick="openModal()">+</button>
+                        </div>
+                        <ul class="neon-list" id="taskList">
+                            <li><label><input type="checkbox"> Update core architecture</label></li>
+                            <li><label><input type="checkbox"> Calibrate neural interface</label></li>
+                        </ul>
+                    </div>
+                    <div class="glass-card center-align">
+                        <h3>Task Load</h3>
+                        <div class="neon-gauge">
+                            <span id="taskCount">0</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="settingsView" class="view-section hidden">
+                <div class="glass-card settings-panel">
+                    <h2>System Customization</h2>
+                    
+                    <div class="setting-item">
+                        <label>Identity Tag</label>
+                        <div class="input-row">
+                            <input type="text" id="userNameInput" placeholder="Enter name...">
+                            <button class="btn-neon" onclick="updateUserName()">Update</button>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <label>Typography</label>
+                        <select id="fontSelector" class="neon-select" onchange="changeFont(this.value)">
+                            <option value="'Inter', sans-serif">Modern Sans</option>
+                            <option value="'Papyrus', serif">Ancient Papyrus</option>
+                            <option value="'Courier New', monospace">Data Mono</option>
+                            <option value="'Georgia', serif">Classic Serif</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-item">
+                        <label>Interface Hue</label>
+                        <div class="color-grid">
+                            <button class="swatch" style="background: #00f2ff;" onclick="changeAccent('#00f2ff')"></button>
+                            <button class="swatch" style="background: #7000ff;" onclick="changeAccent('#7000ff')"></button>
+                            <button class="swatch" style="background: #ff00c3;" onclick="changeAccent('#ff00c3')"></button>
+                            <button class="swatch" style="background: #00ff41;" onclick="changeAccent('#00ff41')"></button>
+                            <input type="color" id="customPicker" onchange="changeAccent(this.value)">
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal hidden" id="quickModal">
+        <div class="modal-content">
+            <h3>New Entry</h3>
+            <input type="text" id="quickTaskInput" placeholder="Initialize task name...">
+            <div class="modal-actions">
+                <button class="btn-ghost" onclick="closeModal()">Abort</button>
+                <button class="btn-neon" id="saveTaskBtn">Commit</button>
             </div>
         </div>
-      </header>
+    </div>
 
-      <section id="dashboardView" class="view-section">
-          <section class="zen-grid">
-            <div class="card main-checklist">
-              <div class="card-header">
-                <h2>Primary Objectives</h2>
-                <button class="add-task-btn" onclick="openModal()">+</button>
-              </div>
-              <ul class="check-list" id="taskList">
-                <li><label><input type="checkbox" /> Deep work: Strategic planning</label></li>
-                <li><label><input type="checkbox" /> Skill building: Design block</label></li>
-              </ul>
-            </div>
-
-            <div class="card stats-card">
-                <h3>Focus Energy</h3>
-                <div class="stat-circle">
-                    <span id="taskCount">0</span>
-                    <small>Left</small>
-                </div>
-            </div>
-          </section>
-      </section>
-
-      <section id="settingsView" class="view-section hidden">
-        <div class="card zen-modal">
-          <h2>System Customization</h2>
-          
-          <div class="setting-item">
-              <label>User Identity</label>
-              <div class="flex-row">
-                  <input type="text" id="userNameInput" placeholder="Enter your name...">
-                  <button class="primary-btn" onclick="updateUserName()">Update</button>
-              </div>
-          </div>
-
-          <div class="setting-item">
-            <label>Theme Scheduling</label>
-            <div class="flex-row">
-                <input type="checkbox" id="enableSchedule" onchange="toggleSchedule()">
-                <span>Enable Auto-Switching</span>
-            </div>
-            <div id="scheduleInputs" class="schedule-grid" style="display: none; margin-top: 15px;">
-                <div class="input-group">
-                    <label>☀️ Light At:</label>
-                    <input type="time" id="lightTime" value="07:00">
-                </div>
-                <div class="input-group">
-                    <label>🌙 Dark At:</label>
-                    <input type="time" id="darkTime" value="19:00">
-                </div>
-            </div>
-          </div>
-
-          <div class="setting-item">
-            <label>Interface Color</label>
-            <div class="color-options">
-                <button class="color-swatch" style="background: #a3b18a;" onclick="changeAccent('#a3b18a')"></button>
-                <button class="color-swatch" style="background: #606c38;" onclick="changeAccent('#606c38')"></button>
-                <button class="color-swatch" style="background: #00f2ff;" onclick="changeAccent('#00f2ff')"></button>
-                <input type="color" id="customColor" onchange="changeAccent(this.value)">
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
