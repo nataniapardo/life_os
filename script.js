@@ -109,10 +109,27 @@ window.organizeWithAI = function() {
     alert("AI has parsed your objectives.");
 };
 
+/**
+ * UPDATED PRIORITY LOGIC
+ * High (Red): Meetings, Appointments
+ * Medium (Yellow): Errands, Buying, Tasks
+ * Low (Green): Leisure, Hobbies, Cleaning, Walking
+ */
 function detectPriority(text) {
     const lower = text.toLowerCase();
-    if (lower.includes("urgent") || lower.includes("asap") || lower.includes("high")) return "high";
-    if (lower.includes("low")) return "low";
+    
+    // HIGH PRIORITY: Meetings/Appointments
+    if (lower.includes("meeting") || lower.includes("appointment") || lower.includes("urgent")) {
+        return "high";
+    }
+    
+    // LOW PRIORITY: Leisure, Hobbies, Cleaning, Walking
+    if (lower.includes("walk") || lower.includes("hobby") || lower.includes("cleaning") || 
+        lower.includes("leisure") || lower.includes("game") || lower.includes("relax")) {
+        return "low";
+    }
+    
+    // MEDIUM PRIORITY: Default for errands/buying
     return "medium";
 }
 
@@ -140,7 +157,7 @@ window.saveNewTask = function() {
             id: Date.now(), 
             name: nameInput.value.trim(), 
             completed: false,
-            priority: 'medium'
+            priority: detectPriority(nameInput.value.trim())
         });
         saveAndRender();
         closeModal();
@@ -174,7 +191,6 @@ function renderTasks() {
         if (task.completed) completedCount++;
         const li = document.createElement('li');
         
-        // --- PRIORITY HIGHLIGHTING ---
         const priorityClass = `priority-${task.priority || 'medium'}`;
         li.classList.add(priorityClass);
 
@@ -204,7 +220,7 @@ function initClock() {
         const clockEl = document.getElementById('clockDisplay');
         const dateEl = document.getElementById('dateDisplay');
         if (clockEl) clockEl.innerText = isMilitaryTime ? now.toLocaleTimeString('en-GB') : now.toLocaleTimeString('en-US');
-        if (dateEl) dateEl.innerText = now.toLocaleDateString();
+        if (dateEl) dateEl.innerText = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
     }, 1000);
 }
 
