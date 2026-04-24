@@ -1,46 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Productivity Command Center | Local OS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="script.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Life OS | Productivity Center</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-    <div id="appContainer" class="main-layout">
-        <header class="header">
-            <h1 class="brand">AI PRODUCTIVITY COMMAND CENTER</h1>
-            <div class="search-bar">
-                <input type="text" id="globalSearch" placeholder="Search tasks or Hex Code (#ff0055)..." onkeyup="handleSearch()">
-                <div id="clock">00:00:00</div>
+<body class="dark-mode"> <div class="app-container">
+    
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">Life OS</div>
+        <div class="date-time-block">
+            <div id="currentTime">00:00:00</div>
+            <div id="currentDate">Date Loading...</div>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <a href="#" class="nav-item active">📋 Dashboard</a>
+        <a href="#" class="nav-item">⚙️ Settings</a>
+        <div class="nav-divider"></div>
+        <div class="profile-section">
+            <div class="profile-info">
+                <div class="profile-icon" id="profileIcon">👤</div>
+                <span>User Account</span>
             </div>
-        </header>
+            <button class="logout-btn" onclick="handleLogout()">Log Out</button>
+        </div>
+      </nav>
+    </aside>
 
-        <div class="content-grid">
-            <section class="card ai-module">
-                <h3><i data-lucide="brain"></i> Neural Processor</h3>
-                <p class="subtitle">Data is saved locally to your browser storage.</p>
-                <textarea id="taskInput" placeholder="Paste your plan here... e.g. Finish chemistry project by 5pm #urgent"></textarea>
-                <div class="controls">
-                    <button id="processBtn" class="btn-main" onclick="processTask()">
-                        <i data-lucide="zap"></i> Process & Save
-                    </button>
-                    <input type="color" id="themePicker" onchange="changeTheme(this.value)">
-                </div>
-            </section>
+    <main class="main-content">
+      <header class="topbar">
+        <div class="welcome-text">
+          <h1>Welcome back 👋</h1>
+          <p>Prioritize your day with Papyrus precision.</p>
+        </div>
+        <div class="header-actions">
+            <button class="theme-toggle" id="themeToggle">Toggle Light/Dark</button>
+            <button class="primary-btn" id="openQuickAction">+ Quick Add</button>
+        </div>
+      </header>
 
-            <section class="card task-module">
-                <h3>Objectives Tracker</h3>
-                <div id="taskList" class="task-container">
-                    </div>
-                <button class="btn-clear" onclick="clearAllTasks()">Clear Memory</button>
-            </section>
+      <section class="stats-grid">
+        <div class="card stat-card">
+          <h3>Pending Tasks</h3>
+          <p class="stat-number" id="taskCount">0</p>
+        </div>
+        <div class="card stat-card">
+          <h3>Completed Habits</h3>
+          <p class="stat-number" id="habitCount">0/0</p>
+        </div>
+      </section>
+
+      <section class="checklist-section">
+        <div class="card checklist-card">
+          <div class="card-header">
+            <h2>Primary Productivity Checklist</h2>
+            <button class="secondary-btn" id="addTaskBtn">+ New Entry</button>
+          </div>
+          <div class="checklist-wrapper">
+            <ul class="check-list" id="taskList">
+              <li><label><input type="checkbox" /> Review morning plan</label></li>
+              <li><label><input type="checkbox" /> Update daily progress report</label></li>
+              <li><label><input type="checkbox" /> Sync neural processor nodes</label></li>
+            </ul>
+          </div>
         </div>
 
-        <div id="toast" class="hidden"></div>
+        <div class="card checklist-card">
+            <h2>Habit Tracker</h2>
+            <ul class="check-list" id="habitList">
+              <li><label><input type="checkbox" checked /> Morning reflection</label></li>
+              <li><label><input type="checkbox" /> Workout session</label></li>
+              <li><label><input type="checkbox" /> Evening log</label></li>
+            </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal hidden" id="quickModal">
+    <div class="modal-content">
+      <h2>Add New Task</h2>
+      <input type="text" id="quickTaskInput" placeholder="Enter task name..." />
+      <div class="modal-actions">
+        <button class="secondary-btn" id="closeModal">Cancel</button>
+        <button class="primary-btn" id="saveTaskBtn">Save Task</button>
+      </div>
     </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
