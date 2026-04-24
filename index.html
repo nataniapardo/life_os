@@ -3,117 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | Neural Command Center</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <title>AI Productivity Command Center | Life OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js" defer></script>
 </head>
-<body class="theme-futuristic">
-    <div class="productivity-simulation">
-        <div class="sim-column" id="simTasks"></div>
-        <div class="sim-column" id="simCalendar"></div>
-        <div class="sim-column" id="simAccomplishments"></div>
-    </div>
-
-    <section id="authPage" class="auth-container">
-        <div class="glass-card auth-card animate-in">
-            <div class="branding-hero">
-                <h1 class="brand-large">Life OS</h1>
-                <div class="globe-wrapper">
-                    <div class="globe-orbit"></div>
-                    <div class="globe-core"></div>
-                </div>
+<body class="theme-executive">
+    <div id="appContainer" class="app-layout">
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo-hex"></div>
+                <span>COMMAND CENTER</span>
             </div>
-            <div id="loginForm">
-                <h2>System Access</h2>
-                <div class="input-group">
-                    <input type="email" id="emailInput" placeholder="Neural ID (Email)" required>
+            <nav class="nav-menu">
+                <div class="nav-group">
+                    <p class="nav-label">Core Systems</p>
+                    <button class="nav-item active" onclick="switchPage('dashboard')"><i data-lucide="layout-dashboard"></i> Dashboard</button>
+                    <button class="nav-item" onclick="switchPage('planner')"><i data-lucide="calendar"></i> Life Blueprint</button>
+                    <button class="nav-item" onclick="switchPage('networking')"><i data-lucide="users"></i> Networking</button>
                 </div>
-                <div class="input-group">
-                    <input type="password" id="passInput" placeholder="Access Key" required>
+                <div class="nav-group">
+                    <p class="nav-label">Neural Config</p>
+                    <button class="nav-item" onclick="switchPage('settings')"><i data-lucide="sliders"></i> UI Customization</button>
                 </div>
-                <button class="btn-glow-large" onclick="handleAuth('login')">Initialize</button>
-                <p class="auth-toggle">New user? <span onclick="toggleAuthMode()">Create an Account</span></p>
+            </nav>
+            <div class="sidebar-footer">
+                <div id="connectionStatus" class="status-dot"></div>
+                <span>System Online</span>
             </div>
-        </div>
-    </section>
+        </aside>
 
-    <div id="appContainer" class="app-container hidden">
-        <nav class="sidebar">
-            <div class="logo-area-branding"><span>Life OS</span></div>
-            <div class="nav-section">
-                <h3>Fragments</h3>
-                <div id="pagesList" class="custom-nav-list"></div>
-                <button class="btn-outline-dash" onclick="createNewPage()">+ New Page</button>
-            </div>
-            <ul class="nav-links">
-                <li class="active" onclick="switchPage('home')"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></li>
-                <li onclick="switchPage('settings')"><i data-lucide="settings"></i><span>Settings</span></li>
-            </ul>
-        </nav>
-
-        <main class="main-layout">
-            <header class="top-bar">
-                <div class="header-left">
-                    <div id="greeting" class="greeting-text">Initializing...</div>
-                    <input id="nameInput" placeholder="Set identity..." class="glass-input-small">
-                    <button class="btn-glow-small" onclick="saveName()">Update</button>
+        <main class="main-content">
+            <header class="global-header">
+                <div class="header-search">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="globalSearch" placeholder="Search objectives, contacts, or hex codes..." onkeyup="handleGlobalSearch()">
                 </div>
-                <div class="header-right">
-                    <div class="search-box">
-                        <input type="text" id="globalSearch" placeholder="Search Keywords/Synonyms..." onkeyup="handleSearch()">
-                    </div>
-                    <div id="clockDisplay" class="time-text">00:00:00</div>
-                    <div class="profile-group" onclick="toggleProfileMenu()">
-                        <div id="profileIcon" class="avatar-circle">👤</div>
+                <div class="header-tools">
+                    <div id="clockDisplay" class="digital-clock">00:00:00</div>
+                    <div class="user-profile">
+                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=LifeOS" alt="Avatar">
                     </div>
                 </div>
             </header>
 
-            <div class="content-padding">
-                <section id="home" class="view-section">
-                    <div class="workspace-grid">
-                        <div class="glass-card editor-zone">
-                            <h3><i data-lucide="sparkles"></i> AI Neural Processor</h3>
-                            <textarea id="notes" placeholder="Drop documents or write notes for AI extraction..."></textarea>
-                            <div class="action-bar">
-                                <button id="aiBtn" class="btn-glow" onclick="aiOrganize()"><i data-lucide="brain"></i> Organize with AI</button>
-                                <input type="file" id="docUpload" class="hidden" onchange="handleFileUpload()">
-                                <button class="btn-outline" onclick="document.getElementById('docUpload').click()"><i data-lucide="upload"></i> Upload Docs</button>
+            <div class="scroll-container">
+                <section id="dashboard" class="view-section">
+                    <div class="welcome-banner">
+                        <h2 id="greeting">Initializing Neural Link...</h2>
+                        <p>Your automated life plan is 84% synchronized.</p>
+                    </div>
+
+                    <div class="grid-layout">
+                        <div class="glass-card ai-input-node">
+                            <div class="card-header">
+                                <h3><i data-lucide="brain-circuit"></i> Neural Processor</h3>
+                                <span class="ai-badge">AI Active</span>
+                            </div>
+                            <textarea id="notes" placeholder="Paste work deliverables, meeting notes, or job descriptions here..."></textarea>
+                            <div class="button-cluster">
+                                <button id="aiBtn" class="btn-primary" onclick="processNeuralInput()">
+                                    <i data-lucide="sparkles"></i> Organize with AI
+                                </button>
+                                <button class="btn-secondary" onclick="triggerFileUpload()">
+                                    <i data-lucide="file-up"></i> Upload Documents
+                                </button>
+                                <input type="file" id="docUpload" class="hidden" onchange="handleFileUpload(event)">
                             </div>
                         </div>
-                        <div class="glass-card planner-zone">
-                            <h3>Daily Plan</h3>
-                            <div id="planOutput" class="ai-output-box">No plan generated.</div>
-                            <button class="btn-outline" onclick="generatePlan()">Generate Life Plan</button>
+
+                        <div class="glass-card task-node">
+                            <div class="card-header">
+                                <h3><i data-lucide="check-square"></i> Objectives Tracker</h3>
+                                <button class="btn-icon" onclick="openQuickAdd()"><i data-lucide="plus"></i></button>
+                            </div>
+                            <div id="tasksContainer" class="item-list">
+                                </div>
                         </div>
-                    </div>
-                    <div class="task-section">
-                        <h2>Objectives Tracker</h2>
-                        <div id="tasks" class="task-list-grid"></div>
                     </div>
                 </section>
 
                 <section id="settings" class="view-section hidden">
-                    <div class="glass-card">
-                        <h3>Customization & Theme Engine</h3>
-                        <div class="config-row">
-                            <label>Accent Hex Code</label>
-                            <input type="text" id="hexInput" placeholder="#00f2ff" onchange="updateThemeColor(this.value)">
-                            <input type="color" id="colorWheel" onchange="updateThemeColor(this.value)">
-                        </div>
-                        <div class="config-row">
-                            <label>Auto-Theme Schedule</label>
-                            <input type="time" id="lightTime" value="07:00">
-                            <input type="time" id="darkTime" value="19:00">
-                            <button class="btn-glow-small" onclick="saveSchedule()">Commit Chronos</button>
+                    <div class="glass-card config-node">
+                        <h3>Dashboard Aesthetics</h3>
+                        <div class="config-grid">
+                            <div class="config-item">
+                                <label>Primary Accent Color</label>
+                                <div class="color-picker-wrapper">
+                                    <input type="color" id="colorWheel" onchange="updateThemeFromPicker(this.value)">
+                                    <input type="text" id="hexInput" placeholder="#00f2ff" onchange="updateThemeFromHex(this.value)">
+                                </div>
+                            </div>
+                            <div class="config-item">
+                                <label>Background Visuals</label>
+                                <button class="btn-secondary" onclick="triggerBgUpload()">Upload Custom Image</button>
+                                <input type="file" id="bgUpload" class="hidden" onchange="applyCustomBg(event)">
+                            </div>
                         </div>
                     </div>
                 </section>
             </div>
         </main>
     </div>
+    <div id="notificationStack"></div>
 </body>
 </html>
