@@ -3,92 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | AI Productivity</title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Life OS | Neural Command Center</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;700&family=Papyrus&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;600;800&family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@100;400&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <script src="script.js" defer></script>
 </head>
 <body class="theme-futuristic">
 
     <audio id="timerAlert" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
+    <audio id="systemClick" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
 
-    <div class="app-container">
-        <nav class="sidebar">
+    <div id="globalNotificationContainer" class="notification-stack"></div>
+    
+    <div id="settingsModal" class="modal-overlay hidden">
+        <div class="glass-card modal-content">
+            <div class="modal-header">
+                <h3>System Configuration</h3>
+                <button class="btn-icon" onclick="closeSettings()"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                </div>
+        </div>
+    </div>
+
+    <section id="authPage" class="auth-container">
+        <div class="auth-grid-bg"></div>
+        <div class="glass-card auth-card">
             <div class="logo-area-branding">
-                <span class="brand-text">Life OS</span>
+                <span class="brand-text">Life</span>
+                <div class="globe-container">
+                    <div class="globe"><div class="axis"></div></div>
+                </div>
+                <span class="brand-text">OS</span>
             </div>
-            
-            <div class="sidebar-section">
-                <h3>Pages</h3>
-                <div id="pagesList" class="custom-nav-list">
+
+            <div id="loginForm" class="auth-form-wrapper">
+                <div class="auth-header">
+                    <h2>Neural Link Established</h2>
+                    <p>Enter credentials to access Bio-ID</p>
+                </div>
+                <div class="input-group">
+                    <label for="emailInput"><i data-lucide="mail"></i> Email Address</label>
+                    <input type="email" id="emailInput" placeholder="identity@neural.link" autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label for="passInput"><i data-lucide="lock"></i> Access Key</label>
+                    <input type="password" id="passInput" placeholder="••••••••">
+                </div>
+                <div class="auth-footer">
+                    <button class="btn-glow full-width" onclick="handleAuth('login')">Initialize System</button>
+                    <p class="toggle-text">New Entity? <span onclick="toggleAuthMode()">Register Bio-Signature</span></p>
+                </div>
+            </div>
+
+            <div id="signupForm" class="auth-form-wrapper hidden">
+                </div>
+        </div>
+    </section>
+
+    <div id="appContainer" class="app-container hidden">
+        
+        <nav class="sidebar" id="mainSidebar">
+            <div class="sidebar-top">
+                <div class="logo-area-branding" onclick="switchPage('home')">
+                    <span class="brand-text">Life OS</span>
+                </div>
+                <div class="search-bar">
+                    <i data-lucide="search"></i>
+                    <input type="text" placeholder="Quick Search (Ctrl+K)">
+                </div>
+            </div>
+
+            <div class="sidebar-scrollable">
+                <div class="nav-section">
+                    <div class="section-label">Identity Core</div>
+                    <ul class="nav-links">
+                        <li class="active" id="nav-home" onclick="switchPage('home')">
+                            <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
+                        </li>
+                        <li id="nav-brain" onclick="switchPage('neural-map')">
+                            <i data-lucide="brain-circuit"></i><span>Neural Map</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <div class="section-label-row">
+                        <span class="section-label">Fragments</span>
+                        <button class="btn-tiny" onclick="createNewFragment()"><i data-lucide="plus"></i></button>
                     </div>
-                <button id="newPageBtn" class="btn-outline-dash" style="width: 100%; margin-top: 10px;">
-                    <i data-lucide="plus"></i> New Page
-                </button>
+                    <div id="pagesList" class="custom-nav-list">
+                        </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="section-label">System Utilities</div>
+                    <ul class="nav-links">
+                        <li onclick="switchPage('timers')"><i data-lucide="timer"></i><span>Bio-Clock</span></li>
+                        <li onclick="switchPage('calendar')"><i data-lucide="calendar-days"></i><span>Event Horizon</span></li>
+                        <li id="nav-settings" onclick="switchPage('settings')"><i data-lucide="settings"></i><span>Configuration</span></li>
+                    </ul>
+                </div>
             </div>
-            
-            <ul class="nav-links">
-                <li class="active" onclick="switchPage('home')"><i data-lucide="home"></i><span>Dashboard</span></li>
-                <li onclick="switchPage('settings')"><i data-lucide="settings"></i><span>Settings</span></li>
-            </ul>
+
+            <div class="sidebar-bottom">
+                <div class="user-status-card">
+                    <div class="pulse-dot online"></div>
+                    <div class="status-info">
+                        <span class="status-label">System Ready</span>
+                        <span class="status-sub">Cloud Latency: 24ms</span>
+                    </div>
+                </div>
+            </div>
         </nav>
 
         <main class="main-layout">
+            
             <header class="top-bar">
                 <div class="header-left">
-                    <div id="greeting" class="greeting-text">Initializing System...</div>
-                    <div class="input-inline">
-                        <input id="nameInput" placeholder="Enter name..." class="glass-input-small">
-                        <button class="btn-glow-small" onclick="saveName()">Set Name</button>
+                    <div class="breadcrumb">
+                        <span class="crumb-root">Root</span>
+                        <i data-lucide="chevron-right"></i>
+                        <span class="crumb-active" id="currentBreadcrumb">Dashboard</span>
+                    </div>
+                </div>
+
+                <div class="header-center">
+                    <div class="time-container">
+                        <div id="clockDisplay" class="time-text">00:00:00</div>
+                        <div id="dateDisplay" class="date-text">Thursday, April 23, 2026</div>
                     </div>
                 </div>
 
                 <div class="header-right">
-                    <button id="themeToggle" class="theme-icon-btn">🌙</button>
-                    
-                    <div class="profile-wrapper">
-                        <div id="profileIcon" class="avatar-circle" onclick="toggleNotifications()">👤</div>
-                        <div id="notificationPanel" class="notification-dropdown glass-card hidden">
-                            <h4>Notifications</h4>
-                            <div id="notifications"></div>
-                            <button id="clearNotifications" class="btn-outline-small">Clear All</button>
+                    <div class="system-controls">
+                        <button id="themeToggle" class="btn-icon-alt" onclick="manualThemeToggle()" title="Switch Theme Mode">
+                            <i id="themeIcon" data-lucide="moon"></i>
+                        </button>
+                        <button class="btn-icon-alt" onclick="toggleNotifications()" title="Alert Logs">
+                            <i data-lucide="bell"></i>
+                            <span class="notif-badge">0</span>
+                        </button>
+                        <div class="v-divider"></div>
+                        <div class="profile-group" onclick="openProfileSettings()">
+                            <div class="profile-info text-right">
+                                <span id="userNameDisplay">Identity Unknown</span>
+                                <span class="user-tier">Pro Access</span>
+                            </div>
+                            <div id="userAvatar" class="avatar-circle">
+                                <span id="userInitials">US</span>
+                                <img id="userAvatarImg" src="" class="hidden" alt="Profile">
+                            </div>
                         </div>
                     </div>
                 </div>
             </header>
 
             <div class="content-padding">
-                <section id="home" class="view-section">
-                    <h1 id="pageTitle">Command Center</h1>
-                    
-                    <div class="workspace-grid">
-                        <div class="glass-card editor-zone">
-                            <textarea id="notes" placeholder="Start writing your thoughts or notes here..."></textarea>
-                            <div class="action-bar">
-                                <button id="aiBtn" class="btn-glow"><i data-lucide="sparkles"></i> Organize with AI</button>
-                            </div>
-                        </div>
 
-                        <div class="glass-card planner-zone">
-                            <h2>Daily Plan</h2>
-                            <button id="planBtn" class="btn-outline"><i data-lucide="calendar"></i> Generate Plan</button>
-                            <pre id="planOutput" class="ai-output-box">Your daily schedule will appear here...</pre>
-                        </div>
+                <section id="home" class="view-section animate-in">
+                    <div class="view-header">
+                        <h1 class="glitch-text" id="dynamicGreeting">Good Evening, User</h1>
+                        <p class="sub-text">Neural node synchronization complete. All systems nominal.</p>
                     </div>
 
-                    <div class="task-section">
-                        <h2>Objectives</h2>
-                        <div id="tasks" class="task-list-grid">
+                    <div class="apple-calendar-strip" id="appleCalendar">
+                        </div>
+
+                    <div class="dashboard-grid">
+                        <div class="glass-card ai-input-zone span-2">
+                            <div class="card-header">
+                                <h3><i data-lucide="sparkles"></i> Neural Processor</h3>
+                                <div class="badge-ai">GPT-4 Turbo</div>
                             </div>
+                            <div class="editor-container">
+                                <textarea id="notes" placeholder="Stream of consciousness... (Enter notes here for AI processing)"></textarea>
+                                <div class="editor-footer">
+                                    <div class="formatting-tools">
+                                        <button class="btn-tool"><i data-lucide="bold"></i></button>
+                                        <button class="btn-tool"><i data-lucide="list"></i></button>
+                                        <button class="btn-tool"><i data-lucide="link"></i></button>
+                                    </div>
+                                    <button id="aiBtn" class="btn-glow-alt">
+                                        <i data-lucide="brain"></i> Synthesize Fragments
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card stats-zone">
+                            <div class="card-header">
+                                <h3><i data-lucide="activity"></i> Neural Load</h3>
+                            </div>
+                            <div class="chart-box">
+                                <canvas id="loadChart"></canvas>
+                            </div>
+                            <div class="stats-row">
+                                <div class="stat-item">
+                                    <span class="label">Tasks Completed</span>
+                                    <span class="value" id="statsCompleted">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="label">Focus Score</span>
+                                    <span class="value">84%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="task-section span-3">
+                            <div class="section-header-row">
+                                <h2>Active Objectives</h2>
+                                <div class="filter-group">
+                                    <button class="btn-filter active">All</button>
+                                    <button class="btn-filter">Urgent</button>
+                                    <button class="btn-filter">Draft</button>
+                                </div>
+                            </div>
+                            <div id="tasks" class="task-list-grid">
+                                </div>
+                            <div class="task-entry-manual">
+                                <input type="text" id="manualTaskInput" placeholder="Add manual objective...">
+                                <button class="btn-add" onclick="addManualTask()"><i data-lucide="plus"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </section>
+
+                <section id="settings" class="view-section hidden">
+                    <div class="settings-layout">
+                        <div class="settings-sidebar glass-card">
+                            <ul class="settings-nav">
+                                <li class="active"><i data-lucide="user"></i> Profile</li>
+                                <li><i data-lucide="palette"></i> Appearance</li>
+                                <li><i data-lucide="database"></i> Cloud Sync</li>
+                                <li><i data-lucide="clock"></i> Chronos Logic</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="settings-content glass-card">
+                            <div class="settings-pane" id="pane-chronos">
+                                <h3><i data-lucide="clock"></i> Chronos Theme Sync</h3>
+                                <p class="pane-description">Automate your environment transitions based on local planetary time.</p>
+                                
+                                <div class="config-row">
+                                    <div class="config-info">
+                                        <span class="config-title">Enable Bio-Clock Sync</span>
+                                        <span class="config-sub">System theme follows scheduled triggers.</span>
+                                    </div>
+                                    <div class="switch-toggle">
+                                        <input type="checkbox" id="enableSchedule" onchange="toggleScheduleUI()">
+                                        <label for="enableSchedule"></label>
+                                    </div>
+                                </div>
+
+                                <div id="scheduleInputs" class="schedule-grid hidden">
+                                    <div class="time-card">
+                                        <label><i data-lucide="sun"></i> Light Mode Activation</label>
+                                        <input type="time" id="lightTime" class="glass-input" value="07:00">
+                                    </div>
+                                    <div class="time-card">
+                                        <label><i data-lucide="moon"></i> Dark Mode Activation</label>
+                                        <input type="time" id="darkTime" class="glass-input" value="19:00">
+                                    </div>
+                                </div>
+
+                                <div class="config-actions">
+                                    <button class="btn-glow" onclick="saveThemeSchedule()">Commit Configuration</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div> </main>
+    </div> <div id="notificationPanel" class="notification-drawer glass-card hidden">
+        <div class="drawer-header">
+            <h4>Alert Logs</h4>
+            <button class="btn-text" onclick="clearNotifications()">Purge All</button>
+        </div>
+        <div id="notifications" class="drawer-content">
             </div>
-        </main>
     </div>
 
 </body>
