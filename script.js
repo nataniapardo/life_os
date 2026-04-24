@@ -1,98 +1,107 @@
+// --- GLOBAL STATE ---
 let isMilitaryTime = false;
 let tasks = JSON.parse(localStorage.getItem('zen_tasks')) || [];
 let userName = localStorage.getItem('zen_name') || "Operator";
 
+// --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
     initClock();
     renderTasks();
     renderCalendar();
+    updateGreeting();
 });
 
-// FIXED: Theme Toggle Logic
-function manualThemeToggle() {
+// --- THEME TOGGLE (FIXED) ---
+window.manualThemeToggle = function() {
     const body = document.body;
     const icon = document.getElementById('themeIcon');
+    body.classList.toggle('dark-mode');
+    body.classList.toggle('light-mode');
     
-    if (body.classList.contains('dark-mode')) {
-        body.classList.remove('dark-mode');
-        body.classList.add('light-mode');
-        icon.setAttribute('data-lucide', 'sun');
-    } else {
-        body.classList.remove('light-mode');
-        body.classList.add('dark-mode');
-        icon.setAttribute('data-lucide', 'moon');
-    }
-    lucide.createIcons();
-}
+    const isLight = body.classList.contains('light-mode');
+    if (icon) icon.setAttribute('data-lucide', isLight ? 'sun' : 'moon');
+    if (window.lucide) lucide.createIcons();
+};
 
-// Navigation Logic
-function switchView(viewId) {
+// --- NAVIGATION ---
+window.switchView = function(viewId) {
     document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
-    document.getElementById(viewId + 'View').classList.remove('hidden');
-    
-    // Update active nav state
+    const target = document.getElementById(viewId + 'View');
+    if (target) target.classList.remove('hidden');
+
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    const activeNav = [...document.querySelectorAll('.nav-item')].find(n => n.onclick.toString().includes(viewId));
-    if (activeNav) activeNav.classList.add('active');
-}
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        if (item.getAttribute('onclick')?.includes(`'${viewId}'`)) item.classList.add('active');
+    });
+};
 
-// Dropdown Module Titles
-function handleModuleSelect() {
+window.handleModuleSelect = function() {
     const selector = document.getElementById('categorySelector');
-    const moduleName = selector.value;
-    
-    document.getElementById('moduleTitle').innerText = moduleName.toUpperCase();
+    const titleEl = document.getElementById('moduleTitle');
+    if (titleEl) titleEl.innerText = selector.value.toUpperCase();
     switchView('module');
-}
+};
 
-// AI Organizer Logic
-function organizeWithAI() {
-    const input = document.getElementById('aiInput').value;
-    if (!input) return;
+// --- SMART AI PARSER ---
+window.organizeWithAI = function() {
+    const input = document.getElementById("aiInput").value;
+    const lines = input.split("\n");
 
-    // Simple priority logic simulation based on keywords
-    const items = input.split(',').map(text => {
-        let priority = 'Normal';
-        if (text.toLowerCase().includes('tomorrow') || text.toLowerCase().includes('urgent')) priority = 'High';
-        return {
+    lines.forEach(line => {
+        const text = line.trim();
+        if (!text) return;
+
+        const priority = detectPriority(text);
+        const date = extractDate(text);
+        const time = extractTime(text);
+
+        // Merge parsing result into the task system
+        tasks.push({
             id: Date.now() + Math.random(),
-            name: text.trim(),
-            date: new Date().toISOString().split('T')[0],
+            name: text,
+            date: date === "No date" ? "" : date,
+            time: time === "No time" ? "" : time,
             priority: priority,
             completed: false
-        };
+        });
     });
 
-    tasks = [...tasks, ...items];
     saveAndRender();
-    document.getElementById('aiInput').value = '';
-    alert("AI has prioritized and added tasks to your Todo List.");
+    document.getElementById("aiInput").value = "";
+    alert("AI has parsed and added your objectives.");
+};
+
+function detectPriority(text) {
+    const lower = text.toLowerCase();
+    if (lower.includes("urgent") || lower.includes("asap") || lower.includes("high")) return "high";
+    if (lower.includes("low")) return "low";
+    return "medium";
 }
 
-// Todo List CRUD
-function saveNewTask() {
-    const name = document.getElementById('taskNameInput').value;
-    const date = document.getElementById('taskDateInput').value;
-    
-    if (name) {
-        tasks.push({ id: Date.now(), name, date, completed: false });
-        saveAndRender();
-        closeModal();
+function extractTime(text) {
+    const match = text.match(/\b(\d{1,2})(:\d{2})?\s?(am|pm)\b/i);
+    if (match) return match[0];
+    const lower = text.toLowerCase();
+    if (lower.includes("morning")) return "9:00 AM";
+    if (lower.includes("afternoon")) return "2:00 PM";
+    if (lower.includes("tonight")) return "8:00 PM";
+    return "No time";
+}
+
+function extractDate(text) {
+    const lower = text.toLowerCase();
+    const today = new Date();
+    if (lower.includes("today")) return today.toISOString().split('T')[0];
+    if (lower.includes("tomorrow")) {
+        today.setDate(today.getDate() + 1);
+        return today.toISOString().split('T')[0];
     }
+    return "No date";
 }
 
-function deleteTask(id) {
-    tasks = tasks.filter(t => t.id !== id);
-    saveAndRender();
-}
-
-function toggleTask(id) {
-    const task = tasks.find(t => t.id === id);
-    if (task) task.completed = !task.completed;
-    saveAndRender();
-}
-
+// --- TASK RENDERING ---
 function saveAndRender() {
     localStorage.setItem('zen_tasks', JSON.stringify(tasks));
     renderTasks();
@@ -100,44 +109,42 @@ function saveAndRender() {
 
 function renderTasks() {
     const list = document.getElementById('todoListElement');
+    if (!list) return;
     list.innerHTML = '';
-    
     let completedCount = 0;
 
     tasks.forEach(task => {
         if (task.completed) completedCount++;
         const li = document.createElement('li');
+        li.className = task.priority || 'medium';
         li.innerHTML = `
             <div>
                 <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})">
-                <span style="${task.completed ? 'text-decoration: line-through; opacity: 0.5' : ''}">${task.name}</span>
-                <small style="margin-left: 10px; opacity: 0.6">${task.date || ''}</small>
+                <span class="${task.completed ? 'strikethrough' : ''}">[${(task.priority || 'MED').toUpperCase()}] ${task.name}</span>
             </div>
-            <button class="delete-btn" onclick="deleteTask(${task.id})"><i data-lucide="trash-2"></i></button>
+            <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
         `;
         list.appendChild(li);
     });
 
-    // Update Chart
     const percent = tasks.length > 0 ? (completedCount / tasks.length) * 100 : 0;
-    document.getElementById('taskBar').style.width = percent + '%';
+    const bar = document.getElementById('taskBar');
+    if (bar) bar.style.width = percent + '%';
     document.getElementById('taskStatus').innerText = Math.round(percent) + '% Complete';
-    lucide.createIcons();
 }
 
-// Calendar Generator
-function renderCalendar() {
-    const grid = document.getElementById('calendarGrid');
-    grid.innerHTML = '';
-    for (let i = 1; i <= 31; i++) {
-        const day = document.createElement('div');
-        day.className = 'day-box';
-        day.innerText = i;
-        grid.appendChild(day);
-    }
-}
+window.toggleTask = function(id) {
+    const task = tasks.find(t => t.id === id);
+    if (task) task.completed = !task.completed;
+    saveAndRender();
+};
 
-// Clock & Utils
+window.deleteTask = function(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    saveAndRender();
+};
+
+// --- UTILS ---
 function initClock() {
     setInterval(() => {
         const now = new Date();
@@ -146,7 +153,20 @@ function initClock() {
     }, 1000);
 }
 
-function openModal() { document.getElementById('quickModal').classList.remove('hidden'); }
-function closeModal() { document.getElementById('quickModal').classList.add('hidden'); }
-function toggleProfileMenu(e) { e.stopPropagation(); document.getElementById('profileMenu').classList.toggle('hidden'); }
-window.onclick = () => document.getElementById('profileMenu').classList.add('hidden');
+function updateGreeting() {
+    document.getElementById('dynamicGreeting').innerText = `System Active, ${userName}`;
+}
+
+window.openModal = () => document.getElementById('quickModal').classList.remove('hidden');
+window.closeModal = () => document.getElementById('quickModal').classList.add('hidden');
+window.toggleProfileMenu = (e) => { e.stopPropagation(); document.getElementById('profileMenu').classList.toggle('hidden'); };
+window.renderCalendar = () => {
+    const grid = document.getElementById('calendarGrid');
+    if(!grid) return;
+    grid.innerHTML = '';
+    for (let i = 1; i <= 31; i++) {
+        const d = document.createElement('div');
+        d.className = 'day-box'; d.innerText = i;
+        grid.appendChild(d);
+    }
+};
