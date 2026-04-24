@@ -111,7 +111,7 @@ window.organizeWithAI = function() {
     saveAndRender();
     renderCalendar(); 
     document.getElementById("aiInput").value = "";
-    alert("AI has documented your objectives in the calendar.");
+    alert("AI has documented your milestones in the calendar.");
 };
 
 function detectPriority(text) {
@@ -150,45 +150,59 @@ function extractDate(text) {
     return "";
 }
 
-// --- CALENDAR & TASK SYNC ---
+// --- AI PROGRESS & TIME MANAGEMENT TRACKER ---
+function updateAIInsights() {
+    const total = tasks.length;
+    const completed = tasks.filter(t => t.completed).length;
+    const progress = total > 0 ? (completed / total) * 100 : 0;
+    
+    // AI Sentiment detection based on progress
+    let aiFeedback = "";
+    if (progress === 100 && total > 0) aiFeedback = "Optimal Performance: All milestones reached.";
+    else if (progress > 50) aiFeedback = "Steady Momentum: Time management is balanced.";
+    else if (total > 0) aiFeedback = "Attention Required: Schedule density is increasing.";
+    else aiFeedback = "Awaiting Milestone Initialization...";
 
-/**
- * Synchronizes Todo List tasks with the Calendar view.
- */
-function syncTasksToCalendar() {
-    // 1. Clear existing task indicators from the calendar to avoid duplicates
-    document.querySelectorAll('.calendar-event-dot, .calendar-task-label').forEach(el => el.remove());
-
-    // 2. Loop through your todo data (tasks array)
-    tasks.forEach(task => {
-        if (!task.date || task.completed) return; // Skip if no date or already done
-
-        // 3. Find the calendar cell that matches the task date
-        const dateString = task.date; 
-        
-        const dayCell = document.querySelector(`.day-box[data-date="${dateString}"]`);
-
-        if (dayCell) {
-            // 4. Create a visual indicator
-            const dot = document.createElement('div');
-            dot.className = 'calendar-event-dot';
-            
-            // Optional: Show task name on hover
-            dot.title = task.name; 
-
-            // Handle navigation back to todo list
-            dot.onclick = () => {
-                switchView('todo');
-                // Logic to highlight the specific task in the list
-                console.log("Navigating to task: " + task.name);
-            };
-            
-            // Add the dot to the cell
-            dayCell.appendChild(dot);
-        }
-    });
+    const aiStatusEl = document.getElementById('aiTaskAnalysis');
+    if (aiStatusEl) aiStatusEl.innerText = aiFeedback;
 }
 
+// --- SYNC ENGINE: TASKS TO CALENDAR TABS ---
+function syncTasksToCalendar() {
+    // 1. Clear existing task indicators/tabs to avoid duplicates
+    document.querySelectorAll('.calendar-event-dot, .calendar-task-tab').forEach(el => el.remove());
+
+    // 2. Loop through your todo data
+    tasks.forEach(task => {
+        if (!task.date || task.completed) return; 
+
+        // 3. Find the calendar cell that matches the task date (Ensure YYYY-MM-DD match)
+        const dayCell = document.querySelector(`.day-box[data-date="${task.date}"]`);
+
+        if (dayCell) {
+            // 4. Create a visual Tab indicator
+            const tab = document.createElement('div');
+            tab.className = 'calendar-task-tab';
+            
+            // Priority visual and Milestone name
+            tab.innerHTML = `<span class="tab-priority ${task.priority}"></span> ${task.name}`;
+            tab.title = `Milestone: ${task.name}`;
+
+            // Handle navigation back to todo list
+            tab.onclick = (e) => {
+                e.stopPropagation();
+                switchView('todo');
+                console.log("Navigating to milestone: " + task.name);
+            };
+            
+            dayCell.appendChild(tab);
+        }
+    });
+    // Trigger AI assessment
+    updateAIInsights();
+}
+
+// --- UPDATED RENDER CALENDAR ---
 function renderCalendar() {
     const grid = document.getElementById('calendarGrid');
     const monthEl = document.getElementById('currentMonthName');
@@ -204,15 +218,14 @@ function renderCalendar() {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
     for (let i = 1; i <= daysInMonth; i++) {
-        const dayCount = i;
-        // CREATE CELL
         const cell = document.createElement('div');
         cell.className = 'day-box';
-        // Set data attribute for sync mapping: YYYY-MM-DD
-        const dateAttr = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayCount).padStart(2, '0')}`;
-        cell.setAttribute('data-date', dateAttr); 
-        cell.innerHTML = `<span class="day-number">${dayCount}</span>`;
         
+        // CRITICAL: Padding ensures "2026-04-01" instead of "2026-4-1" to match data
+        const dateAttr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+        cell.setAttribute('data-date', dateAttr); 
+        
+        cell.innerHTML = `<span class="day-num">${i}</span>`;
         grid.appendChild(cell);
     }
 
@@ -286,6 +299,9 @@ function renderTasks() {
     if (bar) bar.style.width = percent + '%';
     const statusText = document.getElementById('taskStatus');
     if (statusText) statusText.innerText = Math.round(percent) + '% Complete';
+    
+    // Refresh AI Insights on the dashboard
+    updateAIInsights();
 }
 
 // --- UTILS ---
