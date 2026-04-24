@@ -35,10 +35,9 @@ body {
 
 .app-container { display: flex; height: 100vh; flex-direction: column; }
 
-/* --- HEADER & TOPBAR LAYOUT FIX --- */
+/* --- HEADER & TOPBAR --- */
 .topbar {
     display: grid;
-    /* Divide topbar into 3 equal sections: Left, Center, Right */
     grid-template-columns: 1fr auto 1fr; 
     align-items: center;
     padding: 20px 40px;
@@ -49,12 +48,8 @@ body {
     z-index: 10;
 }
 
-/* Left side spacer */
-.header-left {
-    flex: 1;
-}
+.header-left { flex: 1; }
 
-/* Center the Greeting and Clock */
 .header-center {
     display: flex;
     flex-direction: column;
@@ -69,7 +64,6 @@ body {
     color: var(--text);
 }
 
-/* Clock and Date styling */
 .chrono-unit {
     display: flex;
     flex-direction: column;
@@ -91,7 +85,6 @@ body {
     margin-top: 5px;
 }
 
-/* Push icons to the far right */
 .header-right {
     display: flex;
     justify-content: flex-end;
@@ -99,71 +92,35 @@ body {
     gap: 15px;
 }
 
-/* --- MAIN CONTENT & DASHBOARD --- */
-.main-content { 
-    display: flex; 
+/* --- DASHBOARD CENTERED LAYOUT --- */
+.dashboard-center-panel {
+    display: flex;
     flex-direction: column;
-    align-items: center; /* Centers the dashboard content horizontally */
-    flex: 1; 
-    overflow-y: auto; 
+    align-items: center;
+    gap: 20px;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 600px;
 }
 
-#dashboardView {
-    width: 100%;
-    max-width: 800px; /* Limits width for a cleaner look */
-    margin: 40px auto;
+.system-controls {
     display: flex;
     justify-content: center;
-}
-
-.glass-card {
-    width: 100%;
-    padding: 30px;
+    gap: 15px;
+    padding: 20px;
     background: var(--card);
-    border-radius: 15px;
+    border-radius: 12px;
     border: 1px solid var(--border);
-    backdrop-filter: blur(10px);
+    width: 100%;
 }
 
-/* --- LOGO & GLOBE --- */
-.logo-wrap {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 30px;
-}
-
-.logo-text {
-    font-size: 2.2rem;
-    font-weight: 800;
-    letter-spacing: 2px;
+#aiTaskAnalysis {
+    font-size: 0.9rem;
+    font-weight: bold;
     color: var(--neon-color);
     text-transform: uppercase;
-}
-
-.globe-outer {
-    width: 24px;
-    height: 24px;
-    border: 2px solid var(--neon-color);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.globe-inner {
-    width: 10px;
-    height: 10px;
-    background: var(--neon-color);
-    border-radius: 50%;
-    box-shadow: 0 0 10px var(--neon-color);
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.2); opacity: 0.6; }
-    100% { transform: scale(1); opacity: 1; }
+    letter-spacing: 1px;
+    margin-top: 10px;
 }
 
 /* --- SIDEBAR --- */
@@ -186,27 +143,31 @@ body {
     box-shadow: 0 0 15px var(--neon-color);
 }
 
-/* --- PRIORITY LISTS --- */
-.neon-list { list-style: none; }
-
-.neon-list li {
+/* --- MAIN CONTENT & CARDS --- */
+.main-content { 
     display: flex; 
-    justify-content: space-between; 
+    flex-direction: column;
     align-items: center;
-    padding: 12px; 
-    margin-bottom: 8px;
-    background: rgba(255, 255, 255, 0.05);
-    border-left: 5px solid transparent;
-    transition: all 0.3s ease;
-    border-radius: 4px;
+    flex: 1; 
+    overflow-y: auto; 
 }
 
-.priority-high { border-left-color: #ff4d4d !important; }
-.priority-medium { border-left-color: #ffeb3b !important; }
-.priority-low { border-left-color: #4caf50 !important; }
+#dashboardView {
+    width: 100%;
+    max-width: 800px;
+    margin: 40px auto;
+    display: flex;
+    justify-content: center;
+}
 
-.strikethrough { text-decoration: line-through; opacity: 0.5; }
-.delete-btn { background: none; border: none; color: #ff4444; cursor: pointer; font-weight: bold; }
+.glass-card {
+    width: 100%;
+    padding: 30px;
+    background: var(--card);
+    border-radius: 15px;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+}
 
 /* --- CALENDAR STYLING --- */
 .calendar-grid { 
@@ -223,45 +184,58 @@ body {
     border-radius: 5px; 
     min-height: 100px; 
     background: var(--card);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-/* --- UTILS --- */
-textarea { 
-    width: 100%; 
-    height: 100px; 
-    background: rgba(0,0,0,0.2); 
-    border: 1px solid var(--border); 
-    color: var(--text); 
-    padding: 15px; 
-    border-radius: 10px; 
-    margin: 15px 0; 
-}
-
-.btn-neon { 
-    background: var(--neon-color); 
-    color: #fff; 
-    border: none; 
-    padding: 10px 20px; 
-    border-radius: 8px; 
-    cursor: pointer; 
-    font-weight: bold; 
-}
-
-#themeToggleBtn, .avatar-trigger {
+.calendar-task-tab {
+    background: rgba(0, 242, 255, 0.1);
+    border-left: 3px solid var(--neon-color);
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    margin-top: 4px;
+    border-radius: 3px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     cursor: pointer;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 8px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 50%;
-    border: 1px solid var(--border);
-    color: var(--text);
+    gap: 4px;
 }
 
-.hidden { display: none !important; }
+.calendar-task-tab:hover {
+    background: var(--neon-color);
+    color: #000;
+}
 
-/* --- AUTH PAGE STYLES --- */
+.tab-priority.high { background: #ff4d4d; width: 4px; height: 4px; border-radius: 50%; }
+.tab-priority.medium { background: #ffeb3b; width: 4px; height: 4px; border-radius: 50%; }
+.tab-priority.low { background: #4caf50; width: 4px; height: 4px; border-radius: 50%; }
+
+/* --- PRIORITY LISTS --- */
+.neon-list { list-style: none; }
+.neon-list li {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    padding: 12px; 
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 5px solid transparent;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+}
+
+.priority-high { border-left-color: #ff4d4d !important; }
+.priority-medium { border-left-color: #ffeb3b !important; }
+.priority-low { border-left-color: #4caf50 !important; }
+.strikethrough { text-decoration: line-through; opacity: 0.5; }
+
+/* --- AUTH PAGE --- */
 .auth-page {
     position: fixed;
     inset: 0;
@@ -271,7 +245,7 @@ textarea {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999; /* Stay above everything */
+    z-index: 9999;
     backdrop-filter: blur(20px);
 }
 
@@ -299,19 +273,26 @@ textarea {
     color: white;
 }
 
-.auth-switch {
-    margin-top: 20px;
-    font-size: 0.85rem;
-    opacity: 0.7;
+/* --- UTILS --- */
+.btn-neon { 
+    background: var(--neon-color); 
+    color: #fff; 
+    border: none; 
+    padding: 10px 20px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-weight: bold; 
 }
 
-.auth-switch a {
-    color: var(--neon-color);
-    text-decoration: none;
-    font-weight: bold;
-}
+.hidden { display: none !important; }
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.6; }
+    100% { transform: scale(1); opacity: 1; }
 }
