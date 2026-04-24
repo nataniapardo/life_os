@@ -1,153 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zen OS | Cyber-Interface</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
+<meta charset="UTF-8">
+<title>AI Assistant Demo (Improved)</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f4f6f8;
+  padding: 20px;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+textarea {
+  width: 100%;
+  height: 120px;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+button {
+  margin-top: 10px;
+  float: right;
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.lists {
+  display: flex;
+  gap: 20px;
+  margin-top: 60px;
+}
+
+.box {
+  flex: 1;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.high { color: red; font-weight: bold; }
+.medium { color: orange; }
+.low { color: green; }
+
+.meeting {
+  border-bottom: 1px solid #eee;
+  padding: 8px 0;
+}
+
+.date {
+  font-weight: bold;
+  color: #007bff;
+}
+</style>
 </head>
-<body class="dark-mode">
-    <div class="app-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-wrap">
-                    <span class="logo-text">LIFE</span>
-                    <div class="globe-outer"><div class="globe-inner"></div></div>
-                    <span class="logo-text">OS</span>
-                </div>
-            </div>
 
-            <nav class="nav-menu">
-                <a href="#" class="nav-item active" onclick="switchView('dashboard')">
-                    <i data-lucide="home"></i> <span>Home</span>
-                </a>
-                <a href="#" class="nav-item" onclick="switchView('todo')">
-                    <i data-lucide="list-checks"></i> <span>Todo List</span>
-                </a>
-                <a href="#" class="nav-item" onclick="switchView('calendar')">
-                    <i data-lucide="calendar"></i> <span>Calendar</span>
-                </a>
-                
-                <div class="nav-divider"></div>
-                
-                <div class="add-section-wrap">
-                    <label class="nav-label">Modules</label>
-                    <select id="categorySelector" class="neon-select" onchange="handleModuleSelect()">
-                        <option value="" disabled selected>View Modules</option>
-                        <option value="groceries">Groceries</option>
-                        <option value="finances">Finances</option>
-                        <option value="journal">Journal</option>
-                        <option value="mood">Mood Tracker</option>
-                    </select>
-                </div>
-            </nav>
-        </aside>
+<body>
 
-        <main class="main-content">
-            <header class="topbar">
-                <div class="header-left">
-                    <h1 id="dynamicGreeting">System Active</h1>
-                </div>
+<div class="container">
+<h2>AI Assistant (Smart Demo)</h2>
 
-                <div class="header-right">
-                    <div class="chrono-unit">
-                        <div id="clockDisplay" onclick="toggleMilitaryTime()">00:00:00</div>
-                        <div id="dateDisplay">Syncing...</div>
-                    </div>
-                    
-                    <button id="themeToggleBtn" class="icon-btn" onclick="manualThemeToggle()">
-                        <i id="themeIcon" data-lucide="moon"></i>
-                    </button>
+<textarea id="inputText" placeholder="Example:
+URGENT meeting April 30 at 2pm
+Study tomorrow morning
+Buy groceries tonight
+Low priority clean room"></textarea>
 
-                    <div class="profile-group">
-                        <div class="avatar-trigger" onclick="toggleProfileMenu(event)">
-                            <i data-lucide="user"></i>
-                        </div>
-                        <div class="dropdown-menu hidden" id="profileMenu">
-                            <button onclick="switchView('settings')"><i data-lucide="settings"></i> Settings</button>
-                            <button onclick="handleLogout()"><i data-lucide="log-out"></i> Disconnect</button>
-                        </div>
-                    </div>
-                </div>
-            </header>
+<button onclick="organize()">Organize</button>
 
-            <section id="dashboardView" class="view-section">
-                <div class="glass-card">
-                    <h3>AI Personal Assistant</h3>
-                    <p class="subtitle">Enter tasks with dates to organize by priority.</p>
-                    <textarea id="aiInput" placeholder="Ex: Finish report by tomorrow, Call mom on Friday, Gym tonight..."></textarea>
-                    <button class="btn-neon" onclick="organizeWithAI()">Organize Priority</button>
-                </div>
-            </section>
+<div class="lists">
+  <div class="box">
+    <h3>To-Do List</h3>
+    <ul id="todoList"></ul>
+  </div>
 
-            <section id="todoView" class="view-section hidden">
-                <h2 class="view-title">Objective Management</h2>
-                <div class="grid-layout">
-                    <div class="glass-card">
-                        <div class="card-header">
-                            <h3>Checklist</h3>
-                            <button class="add-btn" onclick="openModal()">+</button>
-                        </div>
-                        <ul class="neon-list" id="todoListElement">
-                            </ul>
-                    </div>
-                    <div class="glass-card">
-                        <h3>Load Chart</h3>
-                        <div class="chart-container">
-                            <div id="taskBar" class="progress-bar"></div>
-                            <p id="taskStatus">0% Complete</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+  <div class="box">
+    <h3>Calendar</h3>
+    <div id="calendar"></div>
+  </div>
+</div>
+</div>
 
-            <section id="calendarView" class="view-section hidden">
-                <h2 class="calendar-title">Calendar</h2>
-                <div class="glass-card calendar-grid" id="calendarGrid">
-                    </div>
-            </section>
+<script>
+function organize() {
+  const input = document.getElementById("inputText").value;
+  const lines = input.split("\n");
 
-            <section id="moduleView" class="view-section hidden">
-                <h2 id="moduleTitle" class="view-title">Module</h2>
-                <div class="glass-card">
-                    <p>System content for this module is currently initializing.</p>
-                </div>
-            </section>
+  const tasks = [];
+  const meetings = [];
 
-            <section id="settingsView" class="view-section hidden">
-                <div class="glass-card settings-panel">
-                    <h2>System Customization</h2>
-                    <div class="setting-item">
-                        <label>Identity Tag</label>
-                        <input type="text" id="userNameInput" placeholder="Change name...">
-                        <button class="btn-neon" onclick="updateUserName()">Save</button>
-                    </div>
-                    <div class="setting-item">
-                        <label>Interface Typography</label>
-                        <select id="fontSelector" class="neon-select" onchange="changeFont(this.value)">
-                            <option value="'Inter', sans-serif">Modern Sans</option>
-                            <option value="'Papyrus', serif">Ancient Papyrus</option>
-                            <option value="'Courier New', monospace">Data Mono</option>
-                        </select>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
+  lines.forEach(line => {
+    const text = line.trim();
+    if (!text) return;
 
-    <div class="modal hidden" id="quickModal">
-        <div class="modal-content">
-            <h3>New Task</h3>
-            <input type="text" id="taskNameInput" placeholder="Objective name...">
-            <input type="date" id="taskDateInput">
-            <div class="modal-actions">
-                <button class="btn-ghost" onclick="closeModal()">Abort</button>
-                <button class="btn-neon" onclick="saveNewTask()">Commit</button>
-            </div>
-        </div>
-    </div>
+    const priority = detectPriority(text);
+    const date = extractDate(text);
+    const time = extractTime(text);
 
-    <script src="script.js"></script>
+    if (date !== "No date" || time !== "No time") {
+      meetings.push({ title: text, date, time, priority });
+    } else {
+      tasks.push({ title: text, priority });
+    }
+  });
+
+  renderTasks(tasks);
+  renderMeetings(meetings);
+}
+
+function detectPriority(text) {
+  const lower = text.toLowerCase();
+
+  if (lower.includes("urgent") || lower.includes("asap") || lower.includes("high")) {
+    return "high";
+  }
+  if (lower.includes("low")) {
+    return "low";
+  }
+  return "medium";
+}
+
+function extractTime(text) {
+  const lower = text.toLowerCase();
+
+  // explicit time
+  const match = text.match(/\b(\d{1,2})(:\d{2})?\s?(am|pm)\b/i);
+  if (match) return match[0];
+
+  // natural time words
+  if (lower.includes("morning")) return "9:00 AM";
+  if (lower.includes("afternoon")) return "2:00 PM";
+  if (lower.includes("evening")) return "6:00 PM";
+  if (lower.includes("tonight")) return "8:00 PM";
+
+  return "No time";
+}
+
+function extractDate(text) {
+  const lower = text.toLowerCase();
+  const today = new Date();
+
+  if (lower.includes("today")) {
+    return today.toDateString();
+  }
+
+  if (lower.includes("tomorrow")) {
+    const d = new Date();
+    d.setDate(today.getDate() + 1);
+    return d.toDateString();
+  }
+
+  const months = {
+    january:0,february:1,march:2,april:3,may:4,june:5,
+    july:6,august:7,september:8,october:9,november:10,december:11
+  };
+
+  for (let month in months) {
+    if (lower.includes(month)) {
+      const dayMatch = text.match(/\d{1,2}/);
+      if (dayMatch) {
+        const d = new Date();
+        d.setMonth(months[month]);
+        d.setDate(parseInt(dayMatch[0]));
+        return d.toDateString();
+      }
+    }
+  }
+
+  return "No date";
+}
+
+function renderTasks(tasks) {
+  const list = document.getElementById("todoList");
+  list.innerHTML = "";
+
+  tasks.forEach(task => {
+    const li = document.createElement("li");
+    li.className = task.priority;
+    li.textContent = `[${task.priority.toUpperCase()}] ${task.title}`;
+    list.appendChild(li);
+  });
+}
+
+function renderMeetings(meetings) {
+  const calendar = document.getElementById("calendar");
+  calendar.innerHTML = "";
+
+  meetings.forEach(m => {
+    const div = document.createElement("div");
+    div.className = "meeting " + m.priority;
+
+    div.innerHTML = `
+      <div class="date">${m.date}</div>
+      <div>[${m.priority.toUpperCase()}] ${m.title}</div>
+      <div>${m.time}</div>
+    `;
+
+    calendar.appendChild(div);
+  });
+}
+</script>
+
 </body>
 </html>
+
