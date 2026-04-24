@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateGreeting();
 });
 
-// --- THEME TOGGLE (FIXED) ---
+// --- THEME ENGINE ---
 window.manualThemeToggle = function() {
     const body = document.body;
     const icon = document.getElementById('themeIcon');
@@ -44,6 +44,46 @@ window.handleModuleSelect = function() {
     switchView('module');
 };
 
+// --- USER IDENTITY & GREETING ---
+window.updateGreeting = function() {
+    const greetingEl = document.getElementById('dynamicGreeting');
+    if (!greetingEl) return;
+
+    const hour = new Date().getHours();
+    let welcome;
+
+    if (hour < 12) welcome = "Good Morning";
+    else if (hour < 18) welcome = "Good Afternoon";
+    else welcome = "Good Evening";
+
+    greetingEl.innerText = `${welcome}, ${userName}`;
+};
+
+window.updateUserName = function() {
+    const input = document.getElementById('userNameInput');
+    if (input && input.value.trim() !== "") {
+        userName = input.value.trim();
+        localStorage.setItem('zen_name', userName); 
+        updateGreeting();
+        input.value = ""; 
+        alert("Identity Tag Updated Successfully.");
+    } else {
+        alert("Please enter a valid name.");
+    }
+};
+
+// --- SETTINGS HELPERS ---
+window.handleLogout = function() {
+    if(confirm("Confirm system disconnect?")) {
+        localStorage.clear();
+        location.reload();
+    }
+};
+
+window.changeFont = function(fontFamily) {
+    document.body.style.fontFamily = fontFamily;
+};
+
 // --- SMART AI PARSER ---
 window.organizeWithAI = function() {
     const input = document.getElementById("aiInput").value;
@@ -57,7 +97,6 @@ window.organizeWithAI = function() {
         const date = extractDate(text);
         const time = extractTime(text);
 
-        // Merge parsing result into the task system
         tasks.push({
             id: Date.now() + Math.random(),
             name: text,
@@ -101,7 +140,33 @@ function extractDate(text) {
     return "No date";
 }
 
-// --- TASK RENDERING ---
+// --- TASK LOGIC (CRUD) ---
+window.saveNewTask = function() {
+    const nameInput = document.getElementById('taskNameInput');
+    if (nameInput && nameInput.value.trim()) {
+        tasks.push({ 
+            id: Date.now(), 
+            name: nameInput.value.trim(), 
+            completed: false,
+            priority: 'medium'
+        });
+        saveAndRender();
+        closeModal();
+        nameInput.value = '';
+    }
+};
+
+window.toggleTask = function(id) {
+    const task = tasks.find(t => t.id === id);
+    if (task) task.completed = !task.completed;
+    saveAndRender();
+};
+
+window.deleteTask = function(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    saveAndRender();
+};
+
 function saveAndRender() {
     localStorage.setItem('zen_tasks', JSON.stringify(tasks));
     renderTasks();
@@ -130,36 +195,26 @@ function renderTasks() {
     const percent = tasks.length > 0 ? (completedCount / tasks.length) * 100 : 0;
     const bar = document.getElementById('taskBar');
     if (bar) bar.style.width = percent + '%';
-    document.getElementById('taskStatus').innerText = Math.round(percent) + '% Complete';
+    const statusText = document.getElementById('taskStatus');
+    if (statusText) statusText.innerText = Math.round(percent) + '% Complete';
 }
-
-window.toggleTask = function(id) {
-    const task = tasks.find(t => t.id === id);
-    if (task) task.completed = !task.completed;
-    saveAndRender();
-};
-
-window.deleteTask = function(id) {
-    tasks = tasks.filter(t => t.id !== id);
-    saveAndRender();
-};
 
 // --- UTILS ---
 function initClock() {
     setInterval(() => {
         const now = new Date();
-        document.getElementById('clockDisplay').innerText = isMilitaryTime ? now.toLocaleTimeString('en-GB') : now.toLocaleTimeString('en-US');
-        document.getElementById('dateDisplay').innerText = now.toLocaleDateString();
+        const clockEl = document.getElementById('clockDisplay');
+        const dateEl = document.getElementById('dateDisplay');
+        if (clockEl) clockEl.innerText = isMilitaryTime ? now.toLocaleTimeString('en-GB') : now.toLocaleTimeString('en-US');
+        if (dateEl) dateEl.innerText = now.toLocaleDateString();
     }, 1000);
-}
-
-function updateGreeting() {
-    document.getElementById('dynamicGreeting').innerText = `System Active, ${userName}`;
 }
 
 window.openModal = () => document.getElementById('quickModal').classList.remove('hidden');
 window.closeModal = () => document.getElementById('quickModal').classList.add('hidden');
 window.toggleProfileMenu = (e) => { e.stopPropagation(); document.getElementById('profileMenu').classList.toggle('hidden'); };
+window.toggleMilitaryTime = () => { isMilitaryTime = !isMilitaryTime; };
+
 window.renderCalendar = () => {
     const grid = document.getElementById('calendarGrid');
     if(!grid) return;
