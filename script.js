@@ -1,100 +1,79 @@
-// DOM Elements
-const taskList = document.getElementById("taskList");
-const habitList = document.getElementById("habitList");
-const taskCount = document.getElementById("taskCount");
-const habitCount = document.getElementById("habitCount");
-const themeToggle = document.getElementById("themeToggle");
-const timeDisplay = document.getElementById("currentTime");
-const dateDisplay = document.getElementById("currentDate");
+// --- STATE & INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    updateClock();
+    setInterval(updateClock, 1000);
+    loadSettings();
+    attachListeners();
+});
 
-const quickModal = document.getElementById("quickModal");
-const openQuickAction = document.getElementById("openQuickAction");
-const closeModal = document.getElementById("closeModal");
-const saveTaskBtn = document.getElementById("saveTaskBtn");
-const quickTaskInput = document.getElementById("quickTaskInput");
-const addTaskBtn = document.getElementById("addTaskBtn");
-
-// 1. Time and Date Updates
 function updateClock() {
     const now = new Date();
-    timeDisplay.textContent = now.toLocaleTimeString();
-    dateDisplay.textContent = now.toLocaleDateString(undefined, { 
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+    document.getElementById('currentTime').textContent = now.toLocaleTimeString();
+    document.getElementById('currentDate').textContent = now.toLocaleDateString(undefined, { 
+        weekday: 'short', month: 'short', day: 'numeric' 
     });
 }
-setInterval(updateClock, 1000);
-updateClock();
 
-// 2. Theme Toggle (Light/Dark)
-themeToggle.addEventListener("click", () => {
-    if (document.body.classList.contains("dark-mode")) {
-        document.body.classList.replace("dark-mode", "light-mode");
-    } else {
-        document.body.classList.replace("light-mode", "dark-mode");
-    }
+// --- UI TOGGLES ---
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    document.body.classList.toggle('light-mode');
+    localStorage.setItem('zen_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
 });
 
-// 3. Counter Management
+const profileBtn = document.getElementById('profileBtn');
+const profileMenu = document.getElementById('profileMenu');
+profileBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    profileMenu.classList.toggle('hidden');
+});
+
+// Close menu on outside click
+window.addEventListener('click', () => profileMenu.classList.add('hidden'));
+
+// --- SETTINGS (COLOR CUSTOMIZATION) ---
+function toggleSettings() {
+    document.getElementById('settingsModal').classList.toggle('hidden');
+}
+
+function changeAccent(color) {
+    document.documentElement.style.setProperty('--accent', color);
+    localStorage.setItem('zen_accent', color);
+    
+    // Update the globe glow dynamically
+    const globe = document.querySelector('.globe');
+    globe.style.background = color;
+    globe.style.boxShadow = `0 0 15px ${color}`;
+}
+
+function loadSettings() {
+    const savedAccent = localStorage.getItem('zen_accent');
+    if (savedAccent) changeAccent(savedAccent);
+    
+    const savedTheme = localStorage.getItem('zen_theme');
+    if (savedTheme === 'light') {
+        document.body.classList.remove('dark-mode');
+        document.body.classList.add('light-mode');
+    }
+}
+
+// --- TASK LOGIC ---
 function updateTaskCount() {
-    const tasks = taskList.querySelectorAll('input[type="checkbox"]');
-    const unchecked = [...tasks].filter(task => !task.checked).length;
-    taskCount.textContent = unchecked;
+    const total = document.querySelectorAll('#taskList input[type="checkbox"]').length;
+    const unchecked = [...document.querySelectorAll('#taskList input[type="checkbox"]')].filter(i => !i.checked).length;
+    document.getElementById('taskCount').textContent = unchecked;
 }
 
-function updateHabitCount() {
-    const habits = habitList.querySelectorAll('input[type="checkbox"]');
-    const completed = [...habits].filter(habit => habit.checked).length;
-    habitCount.textContent = `${completed}/${habits.length}`;
-}
-
-// 4. Checklist Listeners
 function attachListeners() {
-    document.querySelectorAll('.check-list input[type="checkbox"]').forEach(input => {
-        input.addEventListener("change", () => {
-            updateTaskCount();
-            updateHabitCount();
-        });
+    document.querySelectorAll('input[type="checkbox"]').forEach(i => {
+        i.addEventListener('change', updateTaskCount);
     });
+    updateTaskCount();
 }
 
-// 5. Modal Management
-function openModal() {
-    quickModal.classList.remove("hidden");
-    quickTaskInput.focus();
-}
-
-function closeQuickModal() {
-    quickModal.classList.add("hidden");
-    quickTaskInput.value = "";
-}
-
-openQuickAction.addEventListener("click", openModal);
-addTaskBtn.addEventListener("click", openModal);
-closeModal.addEventListener("click", closeQuickModal);
-
-saveTaskBtn.addEventListener("click", () => {
-    const name = quickTaskInput.value.trim();
-    if (name) {
-        const li = document.createElement("li");
-        li.innerHTML = `<label><input type="checkbox" /> ${name}</label>`;
-        taskList.appendChild(li);
-        
-        // Attach listener to the new checkbox
-        li.querySelector('input').addEventListener("change", updateTaskCount);
-        
-        updateTaskCount();
-        closeQuickModal();
-    }
-});
-
-// 6. Settings and Logout Mock
 function handleLogout() {
-    if(confirm("Are you sure you want to log out?")) {
-        alert("Session terminated. Demonstration Mode.");
+    if(confirm("End current zen session?")) {
+        alert("Session saved to local consciousness.");
     }
 }
-
-// Initial Run
-attachListeners();
-updateTaskCount();
-updateHabitCount();
