@@ -25,7 +25,7 @@
                     <i data-lucide="home"></i> <span>Home</span>
                 </a>
                 <a href="#" class="nav-item" onclick="switchView('todo')">
-                    <i data-lucide="list-checks"></i> <span>Todo List</span>
+                    <i data-lucide="list-checks"></i> <span>Milestones</span>
                 </a>
                 <a href="#" class="nav-item" onclick="switchView('calendar')">
                     <i data-lucide="calendar"></i> <span>Calendar</span>
@@ -52,7 +52,6 @@
                 <div class="header-left"></div>
 
                 <div class="header-center">
-                    <h1 id="dynamicGreeting">Good Afternoon, Operator</h1>
                     <div class="chrono-unit">
                         <div id="clockDisplay" onclick="toggleMilitaryTime()">00:00:00 PM</div>
                         <div id="dateDisplay">Fri, Apr 24</div>
@@ -76,16 +75,36 @@
             </header>
 
             <section id="dashboardView" class="view-section">
-                <div class="glass-card">
-                    <h3>AI Personal Assistant</h3>
-                    <p class="subtitle">Type naturally: "Urgent meeting tomorrow morning" or "Buy groceries tonight"</p>
-                    <textarea id="aiInput" placeholder="URGENT meeting April 30 at 2pm&#10;Study tomorrow morning&#10;Buy groceries tonight"></textarea>
-                    <button class="btn-neon" onclick="organizeWithAI()">Organize Priority</button>
+                <div class="dashboard-center-panel">
+                    
+                    <div class="glass-card" style="text-align: center;">
+                        <h1 id="dynamicGreeting">Good Afternoon, Operator</h1>
+                        <p id="aiTaskAnalysis">Scanning Milestone Progress...</p>
+                        
+                        <div class="progress-container" style="margin-top: 20px;">
+                            <div id="taskBar" class="progress-bar"></div>
+                            <p id="taskStatus" style="margin-top: 10px;">0% Complete</p>
+                        </div>
+                    </div>
+
+                    <div class="system-controls">
+                        <button onclick="manualThemeToggle()" class="btn-neon">Toggle Theme</button>
+                        <input type="color" onchange="changeSystemColor(this.value)" title="System Hue" style="width: 40px; height: 40px; border: none; cursor: pointer; background: none;">
+                        <button onclick="openModal()" class="btn-neon">+ New Milestone</button>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3>AI Personal Assistant</h3>
+                        <p class="subtitle">Type naturally: "Urgent meeting tomorrow morning"</p>
+                        <textarea id="aiInput" placeholder="Meeting April 30 at 2pm..."></textarea>
+                        <button class="btn-neon" onclick="organizeWithAI()" style="width: 100%;">Organize Milestones</button>
+                    </div>
+                    
                 </div>
             </section>
 
             <section id="todoView" class="view-section hidden">
-                <h2 class="view-title">Objective Management</h2>
+                <h2 class="view-title">Milestone Management</h2>
                 <div class="grid-layout">
                     <div class="glass-card">
                         <div class="card-header">
@@ -93,13 +112,6 @@
                             <button class="add-btn" onclick="openModal()">+</button>
                         </div>
                         <ul class="neon-list" id="todoListElement"></ul>
-                    </div>
-                    <div class="glass-card">
-                        <h3>Load Chart</h3>
-                        <div class="chart-container">
-                            <div id="taskBar" class="progress-bar"></div>
-                            <p id="taskStatus">0% Complete</p>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -131,14 +143,6 @@
                     </div>
 
                     <div class="setting-item" style="margin-top: 25px;">
-                        <label for="themeColorInput">System Accent Color</label>
-                        <div class="color-picker-container">
-                            <input type="color" id="themeColorInput" onchange="changeSystemColor(this.value)" value="#00f2ff">
-                            <span>Select Neon Hue</span>
-                        </div>
-                    </div>
-
-                    <div class="setting-item" style="margin-top: 25px;">
                         <label for="fontSelector">Interface Typography</label>
                         <select id="fontSelector" class="neon-select" onchange="changeFont(this.value)" style="width: 100%; margin-top: 10px;">
                             <option value="'Inter', sans-serif">Modern Sans</option>
@@ -154,7 +158,7 @@
     <div class="modal hidden" id="quickModal">
         <div class="modal-content">
             <h3>New Manual Entry</h3>
-            <input type="text" id="taskNameInput" placeholder="Objective name...">
+            <input type="text" id="taskNameInput" placeholder="Milestone name...">
             <input type="date" id="taskDateInput">
             <div class="modal-actions">
                 <button class="btn-ghost" onclick="closeModal()">Cancel</button>
