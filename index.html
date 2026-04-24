@@ -119,12 +119,14 @@
                     <h2>System Customization</h2>
                     <div class="setting-item">
                         <label>Identity Tag</label>
-                        <input type="text" id="userNameInput" placeholder="Change name...">
-                        <button class="btn-neon" onclick="updateUserName()">Save</button>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <input type="text" id="userNameInput" placeholder="Enter your name...">
+                            <button class="btn-neon" onclick="updateUserName()">Save</button>
+                        </div>
                     </div>
-                    <div class="setting-item">
+                    <div class="setting-item" style="margin-top: 25px;">
                         <label>Interface Typography</label>
-                        <select id="fontSelector" class="neon-select" onchange="changeFont(this.value)">
+                        <select id="fontSelector" class="neon-select" onchange="changeFont(this.value)" style="width: 100%; margin-top: 10px;">
                             <option value="'Inter', sans-serif">Modern Sans</option>
                             <option value="'Papyrus', serif">Ancient Papyrus</option>
                             <option value="'Courier New', monospace">Data Mono</option>
