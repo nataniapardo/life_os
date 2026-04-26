@@ -10,9 +10,9 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="dark-mode">
- 
+
     <div class="app-container" id="appContainer">
- 
+
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-header">
@@ -22,7 +22,7 @@
                     <span class="logo-text">OS</span>
                 </div>
             </div>
- 
+
             <nav class="nav-menu">
                 <a href="#" class="nav-item active" onclick="switchView('dashboard')">
                     <i data-lucide="home"></i> <span>Home</span>
@@ -47,12 +47,12 @@
                 </div>
             </nav>
         </aside>
- 
+
         <!-- MAIN CONTENT -->
         <main class="main-content">
             <header class="topbar">
                 <div class="header-left"></div>
- 
+
                 <div class="header-center">
                     <h1 id="dynamicGreeting">Good Afternoon, Operator</h1>
                     <div class="chrono-unit">
@@ -60,7 +60,7 @@
                         <div id="dateDisplay">Fri, Apr 24</div>
                     </div>
                 </div>
- 
+
                 <div class="header-right">
                     <button id="themeToggleBtn" class="icon-btn" onclick="manualThemeToggle()">
                         <i id="themeIcon" data-lucide="moon"></i>
@@ -77,7 +77,7 @@
                     </div>
                 </div>
             </header>
- 
+
             <!-- DASHBOARD -->
             <section id="dashboardView" class="view-section">
                 <div class="glass-card">
@@ -87,7 +87,7 @@
                     <button class="btn-neon" onclick="organizeWithAI()">Organize Priority</button>
                 </div>
             </section>
- 
+
             <!-- TODO -->
             <section id="todoView" class="view-section hidden">
                 <h2 class="view-title">Objective Management</h2>
@@ -108,7 +108,7 @@
                     </div>
                 </div>
             </section>
- 
+
             <!-- CALENDAR -->
             <section id="calendarView" class="view-section hidden">
                 <div class="calendar-header">
@@ -116,7 +116,7 @@
                 </div>
                 <div class="glass-card calendar-grid" id="calendarGrid"></div>
             </section>
- 
+
             <!-- MODULE -->
             <section id="moduleView" class="view-section hidden">
                 <h2 id="moduleTitle" class="view-title">Module</h2>
@@ -124,12 +124,12 @@
                     <p>System content for this module is currently initializing.</p>
                 </div>
             </section>
- 
+
             <!-- SETTINGS -->
             <section id="settingsView" class="view-section hidden">
                 <div class="glass-card settings-panel">
                     <h2>System Customization</h2>
- 
+
                     <div class="setting-item">
                         <label for="userNameInput">Display Name</label>
                         <div style="display:flex;gap:10px;margin-top:10px;">
@@ -137,7 +137,7 @@
                             <button class="btn-neon" onclick="updateUserName()">Save</button>
                         </div>
                     </div>
- 
+
                     <div class="setting-item" style="margin-top:25px;">
                         <label for="themeColorInput">System Accent Color</label>
                         <div class="color-picker-container">
@@ -145,7 +145,7 @@
                             <span>Select Neon Hue</span>
                         </div>
                     </div>
- 
+
                     <div class="setting-item" style="margin-top:25px;">
                         <label for="fontSelector">Interface Typography</label>
                         <select id="fontSelector" class="neon-select" onchange="changeFont(this.value)" style="width:100%;margin-top:10px;">
@@ -158,7 +158,7 @@
             </section>
         </main>
     </div>
- 
+
     <!-- TASK MODAL -->
     <div class="modal hidden" id="quickModal">
         <div class="modal-content">
@@ -171,7 +171,7 @@
             </div>
         </div>
     </div>
- 
+
     <script src="script.js"></script>
 </body>
 </html>
