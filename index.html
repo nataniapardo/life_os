@@ -12,8 +12,20 @@
 </head>
 <body class="dark-mode">
 
-<!-- ═══ NOTIFICATION TOAST ═══ -->
+<!-- ═══ TOASTS ═══ -->
 <div id="toastContainer" class="toast-container"></div>
+
+<!-- ═══ SEARCH OVERLAY ═══ -->
+<div class="search-overlay hidden" id="searchOverlay" onclick="closeSearch(event)">
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <i data-lucide="search" class="search-mag-icon"></i>
+      <input type="text" id="globalSearchInput" placeholder="Search pages, features, tasks, notes..." oninput="handleGlobalSearch(this.value)" autocomplete="off">
+      <button class="search-close-btn" onclick="closeSearch()"><i data-lucide="x"></i></button>
+    </div>
+    <div id="searchResults" class="search-results-panel"></div>
+  </div>
+</div>
 
 <!-- ═══ OVERDUE MODAL ═══ -->
 <div class="modal hidden" id="overdueModal">
@@ -22,7 +34,7 @@
     <p id="overdueModalMsg" style="margin:10px 0 18px;opacity:.7;font-size:.9rem;"></p>
     <div class="modal-actions" style="flex-wrap:wrap;gap:8px;">
       <button class="btn-ghost" onclick="resolveOverdue('new')">Pick New Date</button>
-      <button class="btn-neon"  onclick="resolveOverdue('suggest')">Use Suggested Date</button>
+      <button class="btn-neon" onclick="resolveOverdue('suggest')">Use Suggested Date</button>
       <button class="btn-ghost" onclick="resolveOverdue('nextweek')">Move to Next Week</button>
     </div>
     <input type="date" id="overdueNewDate" style="margin-top:12px;width:100%;display:none;">
@@ -50,13 +62,65 @@
 
 <!-- ═══ JOURNAL MODAL ═══ -->
 <div class="modal hidden" id="journalModal">
-  <div class="modal-content" style="max-width:560px;">
+  <div class="modal-content" style="max-width:580px;">
     <h3 id="journalModalTitle">New Journal Entry</h3>
     <input type="text" id="journalTitleInput" placeholder="Entry title..." style="margin-bottom:10px;">
     <textarea id="journalBodyInput" placeholder="Write your thoughts..." style="height:160px;resize:vertical;"></textarea>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeJournalModal()">Cancel</button>
       <button class="btn-neon" onclick="saveJournalEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NOTE EDITOR MODAL ═══ -->
+<div class="modal hidden" id="noteModal">
+  <div class="modal-content note-editor-modal">
+    <div class="note-modal-header">
+      <input type="text" id="noteTitleInput" class="note-title-field" placeholder="Note title...">
+      <button class="icon-btn" onclick="closeNoteModal()"><i data-lucide="x"></i></button>
+    </div>
+    <!-- Rich Text Toolbar -->
+    <div class="rte-toolbar">
+      <button class="rte-btn" onclick="rteExec('bold')" title="Bold"><i data-lucide="bold"></i></button>
+      <button class="rte-btn" onclick="rteExec('italic')" title="Italic"><i data-lucide="italic"></i></button>
+      <button class="rte-btn" onclick="rteExec('underline')" title="Underline"><i data-lucide="underline"></i></button>
+      <button class="rte-btn" onclick="rteExec('strikeThrough')" title="Strikethrough"><i data-lucide="strikethrough"></i></button>
+      <div class="rte-sep"></div>
+      <button class="rte-btn" onclick="rteExec('insertUnorderedList')" title="Bullet List"><i data-lucide="list"></i></button>
+      <button class="rte-btn" onclick="rteExec('insertOrderedList')" title="Numbered List"><i data-lucide="list-ordered"></i></button>
+      <button class="rte-btn" onclick="insertChecklist()" title="Checklist"><i data-lucide="check-square"></i></button>
+      <button class="rte-btn" onclick="insertTable()" title="Insert Table"><i data-lucide="table"></i></button>
+      <div class="rte-sep"></div>
+      <button class="rte-btn" onclick="rteExec('justifyLeft')" title="Align Left"><i data-lucide="align-left"></i></button>
+      <button class="rte-btn" onclick="rteExec('justifyCenter')" title="Center"><i data-lucide="align-center"></i></button>
+      <button class="rte-btn" onclick="rteExec('justifyRight')" title="Align Right"><i data-lucide="align-right"></i></button>
+      <div class="rte-sep"></div>
+      <select class="rte-select" onchange="rteExec('formatBlock',this.value); this.value=''">
+        <option value="" disabled selected>Format</option>
+        <option value="p">Paragraph</option>
+        <option value="h1">Heading 1</option>
+        <option value="h2">Heading 2</option>
+        <option value="h3">Heading 3</option>
+        <option value="blockquote">Blockquote</option>
+      </select>
+      <div class="rte-sep"></div>
+      <button class="rte-btn" onclick="insertNoteLink()" title="Insert Link"><i data-lucide="link"></i></button>
+      <button class="rte-btn" onclick="triggerNoteImage()" title="Add Photo/File"><i data-lucide="image"></i></button>
+      <input type="file" id="noteImageInput" style="display:none;" accept="image/*,video/*,.pdf,.doc,.docx" onchange="handleNoteFile(this)">
+    </div>
+    <div id="noteEditorBody" class="note-editor-body" contenteditable="true" spellcheck="true" data-placeholder="Start writing..."></div>
+    <div class="note-attachments" id="noteAttachments"></div>
+    <div class="note-modal-footer">
+      <div class="note-tags-row">
+        <i data-lucide="tag" style="width:14px;height:14px;opacity:.5;"></i>
+        <input type="text" id="noteTagInput" placeholder="Add tag..." style="background:none;border:none;outline:none;font-size:.82rem;color:var(--text);width:120px;" onkeydown="handleTagKey(event)">
+        <div id="noteTagsDisplay" class="note-tags-display"></div>
+      </div>
+      <div class="modal-actions" style="margin-top:0;">
+        <button class="btn-ghost" onclick="closeNoteModal()">Cancel</button>
+        <button class="btn-neon" onclick="saveNote()">Save Note</button>
+      </div>
     </div>
   </div>
 </div>
@@ -77,6 +141,7 @@
       <a class="nav-item active" onclick="switchView('dashboard')"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
       <a class="nav-item" onclick="switchView('todo')"><i data-lucide="list-checks"></i><span>Todo List</span></a>
       <a class="nav-item" onclick="switchView('calendar')"><i data-lucide="calendar-days"></i><span>Calendar</span></a>
+      <a class="nav-item" onclick="switchView('notes')"><i data-lucide="sticky-note"></i><span>Notes</span></a>
       <a class="nav-item" onclick="switchView('pomodoro')"><i data-lucide="timer"></i><span>Pomodoro</span></a>
       <a class="nav-item" onclick="switchView('basicTimer')"><i data-lucide="clock"></i><span>Timer</span></a>
       <div class="nav-divider"></div>
@@ -97,36 +162,37 @@
     <!-- TOPBAR -->
     <header class="topbar">
       <div class="header-left">
-        <div class="breadcrumb" id="breadcrumb">Dashboard</div>
+        <!-- SEARCH BAR -->
+        <div class="topbar-search-wrap" onclick="openSearch()">
+          <i data-lucide="search" class="topbar-search-icon"></i>
+          <span class="topbar-search-placeholder">Search features &amp; pages...</span>
+          <kbd class="search-kbd">⌘K</kbd>
+        </div>
       </div>
       <div class="header-center">
         <h1 id="dynamicGreeting">Good Afternoon, Operator</h1>
         <div class="chrono-unit">
-          <div id="clockDisplay" onclick="toggleMilitaryTime()">00:00:00 PM</div>
-          <div id="dateDisplay">Mon, Jan 1</div>
+          <div id="clockDisplay" onclick="toggleMilitaryTime()" class="clock-time">00:00:00 PM</div>
+          <div id="dateDisplay" class="date-display-large">Monday, January 1, 2025</div>
         </div>
       </div>
       <div class="header-right">
         <button class="icon-btn" onclick="manualThemeToggle()" title="Toggle theme">
           <i id="themeIcon" data-lucide="moon"></i>
         </button>
-        <!-- BELL NOTIFICATIONS -->
         <div class="notif-wrap">
-          <button class="icon-btn" onclick="toggleNotifPanel(event)" title="Notifications" id="bellBtn">
+          <button class="icon-btn" onclick="toggleNotifPanel(event)" title="Notifications">
             <i data-lucide="bell"></i>
             <span class="notif-badge hidden" id="notifBadge">0</span>
           </button>
           <div class="notif-panel hidden" id="notifPanel">
             <div class="notif-header">
               <span>Notifications</span>
-              <button onclick="clearAllNotifs()" style="font-size:.75rem;background:none;border:none;color:var(--neon-color);cursor:pointer;">Clear All</button>
+              <button onclick="clearAllNotifs()" class="notif-clear-btn">Clear All</button>
             </div>
-            <div id="notifList" class="notif-list">
-              <div class="notif-empty">No notifications</div>
-            </div>
+            <div id="notifList" class="notif-list"><div class="notif-empty">No notifications</div></div>
           </div>
         </div>
-        <!-- PROFILE -->
         <div class="profile-group">
           <div class="avatar-trigger" onclick="toggleProfileMenu(event)">
             <i data-lucide="user"></i>
@@ -142,9 +208,6 @@
 
     <!-- ═══ DASHBOARD ═══ -->
     <section id="dashboardView" class="view-section">
-      <div class="view-header-bar">
-        <h2 class="view-title">Dashboard</h2>
-      </div>
       <div class="dash-stats">
         <div class="stat-card"><i data-lucide="check-square"></i><div><div class="stat-num" id="statOpen">0</div><div class="stat-lbl">Open Tasks</div></div></div>
         <div class="stat-card"><i data-lucide="alert-circle"></i><div><div class="stat-num" id="statOverdue">0</div><div class="stat-lbl">Overdue</div></div></div>
@@ -153,9 +216,13 @@
       </div>
       <div class="glass-card ai-card">
         <h3><i data-lucide="sparkles" style="width:18px;height:18px;vertical-align:middle;margin-right:6px;"></i>AI Personal Assistant</h3>
-        <p class="subtitle">Type naturally: "Urgent meeting April 30 at 2pm" or "Buy groceries tonight"</p>
-        <textarea id="aiInput" placeholder="URGENT board meeting April 30 at 2pm&#10;Study tomorrow morning&#10;Buy groceries tonight — low priority"></textarea>
-        <button class="btn-neon" onclick="organizeWithAI()"><i data-lucide="zap" style="width:15px;height:15px;vertical-align:middle;margin-right:6px;"></i>Parse &amp; Organize</button>
+        <p class="subtitle">Try: "Add milk to groceries" · "Journal: I landed a new client today" · "Task: Call dentist tomorrow high priority" · "Mood: feeling great"</p>
+        <textarea id="aiInput" placeholder="Type anything — AI will route it to the right section automatically..."></textarea>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <button class="btn-neon" onclick="organizeWithAI()"><i data-lucide="zap" style="width:15px;height:15px;vertical-align:middle;margin-right:6px;"></i>Analyze &amp; Route</button>
+          <span class="ai-status" id="aiStatus"></span>
+        </div>
+        <div id="aiActionLog" class="ai-action-log"></div>
       </div>
     </section>
 
@@ -199,19 +266,29 @@
         </div>
         <button class="btn-ghost" onclick="goToToday()">Today</button>
       </div>
-      <div class="cal-weekdays">
-        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
-      </div>
+      <div class="cal-weekdays"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
       <div class="calendar-grid" id="calendarGrid"></div>
       <div class="cal-selected-panel hidden" id="calSelectedPanel">
         <div class="csp-header" id="cspTitle">Selected</div>
         <div id="cspTasks"></div>
-        <!-- Budget Calendar -->
-        <div style="margin-top:16px;">
-          <strong style="font-size:.85rem;color:var(--neon-color);">Budget for Day</strong>
-          <div id="cspBudget" style="font-size:.85rem;margin-top:6px;opacity:.7;">No budget entries.</div>
+        <div style="margin-top:16px;"><strong style="font-size:.85rem;color:var(--neon-color);">Budget for Day</strong><div id="cspBudget" style="font-size:.85rem;margin-top:6px;opacity:.7;">No budget entries.</div></div>
+      </div>
+    </section>
+
+    <!-- ═══ NOTES ═══ -->
+    <section id="notesView" class="view-section hidden">
+      <div class="view-header-bar">
+        <h2 class="view-title">Notes</h2>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div class="notes-search-wrap">
+            <i data-lucide="search" style="width:14px;height:14px;position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.5;"></i>
+            <input type="text" id="notesSearchInput" placeholder="Search notes..." oninput="searchNotes(this.value)" style="padding:8px 12px 8px 32px;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);outline:none;font-size:.85rem;position:relative;">
+          </div>
+          <button class="btn-neon" onclick="openNoteModal()"><i data-lucide="plus" style="width:15px;height:15px;vertical-align:middle;"></i> New Note</button>
         </div>
       </div>
+      <div class="notes-filter-row" id="notesTagFilter"></div>
+      <div class="notes-grid" id="notesGrid"><div class="empty-state">No notes yet. Create your first note!</div></div>
     </section>
 
     <!-- ═══ POMODORO ═══ -->
@@ -236,19 +313,11 @@
           </div>
           <div class="pomo-controls">
             <button class="pomo-btn" onclick="resetPomo()"><i data-lucide="rotate-ccw"></i></button>
-            <button class="pomo-btn primary" id="pomoStartBtn" onclick="togglePomo()">
-              <i data-lucide="play" id="pomoPlayIcon"></i>
-            </button>
+            <button class="pomo-btn primary" id="pomoStartBtn" onclick="togglePomo()"><i data-lucide="play" id="pomoPlayIcon"></i></button>
             <button class="pomo-btn" onclick="skipPomo()"><i data-lucide="skip-forward"></i></button>
           </div>
-          <div class="pomo-session-info">
-            Session <span id="pomoSessionNum">1</span> of 4 &nbsp;|&nbsp;
-            <span id="pomoBreakLabel" style="color:var(--neon-color);">Next: Short Break</span>
-          </div>
-          <div class="pomo-today-stats">
-            <span>Today: <strong id="pomoTodaySessions">0</strong> sessions</span>
-            <span><strong id="pomoTodayMins">0</strong> min focused</span>
-          </div>
+          <div class="pomo-session-info">Session <span id="pomoSessionNum">1</span> of 4 &nbsp;|&nbsp; <span id="pomoBreakLabel" style="color:var(--neon-color);">Next: Short Break</span></div>
+          <div class="pomo-today-stats"><span>Today: <strong id="pomoTodaySessions">0</strong> sessions</span><span><strong id="pomoTodayMins">0</strong> min focused</span></div>
         </div>
         <div class="glass-card pomo-settings">
           <h3 style="margin-bottom:16px;">Settings</h3>
@@ -274,15 +343,13 @@
         </div>
         <div class="pomo-controls" style="margin-top:20px;">
           <button class="pomo-btn" onclick="resetBasicTimer()"><i data-lucide="rotate-ccw"></i></button>
-          <button class="pomo-btn primary" id="basicTimerStartBtn" onclick="toggleBasicTimer()">
-            <i data-lucide="play" id="basicTimerIcon"></i>
-          </button>
+          <button class="pomo-btn primary" id="basicTimerStartBtn" onclick="toggleBasicTimer()"><i data-lucide="play" id="basicTimerIcon"></i></button>
         </div>
-        <p style="margin-top:14px;font-size:.82rem;opacity:.5;font-family:'Space Mono',monospace;">Timer will notify you when complete</p>
+        <p style="margin-top:14px;font-size:.82rem;opacity:.5;font-family:'Space Mono',monospace;">Notifies you when complete</p>
       </div>
     </section>
 
-    <!-- ═══ MODULE VIEW (host for all modules) ═══ -->
+    <!-- ═══ MODULE HOST ═══ -->
     <section id="moduleView" class="view-section hidden">
 
       <!-- GROCERIES -->
@@ -298,14 +365,10 @@
               <input type="text" id="groceryItemInput" placeholder="Item name..." style="flex:1;">
               <input type="number" id="groceryQtyInput" placeholder="Qty" style="width:70px;" min="1" value="1">
               <select id="groceryCatInput" class="neon-select" style="width:120px;">
-                <option value="Produce">Produce</option>
-                <option value="Dairy">Dairy</option>
-                <option value="Meat">Meat</option>
-                <option value="Bakery">Bakery</option>
-                <option value="Frozen">Frozen</option>
-                <option value="Pantry">Pantry</option>
-                <option value="Beverages">Beverages</option>
-                <option value="Other">Other</option>
+                <option value="Produce">Produce</option><option value="Dairy">Dairy</option>
+                <option value="Meat">Meat</option><option value="Bakery">Bakery</option>
+                <option value="Frozen">Frozen</option><option value="Pantry">Pantry</option>
+                <option value="Beverages">Beverages</option><option value="Other">Other</option>
               </select>
               <button class="btn-neon" onclick="addGroceryItem()"><i data-lucide="plus" style="width:14px;height:14px;vertical-align:middle;"></i></button>
             </div>
@@ -327,22 +390,29 @@
           <button class="btn-neon" onclick="openBudgetEntryModal()"><i data-lucide="plus" style="width:15px;height:15px;vertical-align:middle;"></i> Add Entry</button>
         </div>
         <div class="budget-layout">
-          <!-- Summary Cards -->
           <div class="budget-summary-row">
             <div class="budget-stat income"><i data-lucide="trending-up"></i><div><div class="stat-num" id="bIncome">$0</div><div class="stat-lbl">Income</div></div></div>
             <div class="budget-stat expense"><i data-lucide="trending-down"></i><div><div class="stat-num" id="bExpense">$0</div><div class="stat-lbl">Expenses</div></div></div>
             <div class="budget-stat balance"><i data-lucide="dollar-sign"></i><div><div class="stat-num" id="bBalance">$0</div><div class="stat-lbl">Balance</div></div></div>
           </div>
-          <!-- Chart + Calculator -->
           <div class="budget-mid">
             <div class="glass-card">
               <h3 style="margin-bottom:14px;">Monthly Overview</h3>
               <canvas id="budgetChart" height="220"></canvas>
             </div>
+            <!-- SCIENTIFIC CALCULATOR -->
             <div class="glass-card calculator-card">
-              <h3 style="margin-bottom:14px;"><i data-lucide="calculator" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i>Calculator</h3>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <h3><i data-lucide="calculator" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i>Calculator</h3>
+                <div class="calc-mode-toggle">
+                  <button id="calcModeBasicBtn" class="calc-mode-btn active" onclick="setCalcMode('basic')">Basic</button>
+                  <button id="calcModeSciBtn" class="calc-mode-btn" onclick="setCalcMode('sci')">Scientific</button>
+                </div>
+              </div>
               <div class="calc-display" id="calcDisplay">0</div>
-              <div class="calc-grid">
+              <div class="calc-expr" id="calcExprDisplay"></div>
+              <!-- Basic grid -->
+              <div class="calc-grid" id="calcBasicGrid">
                 <button class="calc-btn span2" onclick="calcAction('clear')">C</button>
                 <button class="calc-btn op" onclick="calcAction('backspace')"><i data-lucide="delete" style="width:14px;height:14px;"></i></button>
                 <button class="calc-btn op" onclick="calcAction('/')">&divide;</button>
@@ -362,9 +432,61 @@
                 <button class="calc-btn" onclick="calcAction('.')">.</button>
                 <button class="calc-btn op equals" onclick="calcAction('=')">=</button>
               </div>
+              <!-- Scientific grid -->
+              <div class="calc-grid sci-grid hidden" id="calcSciGrid">
+                <button class="calc-btn sci" onclick="calcSci('sin')">sin</button>
+                <button class="calc-btn sci" onclick="calcSci('cos')">cos</button>
+                <button class="calc-btn sci" onclick="calcSci('tan')">tan</button>
+                <button class="calc-btn sci" onclick="calcSci('log')">log</button>
+                <button class="calc-btn sci" onclick="calcSci('ln')">ln</button>
+                <button class="calc-btn sci" onclick="calcSci('sqrt')">&radic;</button>
+                <button class="calc-btn sci" onclick="calcSci('pow2')">x²</button>
+                <button class="calc-btn sci" onclick="calcSci('pow3')">x³</button>
+                <button class="calc-btn sci" onclick="calcSci('inv')">1/x</button>
+                <button class="calc-btn sci" onclick="calcSci('pi')">&pi;</button>
+                <button class="calc-btn sci" onclick="calcSci('e')">e</button>
+                <button class="calc-btn sci" onclick="calcSci('fact')">n!</button>
+                <button class="calc-btn sci" onclick="calcAction('(')">(</button>
+                <button class="calc-btn sci" onclick="calcAction(')')">)</button>
+                <button class="calc-btn sci" onclick="calcSci('pct')">%</button>
+                <button class="calc-btn sci" onclick="calcSci('abs')">|x|</button>
+                <button class="calc-btn span2" onclick="calcAction('clear')">C</button>
+                <button class="calc-btn op" onclick="calcAction('backspace')"><i data-lucide="delete" style="width:13px;height:13px;"></i></button>
+                <button class="calc-btn op" onclick="calcAction('/')">&divide;</button>
+                <button class="calc-btn" onclick="calcAction('7')">7</button>
+                <button class="calc-btn" onclick="calcAction('8')">8</button>
+                <button class="calc-btn" onclick="calcAction('9')">9</button>
+                <button class="calc-btn op" onclick="calcAction('*')">&times;</button>
+                <button class="calc-btn" onclick="calcAction('4')">4</button>
+                <button class="calc-btn" onclick="calcAction('5')">5</button>
+                <button class="calc-btn" onclick="calcAction('6')">6</button>
+                <button class="calc-btn op" onclick="calcAction('-')">&minus;</button>
+                <button class="calc-btn" onclick="calcAction('1')">1</button>
+                <button class="calc-btn" onclick="calcAction('2')">2</button>
+                <button class="calc-btn" onclick="calcAction('3')">3</button>
+                <button class="calc-btn op" onclick="calcAction('+')">+</button>
+                <button class="calc-btn span2" onclick="calcAction('0')">0</button>
+                <button class="calc-btn" onclick="calcAction('.')">.</button>
+                <button class="calc-btn op equals" onclick="calcAction('=')">=</button>
+              </div>
             </div>
           </div>
-          <!-- Transactions -->
+          <!-- CURRENCY CONVERTER -->
+          <div class="glass-card">
+            <h3 style="margin-bottom:14px;"><i data-lucide="refresh-cw" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i>Currency Converter</h3>
+            <div class="currency-converter">
+              <div class="currency-row">
+                <input type="number" id="currencyFromAmt" value="1" min="0" step="any" oninput="convertCurrency()">
+                <select id="currencyFrom" class="neon-select" onchange="convertCurrency()"></select>
+              </div>
+              <button class="currency-swap-btn" onclick="swapCurrencies()"><i data-lucide="arrow-up-down"></i></button>
+              <div class="currency-row">
+                <input type="number" id="currencyToAmt" readonly>
+                <select id="currencyTo" class="neon-select" onchange="convertCurrency()"></select>
+              </div>
+              <div class="currency-rate-display" id="currencyRateDisplay"></div>
+            </div>
+          </div>
           <div class="glass-card">
             <h3 style="margin-bottom:14px;">Transactions</h3>
             <div id="budgetList" class="budget-list"></div>
@@ -372,21 +494,16 @@
         </div>
       </div>
 
-      <!-- BUDGET ENTRY MODAL (inline) -->
+      <!-- BUDGET MODAL -->
       <div class="modal hidden" id="budgetModal">
         <div class="modal-content">
           <h3>Add Budget Entry</h3>
-          <select id="budgetType" class="neon-select" style="width:100%;margin-bottom:10px;">
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </select>
+          <select id="budgetType" class="neon-select" style="width:100%;margin-bottom:10px;"><option value="income">Income</option><option value="expense">Expense</option></select>
           <input type="text" id="budgetDesc" placeholder="Description..." style="margin-bottom:10px;">
           <input type="number" id="budgetAmt" placeholder="Amount ($)" min="0" step="0.01" style="margin-bottom:10px;">
           <input type="date" id="budgetDate" style="margin-bottom:10px;">
           <select id="budgetCat" class="neon-select" style="width:100%;margin-bottom:10px;">
-            <option>Housing</option><option>Food</option><option>Transport</option>
-            <option>Health</option><option>Entertainment</option><option>Savings</option>
-            <option>Salary</option><option>Other</option>
+            <option>Housing</option><option>Food</option><option>Transport</option><option>Health</option><option>Entertainment</option><option>Savings</option><option>Salary</option><option>Other</option>
           </select>
           <div class="modal-actions">
             <button class="btn-ghost" onclick="closeBudgetModal()">Cancel</button>
@@ -401,9 +518,7 @@
           <h2 class="view-title">Journal</h2>
           <button class="btn-neon" onclick="openJournalModal()"><i data-lucide="plus" style="width:15px;height:15px;vertical-align:middle;"></i> New Entry</button>
         </div>
-        <div class="journal-grid" id="journalGrid">
-          <div class="empty-state">No journal entries yet. Start writing!</div>
-        </div>
+        <div class="journal-grid" id="journalGrid"><div class="empty-state">No journal entries yet.</div></div>
       </div>
 
       <!-- MOOD TRACKER -->
@@ -422,14 +537,8 @@
             <textarea id="moodNote" placeholder="Add a note about your day..." style="height:80px;margin-top:14px;resize:vertical;"></textarea>
             <button class="btn-neon" style="margin-top:10px;" onclick="logMood()">Log Mood</button>
           </div>
-          <div class="glass-card">
-            <h3 style="margin-bottom:14px;">7-Day Mood Trend</h3>
-            <canvas id="moodChart" height="200"></canvas>
-          </div>
-          <div class="glass-card mood-history-card">
-            <h3 style="margin-bottom:14px;">Recent Entries</h3>
-            <div id="moodHistory" class="mood-history"></div>
-          </div>
+          <div class="glass-card"><h3 style="margin-bottom:14px;">7-Day Mood Trend</h3><canvas id="moodChart" height="200"></canvas></div>
+          <div class="glass-card mood-history-card"><h3 style="margin-bottom:14px;">Recent Entries</h3><div id="moodHistory" class="mood-history"></div></div>
         </div>
       </div>
 
@@ -437,39 +546,32 @@
       <div id="mod-planner" class="module-panel hidden">
         <div class="view-header-bar"><h2 class="view-title">Life Planner</h2></div>
         <div class="planner-layout">
-          <!-- Daily Goals -->
           <div class="glass-card">
             <h3 style="margin-bottom:14px;"><i data-lucide="target" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i>Daily Goals</h3>
-            <div class="planner-add-row">
-              <input type="text" id="dailyGoalInput" placeholder="Add a daily goal...">
-              <button class="btn-neon" onclick="addDailyGoal()"><i data-lucide="plus" style="width:14px;height:14px;vertical-align:middle;"></i></button>
-            </div>
+            <div class="planner-add-row"><input type="text" id="dailyGoalInput" placeholder="Add a daily goal..."><button class="btn-neon" onclick="addDailyGoal()"><i data-lucide="plus" style="width:14px;height:14px;vertical-align:middle;"></i></button></div>
             <ul class="neon-list" id="dailyGoalList" style="margin-top:12px;"></ul>
           </div>
-          <!-- Daily Affirmations -->
           <div class="glass-card">
             <h3 style="margin-bottom:14px;"><i data-lucide="sparkles" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i>Daily Affirmations</h3>
             <div class="affirmation-display" id="affirmationDisplay"></div>
-            <div class="planner-add-row" style="margin-top:12px;">
-              <input type="text" id="affirmationInput" placeholder="Write your own affirmation...">
-              <button class="btn-neon" onclick="addAffirmation()"><i data-lucide="plus" style="width:14px;height:14px;vertical-align:middle;"></i></button>
-            </div>
+            <div class="planner-add-row" style="margin-top:12px;"><input type="text" id="affirmationInput" placeholder="Write your own affirmation..."><button class="btn-neon" onclick="addAffirmation()"><i data-lucide="plus" style="width:14px;height:14px;vertical-align:middle;"></i></button></div>
             <ul class="neon-list" id="affirmationList" style="margin-top:12px;"></ul>
           </div>
-          <!-- Weekly Planner -->
           <div class="glass-card" style="grid-column:1/-1;">
             <h3 style="margin-bottom:14px;"><i data-lucide="calendar-range" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i>Weekly Planner</h3>
             <div class="weekly-planner" id="weeklyPlanner"></div>
           </div>
         </div>
       </div>
-
-    </section><!-- end moduleView -->
+    </section>
 
     <!-- ═══ SETTINGS ═══ -->
     <section id="settingsView" class="view-section hidden">
-      <div class="view-header-bar"><h2 class="view-title">Settings</h2></div>
-      <div class="glass-card settings-panel">
+      <div class="view-header-bar"><h2 class="view-title">System Customization</h2></div>
+
+      <!-- Display Name -->
+      <div class="glass-card settings-panel" style="margin-bottom:16px;">
+        <h3 class="settings-section-title">Profile</h3>
         <div class="setting-item">
           <label for="userNameInput">Display Name</label>
           <div style="display:flex;gap:10px;margin-top:10px;">
@@ -477,15 +579,20 @@
             <button class="btn-neon" onclick="updateUserName()">Save</button>
           </div>
         </div>
-        <div class="setting-item" style="margin-top:25px;">
-          <label for="themeColorInput">System Accent Color</label>
+      </div>
+
+      <!-- Appearance -->
+      <div class="glass-card settings-panel" style="margin-bottom:16px;">
+        <h3 class="settings-section-title">Appearance</h3>
+        <div class="setting-item">
+          <label for="themeColorInput">Accent Color</label>
           <div class="color-picker-container">
             <input type="color" id="themeColorInput" onchange="changeSystemColor(this.value)" value="#00f2ff">
             <span>Select Color</span>
           </div>
         </div>
-        <div class="setting-item" style="margin-top:25px;">
-          <label for="fontSelector">Interface Typography</label>
+        <div class="setting-item" style="margin-top:22px;">
+          <label for="fontSelector">Typography</label>
           <select id="fontSelector" class="neon-select" onchange="changeFont(this.value)" style="width:100%;margin-top:10px;">
             <option value="'DM Sans', sans-serif">Modern Sans (DM Sans)</option>
             <option value="'Space Mono', monospace">Space Mono</option>
@@ -495,12 +602,44 @@
           </select>
         </div>
       </div>
+
+      <!-- Auto Theme Schedule -->
+      <div class="glass-card settings-panel" style="margin-bottom:16px;">
+        <h3 class="settings-section-title">Auto Theme Schedule</h3>
+        <p class="subtitle" style="margin-bottom:16px;">Automatically switch between light and dark mode at set times.</p>
+        <div class="setting-item">
+          <div class="auto-theme-row">
+            <div class="auto-theme-col">
+              <label><i data-lucide="sun" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"></i>Light Mode On</label>
+              <input type="time" id="lightModeOnTime" value="07:00" class="time-input" onchange="saveThemeSchedule()">
+            </div>
+            <div class="auto-theme-col">
+              <label><i data-lucide="moon" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"></i>Dark Mode On</label>
+              <input type="time" id="darkModeOnTime" value="19:00" class="time-input" onchange="saveThemeSchedule()">
+            </div>
+            <div class="auto-theme-col">
+              <label>Enable Schedule</label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="themeScheduleEnabled" onchange="saveThemeSchedule()">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Website Themes -->
+      <div class="glass-card settings-panel">
+        <h3 class="settings-section-title">Website Theme / Background</h3>
+        <p class="subtitle" style="margin-bottom:18px;">Choose a visual theme that sets the tone for your workspace.</p>
+        <div class="theme-gallery" id="themeGallery"></div>
+      </div>
     </section>
 
-  </main><!-- end main-content -->
-</div><!-- end app-container -->
+  </main>
+</div>
 
-<!-- RECENTLY DELETED PANEL -->
+<!-- RECENTLY DELETED MODAL -->
 <div class="modal hidden" id="recentlyDeletedModal">
   <div class="modal-content" style="max-width:500px;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
