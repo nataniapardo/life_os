@@ -1,177 +1,519 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | AI Productivity</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Life OS | AI Command Center</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="dark-mode">
 
-    <div class="app-container" id="appContainer">
+<!-- ═══ NOTIFICATION TOAST ═══ -->
+<div id="toastContainer" class="toast-container"></div>
 
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-wrap">
-                    <span class="logo-text">LIFE</span>
-                    <div class="globe-outer"><div class="globe-inner"></div></div>
-                    <span class="logo-text">OS</span>
-                </div>
-            </div>
-
-            <nav class="nav-menu">
-                <a href="#" class="nav-item active" onclick="switchView('dashboard')">
-                    <i data-lucide="home"></i> <span>Home</span>
-                </a>
-                <a href="#" class="nav-item" onclick="switchView('todo')">
-                    <i data-lucide="list-checks"></i> <span>Todo List</span>
-                </a>
-                <a href="#" class="nav-item" onclick="switchView('calendar')">
-                    <i data-lucide="calendar"></i> <span>Calendar</span>
-                </a>
-                <div class="nav-divider"></div>
-                <div class="add-section-wrap">
-                    <label class="nav-label" for="categorySelector">Modules</label>
-                    <select id="categorySelector" class="neon-select" onchange="handleModuleSelect()">
-                        <option value="" disabled selected>View Modules</option>
-                        <option value="groceries">Groceries</option>
-                        <option value="finances">Finances</option>
-                        <option value="journal">Journal</option>
-                        <option value="mood">Mood Tracker</option>
-                        <option value="planner">Planner</option>
-                    </select>
-                </div>
-            </nav>
-        </aside>
-
-        <!-- MAIN CONTENT -->
-        <main class="main-content">
-            <header class="topbar">
-                <div class="header-left"></div>
-
-                <div class="header-center">
-                    <h1 id="dynamicGreeting">Good Afternoon, Operator</h1>
-                    <div class="chrono-unit">
-                        <div id="clockDisplay" onclick="toggleMilitaryTime()">00:00:00 PM</div>
-                        <div id="dateDisplay">Fri, Apr 24</div>
-                    </div>
-                </div>
-
-                <div class="header-right">
-                    <button id="themeToggleBtn" class="icon-btn" onclick="manualThemeToggle()">
-                        <i id="themeIcon" data-lucide="moon"></i>
-                    </button>
-                    <div class="profile-group">
-                        <div class="avatar-trigger" onclick="toggleProfileMenu(event)">
-                            <i data-lucide="user"></i>
-                        </div>
-                        <div class="dropdown-menu hidden" id="profileMenu">
-                            <button onclick="switchView('settings')">
-                                <i data-lucide="settings"></i> Settings
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- DASHBOARD -->
-            <section id="dashboardView" class="view-section">
-                <div class="glass-card">
-                    <h3>AI Personal Assistant</h3>
-                    <p class="subtitle">Type naturally: "Urgent meeting tomorrow morning" or "Buy groceries tonight"</p>
-                    <textarea id="aiInput" placeholder="URGENT meeting April 30 at 2pm&#10;Study tomorrow morning&#10;Buy groceries tonight"></textarea>
-                    <button class="btn-neon" onclick="organizeWithAI()">Organize Priority</button>
-                </div>
-            </section>
-
-            <!-- TODO -->
-            <section id="todoView" class="view-section hidden">
-                <h2 class="view-title">Objective Management</h2>
-                <div class="grid-layout">
-                    <div class="glass-card">
-                        <div class="card-header">
-                            <h3>Checklist</h3>
-                            <button class="add-btn" onclick="openModal()">+</button>
-                        </div>
-                        <ul class="neon-list" id="todoListElement"></ul>
-                    </div>
-                    <div class="glass-card">
-                        <h3>Load Chart</h3>
-                        <div class="chart-container">
-                            <div id="taskBar" class="progress-bar"></div>
-                            <p id="taskStatus">0% Complete</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- CALENDAR -->
-            <section id="calendarView" class="view-section hidden">
-                <div class="calendar-header">
-                    <h2 id="currentMonthName" class="view-title">Month Name</h2>
-                </div>
-                <div class="glass-card calendar-grid" id="calendarGrid"></div>
-            </section>
-
-            <!-- MODULE -->
-            <section id="moduleView" class="view-section hidden">
-                <h2 id="moduleTitle" class="view-title">Module</h2>
-                <div class="glass-card">
-                    <p>System content for this module is currently initializing.</p>
-                </div>
-            </section>
-
-            <!-- SETTINGS -->
-            <section id="settingsView" class="view-section hidden">
-                <div class="glass-card settings-panel">
-                    <h2>System Customization</h2>
-
-                    <div class="setting-item">
-                        <label for="userNameInput">Display Name</label>
-                        <div style="display:flex;gap:10px;margin-top:10px;">
-                            <input type="text" id="userNameInput" placeholder="Enter your name...">
-                            <button class="btn-neon" onclick="updateUserName()">Save</button>
-                        </div>
-                    </div>
-
-                    <div class="setting-item" style="margin-top:25px;">
-                        <label for="themeColorInput">System Accent Color</label>
-                        <div class="color-picker-container">
-                            <input type="color" id="themeColorInput" onchange="changeSystemColor(this.value)" value="#00f2ff">
-                            <span>Select Neon Hue</span>
-                        </div>
-                    </div>
-
-                    <div class="setting-item" style="margin-top:25px;">
-                        <label for="fontSelector">Interface Typography</label>
-                        <select id="fontSelector" class="neon-select" onchange="changeFont(this.value)" style="width:100%;margin-top:10px;">
-                            <option value="'DM Sans', sans-serif">Modern Sans</option>
-                            <option value="'Space Mono', monospace">Space Mono</option>
-                            <option value="'Courier New', monospace">Data Mono</option>
-                        </select>
-                    </div>
-                </div>
-            </section>
-        </main>
+<!-- ═══ OVERDUE MODAL ═══ -->
+<div class="modal hidden" id="overdueModal">
+  <div class="modal-content" style="max-width:440px;">
+    <h3 id="overdueModalTitle">Task Overdue</h3>
+    <p id="overdueModalMsg" style="margin:10px 0 18px;opacity:.7;font-size:.9rem;"></p>
+    <div class="modal-actions" style="flex-wrap:wrap;gap:8px;">
+      <button class="btn-ghost" onclick="resolveOverdue('new')">Pick New Date</button>
+      <button class="btn-neon"  onclick="resolveOverdue('suggest')">Use Suggested Date</button>
+      <button class="btn-ghost" onclick="resolveOverdue('nextweek')">Move to Next Week</button>
     </div>
+    <input type="date" id="overdueNewDate" style="margin-top:12px;width:100%;display:none;">
+    <button class="btn-neon hidden" id="overdueConfirmNew" onclick="confirmNewDate()" style="margin-top:8px;width:100%;">Confirm Date</button>
+  </div>
+</div>
 
-    <!-- TASK MODAL -->
-    <div class="modal hidden" id="quickModal">
-        <div class="modal-content">
-            <h3>New Manual Entry</h3>
-            <input type="text" id="taskNameInput" placeholder="Objective name...">
-            <input type="date" id="taskDateInput">
-            <div class="modal-actions">
-                <button class="btn-ghost" onclick="closeModal()">Cancel</button>
-                <button class="btn-neon" onclick="saveNewTask()">Commit</button>
-            </div>
+<!-- ═══ TASK MODAL ═══ -->
+<div class="modal hidden" id="quickModal">
+  <div class="modal-content">
+    <h3 id="taskModalTitle">New Task</h3>
+    <input type="text" id="taskNameInput" placeholder="Task name...">
+    <input type="date" id="taskDateInput" style="margin-top:10px;">
+    <select id="taskPriorityInput" class="neon-select" style="margin-top:10px;width:100%;">
+      <option value="high">High Priority</option>
+      <option value="medium" selected>Medium Priority</option>
+      <option value="low">Low Priority</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn-neon" onclick="saveNewTask()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ JOURNAL MODAL ═══ -->
+<div class="modal hidden" id="journalModal">
+  <div class="modal-content" style="max-width:560px;">
+    <h3 id="journalModalTitle">New Journal Entry</h3>
+    <input type="text" id="journalTitleInput" placeholder="Entry title..." style="margin-bottom:10px;">
+    <textarea id="journalBodyInput" placeholder="Write your thoughts..." style="height:160px;resize:vertical;"></textarea>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeJournalModal()">Cancel</button>
+      <button class="btn-neon" onclick="saveJournalEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP SHELL ═══ -->
+<div class="app-container" id="appContainer">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-wrap">
+        <span class="logo-text">LIFE</span>
+        <div class="globe-outer"><div class="globe-inner"></div></div>
+        <span class="logo-text">OS</span>
+      </div>
+    </div>
+    <nav class="nav-menu">
+      <a class="nav-item active" onclick="switchView('dashboard')"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+      <a class="nav-item" onclick="switchView('todo')"><i data-lucide="list-checks"></i><span>Todo List</span></a>
+      <a class="nav-item" onclick="switchView('calendar')"><i data-lucide="calendar-days"></i><span>Calendar</span></a>
+      <a class="nav-item" onclick="switchView('pomodoro')"><i data-lucide="timer"></i><span>Pomodoro</span></a>
+      <a class="nav-item" onclick="switchView('basicTimer')"><i data-lucide="clock"></i><span>Timer</span></a>
+      <div class="nav-divider"></div>
+      <span class="nav-label">MODULES</span>
+      <a class="nav-item" onclick="switchModule('groceries')"><i data-lucide="shopping-cart"></i><span>Groceries</span></a>
+      <a class="nav-item" onclick="switchModule('budget')"><i data-lucide="wallet"></i><span>Budget</span></a>
+      <a class="nav-item" onclick="switchModule('journal')"><i data-lucide="notebook-pen"></i><span>Journal</span></a>
+      <a class="nav-item" onclick="switchModule('mood')"><i data-lucide="heart-pulse"></i><span>Mood Tracker</span></a>
+      <a class="nav-item" onclick="switchModule('planner')"><i data-lucide="book-open"></i><span>Planner</span></a>
+      <div class="nav-divider"></div>
+      <a class="nav-item" onclick="switchView('settings')"><i data-lucide="settings-2"></i><span>Settings</span></a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="header-left">
+        <div class="breadcrumb" id="breadcrumb">Dashboard</div>
+      </div>
+      <div class="header-center">
+        <h1 id="dynamicGreeting">Good Afternoon, Operator</h1>
+        <div class="chrono-unit">
+          <div id="clockDisplay" onclick="toggleMilitaryTime()">00:00:00 PM</div>
+          <div id="dateDisplay">Mon, Jan 1</div>
         </div>
-    </div>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" onclick="manualThemeToggle()" title="Toggle theme">
+          <i id="themeIcon" data-lucide="moon"></i>
+        </button>
+        <!-- BELL NOTIFICATIONS -->
+        <div class="notif-wrap">
+          <button class="icon-btn" onclick="toggleNotifPanel(event)" title="Notifications" id="bellBtn">
+            <i data-lucide="bell"></i>
+            <span class="notif-badge hidden" id="notifBadge">0</span>
+          </button>
+          <div class="notif-panel hidden" id="notifPanel">
+            <div class="notif-header">
+              <span>Notifications</span>
+              <button onclick="clearAllNotifs()" style="font-size:.75rem;background:none;border:none;color:var(--neon-color);cursor:pointer;">Clear All</button>
+            </div>
+            <div id="notifList" class="notif-list">
+              <div class="notif-empty">No notifications</div>
+            </div>
+          </div>
+        </div>
+        <!-- PROFILE -->
+        <div class="profile-group">
+          <div class="avatar-trigger" onclick="toggleProfileMenu(event)">
+            <i data-lucide="user"></i>
+          </div>
+          <div class="dropdown-menu hidden" id="profileMenu">
+            <button onclick="switchView('settings');closeDropdowns();"><i data-lucide="settings"></i> Settings</button>
+            <div class="menu-divider"></div>
+            <button onclick="openRecentlyDeleted();"><i data-lucide="trash-2"></i> Recently Deleted</button>
+          </div>
+        </div>
+      </div>
+    </header>
 
-    <script src="script.js"></script>
+    <!-- ═══ DASHBOARD ═══ -->
+    <section id="dashboardView" class="view-section">
+      <div class="view-header-bar">
+        <h2 class="view-title">Dashboard</h2>
+      </div>
+      <div class="dash-stats">
+        <div class="stat-card"><i data-lucide="check-square"></i><div><div class="stat-num" id="statOpen">0</div><div class="stat-lbl">Open Tasks</div></div></div>
+        <div class="stat-card"><i data-lucide="alert-circle"></i><div><div class="stat-num" id="statOverdue">0</div><div class="stat-lbl">Overdue</div></div></div>
+        <div class="stat-card"><i data-lucide="calendar-check"></i><div><div class="stat-num" id="statToday">0</div><div class="stat-lbl">Due Today</div></div></div>
+        <div class="stat-card"><i data-lucide="check-circle-2"></i><div><div class="stat-num" id="statDone">0</div><div class="stat-lbl">Completed</div></div></div>
+      </div>
+      <div class="glass-card ai-card">
+        <h3><i data-lucide="sparkles" style="width:18px;height:18px;vertical-align:middle;margin-right:6px;"></i>AI Personal Assistant</h3>
+        <p class="subtitle">Type naturally: "Urgent meeting April 30 at 2pm" or "Buy groceries tonight"</p>
+        <textarea id="aiInput" placeholder="URGENT board meeting April 30 at 2pm&#10;Study tomorrow morning&#10;Buy groceries tonight — low priority"></textarea>
+        <button class="btn-neon" onclick="organizeWithAI()"><i data-lucide="zap" style="width:15px;height:15px;vertical-align:middle;margin-right:6px;"></i>Parse &amp; Organize</button>
+      </div>
+    </section>
+
+    <!-- ═══ TODO ═══ -->
+    <section id="todoView" class="view-section hidden">
+      <div class="view-header-bar">
+        <h2 class="view-title">Task Manager</h2>
+        <button class="btn-neon" onclick="openTaskModal()"><i data-lucide="plus" style="width:15px;height:15px;vertical-align:middle;"></i> New Task</button>
+      </div>
+      <div class="filter-row">
+        <button class="filter-btn active" onclick="filterTasks('all',this)">All</button>
+        <button class="filter-btn" onclick="filterTasks('high',this)">High</button>
+        <button class="filter-btn" onclick="filterTasks('medium',this)">Medium</button>
+        <button class="filter-btn" onclick="filterTasks('low',this)">Low</button>
+        <button class="filter-btn" onclick="filterTasks('done',this)">Done</button>
+        <button class="filter-btn" onclick="filterTasks('overdue',this)">Overdue</button>
+      </div>
+      <div class="grid-layout">
+        <div class="glass-card">
+          <div class="prog-summary">
+            <div class="prog-track"><div class="prog-fill" id="taskProgFill"></div></div>
+            <span id="taskProgLabel">0 / 0</span>
+          </div>
+          <ul class="neon-list" id="todoListElement"></ul>
+        </div>
+        <div class="glass-card">
+          <h3 style="margin-bottom:14px;">Completion Chart</h3>
+          <canvas id="taskPieChart" height="200"></canvas>
+          <div class="task-stats" id="taskStatsPanel" style="margin-top:16px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ CALENDAR ═══ -->
+    <section id="calendarView" class="view-section hidden">
+      <div class="view-header-bar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="icon-btn" onclick="changeMonth(-1)"><i data-lucide="chevron-left"></i></button>
+          <h2 id="currentMonthName" class="view-title" style="margin:0;">Month</h2>
+          <button class="icon-btn" onclick="changeMonth(1)"><i data-lucide="chevron-right"></i></button>
+        </div>
+        <button class="btn-ghost" onclick="goToToday()">Today</button>
+      </div>
+      <div class="cal-weekdays">
+        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+      <div class="cal-selected-panel hidden" id="calSelectedPanel">
+        <div class="csp-header" id="cspTitle">Selected</div>
+        <div id="cspTasks"></div>
+        <!-- Budget Calendar -->
+        <div style="margin-top:16px;">
+          <strong style="font-size:.85rem;color:var(--neon-color);">Budget for Day</strong>
+          <div id="cspBudget" style="font-size:.85rem;margin-top:6px;opacity:.7;">No budget entries.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ POMODORO ═══ -->
+    <section id="pomodoroView" class="view-section hidden">
+      <div class="view-header-bar"><h2 class="view-title">Pomodoro Timer</h2></div>
+      <div class="pomo-layout">
+        <div class="glass-card pomo-main">
+          <div class="pomo-mode-tabs">
+            <button class="pomo-tab active" onclick="setPomoMode('work',this)">Focus</button>
+            <button class="pomo-tab" onclick="setPomoMode('short',this)">Short Break</button>
+            <button class="pomo-tab" onclick="setPomoMode('long',this)">Long Break</button>
+          </div>
+          <div class="pomo-ring-wrap">
+            <svg class="pomo-svg" viewBox="0 0 220 220">
+              <circle class="pomo-track" cx="110" cy="110" r="96"/>
+              <circle class="pomo-progress" id="pomoRing" cx="110" cy="110" r="96" stroke-dasharray="603.2" stroke-dashoffset="0"/>
+            </svg>
+            <div class="pomo-center">
+              <div class="pomo-time" id="pomoDisplay">25:00</div>
+              <div class="pomo-mode-label" id="pomoModeLabel">FOCUS</div>
+            </div>
+          </div>
+          <div class="pomo-controls">
+            <button class="pomo-btn" onclick="resetPomo()"><i data-lucide="rotate-ccw"></i></button>
+            <button class="pomo-btn primary" id="pomoStartBtn" onclick="togglePomo()">
+              <i data-lucide="play" id="pomoPlayIcon"></i>
+            </button>
+            <button class="pomo-btn" onclick="skipPomo()"><i data-lucide="skip-forward"></i></button>
+          </div>
+          <div class="pomo-session-info">
+            Session <span id="pomoSessionNum">1</span> of 4 &nbsp;|&nbsp;
+            <span id="pomoBreakLabel" style="color:var(--neon-color);">Next: Short Break</span>
+          </div>
+          <div class="pomo-today-stats">
+            <span>Today: <strong id="pomoTodaySessions">0</strong> sessions</span>
+            <span><strong id="pomoTodayMins">0</strong> min focused</span>
+          </div>
+        </div>
+        <div class="glass-card pomo-settings">
+          <h3 style="margin-bottom:16px;">Settings</h3>
+          <div class="pomo-set-item"><label>Focus (min)</label><input type="number" id="pomoWorkLen" value="25" min="1" max="90" onchange="updatePomoSettings()"></div>
+          <div class="pomo-set-item"><label>Short Break (min)</label><input type="number" id="pomoShortLen" value="5" min="1" max="30" onchange="updatePomoSettings()"></div>
+          <div class="pomo-set-item"><label>Long Break (min)</label><input type="number" id="pomoLongLen" value="15" min="1" max="60" onchange="updatePomoSettings()"></div>
+          <div class="pomo-set-item"><label>Auto-start breaks</label><input type="checkbox" id="pomoAutoBreak" checked></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ BASIC TIMER ═══ -->
+    <section id="basicTimerView" class="view-section hidden">
+      <div class="view-header-bar"><h2 class="view-title">Timer</h2></div>
+      <div class="glass-card" style="max-width:420px;margin:0 auto;text-align:center;">
+        <div class="basic-timer-display" id="basicTimerDisplay">00:00:00</div>
+        <div class="basic-timer-inputs">
+          <div class="bti-group"><label>Hours</label><input type="number" id="btiH" value="0" min="0" max="23"></div>
+          <div class="bti-sep">:</div>
+          <div class="bti-group"><label>Minutes</label><input type="number" id="btiM" value="5" min="0" max="59"></div>
+          <div class="bti-sep">:</div>
+          <div class="bti-group"><label>Seconds</label><input type="number" id="btiS" value="0" min="0" max="59"></div>
+        </div>
+        <div class="pomo-controls" style="margin-top:20px;">
+          <button class="pomo-btn" onclick="resetBasicTimer()"><i data-lucide="rotate-ccw"></i></button>
+          <button class="pomo-btn primary" id="basicTimerStartBtn" onclick="toggleBasicTimer()">
+            <i data-lucide="play" id="basicTimerIcon"></i>
+          </button>
+        </div>
+        <p style="margin-top:14px;font-size:.82rem;opacity:.5;font-family:'Space Mono',monospace;">Timer will notify you when complete</p>
+      </div>
+    </section>
+
+    <!-- ═══ MODULE VIEW (host for all modules) ═══ -->
+    <section id="moduleView" class="view-section hidden">
+
+      <!-- GROCERIES -->
+      <div id="mod-groceries" class="module-panel hidden">
+        <div class="view-header-bar">
+          <h2 class="view-title">Groceries</h2>
+          <button class="btn-neon" onclick="addGroceryItem()"><i data-lucide="plus" style="width:15px;height:15px;vertical-align:middle;"></i> Add Item</button>
+        </div>
+        <div class="groceries-layout">
+          <div class="glass-card">
+            <h3 style="margin-bottom:14px;">Shopping List</h3>
+            <div class="grocery-input-row">
+              <input type="text" id="groceryItemInput" placeholder="Item name..." style="flex:1;">
+              <input type="number" id="groceryQtyInput" placeholder="Qty" style="width:70px;" min="1" value="1">
+              <select id="groceryCatInput" class="neon-select" style="width:120px;">
+                <option value="Produce">Produce</option>
+                <option value="Dairy">Dairy</option>
+                <option value="Meat">Meat</option>
+                <option value="Bakery">Bakery</option>
+                <option value="Frozen">Frozen</option>
+                <option value="Pantry">Pantry</option>
+                <option value="Beverages">Beverages</option>
+                <option value="Other">Other</option>
+              </select>
+              <button class="btn-neon" onclick="addGroceryItem()"><i data-lucide="plus" style="width:14px;height:14px;vertical-align:middle;"></i></button>
+            </div>
+            <ul class="neon-list" id="groceryList" style="margin-top:14px;"></ul>
+          </div>
+          <div class="glass-card">
+            <h3 style="margin-bottom:14px;">Frequently Bought</h3>
+            <div class="freq-bought-grid" id="freqBoughtGrid"></div>
+            <h3 style="margin:20px 0 10px;">Category Breakdown</h3>
+            <canvas id="groceryChart" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- BUDGET -->
+      <div id="mod-budget" class="module-panel hidden">
+        <div class="view-header-bar">
+          <h2 class="view-title">Budget</h2>
+          <button class="btn-neon" onclick="openBudgetEntryModal()"><i data-lucide="plus" style="width:15px;height:15px;vertical-align:middle;"></i> Add Entry</button>
+        </div>
+        <div class="budget-layout">
+          <!-- Summary Cards -->
+          <div class="budget-summary-row">
+            <div class="budget-stat income"><i data-lucide="trending-up"></i><div><div class="stat-num" id="bIncome">$0</div><div class="stat-lbl">Income</div></div></div>
+            <div class="budget-stat expense"><i data-lucide="trending-down"></i><div><div class="stat-num" id="bExpense">$0</div><div class="stat-lbl">Expenses</div></div></div>
+            <div class="budget-stat balance"><i data-lucide="dollar-sign"></i><div><div class="stat-num" id="bBalance">$0</div><div class="stat-lbl">Balance</div></div></div>
+          </div>
+          <!-- Chart + Calculator -->
+          <div class="budget-mid">
+            <div class="glass-card">
+              <h3 style="margin-bottom:14px;">Monthly Overview</h3>
+              <canvas id="budgetChart" height="220"></canvas>
+            </div>
+            <div class="glass-card calculator-card">
+              <h3 style="margin-bottom:14px;"><i data-lucide="calculator" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i>Calculator</h3>
+              <div class="calc-display" id="calcDisplay">0</div>
+              <div class="calc-grid">
+                <button class="calc-btn span2" onclick="calcAction('clear')">C</button>
+                <button class="calc-btn op" onclick="calcAction('backspace')"><i data-lucide="delete" style="width:14px;height:14px;"></i></button>
+                <button class="calc-btn op" onclick="calcAction('/')">&divide;</button>
+                <button class="calc-btn" onclick="calcAction('7')">7</button>
+                <button class="calc-btn" onclick="calcAction('8')">8</button>
+                <button class="calc-btn" onclick="calcAction('9')">9</button>
+                <button class="calc-btn op" onclick="calcAction('*')">&times;</button>
+                <button class="calc-btn" onclick="calcAction('4')">4</button>
+                <button class="calc-btn" onclick="calcAction('5')">5</button>
+                <button class="calc-btn" onclick="calcAction('6')">6</button>
+                <button class="calc-btn op" onclick="calcAction('-')">&minus;</button>
+                <button class="calc-btn" onclick="calcAction('1')">1</button>
+                <button class="calc-btn" onclick="calcAction('2')">2</button>
+                <button class="calc-btn" onclick="calcAction('3')">3</button>
+                <button class="calc-btn op" onclick="calcAction('+')">+</button>
+                <button class="calc-btn span2" onclick="calcAction('0')">0</button>
+                <button class="calc-btn" onclick="calcAction('.')">.</button>
+                <button class="calc-btn op equals" onclick="calcAction('=')">=</button>
+              </div>
+            </div>
+          </div>
+          <!-- Transactions -->
+          <div class="glass-card">
+            <h3 style="margin-bottom:14px;">Transactions</h3>
+            <div id="budgetList" class="budget-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BUDGET ENTRY MODAL (inline) -->
+      <div class="modal hidden" id="budgetModal">
+        <div class="modal-content">
+          <h3>Add Budget Entry</h3>
+          <select id="budgetType" class="neon-select" style="width:100%;margin-bottom:10px;">
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+          <input type="text" id="budgetDesc" placeholder="Description..." style="margin-bottom:10px;">
+          <input type="number" id="budgetAmt" placeholder="Amount ($)" min="0" step="0.01" style="margin-bottom:10px;">
+          <input type="date" id="budgetDate" style="margin-bottom:10px;">
+          <select id="budgetCat" class="neon-select" style="width:100%;margin-bottom:10px;">
+            <option>Housing</option><option>Food</option><option>Transport</option>
+            <option>Health</option><option>Entertainment</option><option>Savings</option>
+            <option>Salary</option><option>Other</option>
+          </select>
+          <div class="modal-actions">
+            <button class="btn-ghost" onclick="closeBudgetModal()">Cancel</button>
+            <button class="btn-neon" onclick="saveBudgetEntry()">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- JOURNAL -->
+      <div id="mod-journal" class="module-panel hidden">
+        <div class="view-header-bar">
+          <h2 class="view-title">Journal</h2>
+          <button class="btn-neon" onclick="openJournalModal()"><i data-lucide="plus" style="width:15px;height:15px;vertical-align:middle;"></i> New Entry</button>
+        </div>
+        <div class="journal-grid" id="journalGrid">
+          <div class="empty-state">No journal entries yet. Start writing!</div>
+        </div>
+      </div>
+
+      <!-- MOOD TRACKER -->
+      <div id="mod-mood" class="module-panel hidden">
+        <div class="view-header-bar"><h2 class="view-title">Mood Tracker</h2></div>
+        <div class="mood-layout">
+          <div class="glass-card mood-log-card">
+            <h3 style="margin-bottom:16px;">How are you feeling today?</h3>
+            <div class="mood-selector" id="moodSelector">
+              <button class="mood-btn" data-mood="5" data-label="Excellent" onclick="selectMood(this)"><i data-lucide="sun"></i><span>Excellent</span></button>
+              <button class="mood-btn" data-mood="4" data-label="Good" onclick="selectMood(this)"><i data-lucide="smile"></i><span>Good</span></button>
+              <button class="mood-btn" data-mood="3" data-label="Neutral" onclick="selectMood(this)"><i data-lucide="minus-circle"></i><span>Neutral</span></button>
+              <button class="mood-btn" data-mood="2" data-label="Low" onclick="selectMood(this)"><i data-lucide="cloud"></i><span>Low</span></button>
+              <button class="mood-btn" data-mood="1" data-label="Difficult" onclick="selectMood(this)"><i data-lucide="cloud-rain"></i><span>Difficult</span></button>
+            </div>
+            <textarea id="moodNote" placeholder="Add a note about your day..." style="height:80px;margin-top:14px;resize:vertical;"></textarea>
+            <button class="btn-neon" style="margin-top:10px;" onclick="logMood()">Log Mood</button>
+          </div>
+          <div class="glass-card">
+            <h3 style="margin-bottom:14px;">7-Day Mood Trend</h3>
+            <canvas id="moodChart" height="200"></canvas>
+          </div>
+          <div class="glass-card mood-history-card">
+            <h3 style="margin-bottom:14px;">Recent Entries</h3>
+            <div id="moodHistory" class="mood-history"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLANNER -->
+      <div id="mod-planner" class="module-panel hidden">
+        <div class="view-header-bar"><h2 class="view-title">Life Planner</h2></div>
+        <div class="planner-layout">
+          <!-- Daily Goals -->
+          <div class="glass-card">
+            <h3 style="margin-bottom:14px;"><i data-lucide="target" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i>Daily Goals</h3>
+            <div class="planner-add-row">
+              <input type="text" id="dailyGoalInput" placeholder="Add a daily goal...">
+              <button class="btn-neon" onclick="addDailyGoal()"><i data-lucide="plus" style="width:14px;height:14px;vertical-align:middle;"></i></button>
+            </div>
+            <ul class="neon-list" id="dailyGoalList" style="margin-top:12px;"></ul>
+          </div>
+          <!-- Daily Affirmations -->
+          <div class="glass-card">
+            <h3 style="margin-bottom:14px;"><i data-lucide="sparkles" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i>Daily Affirmations</h3>
+            <div class="affirmation-display" id="affirmationDisplay"></div>
+            <div class="planner-add-row" style="margin-top:12px;">
+              <input type="text" id="affirmationInput" placeholder="Write your own affirmation...">
+              <button class="btn-neon" onclick="addAffirmation()"><i data-lucide="plus" style="width:14px;height:14px;vertical-align:middle;"></i></button>
+            </div>
+            <ul class="neon-list" id="affirmationList" style="margin-top:12px;"></ul>
+          </div>
+          <!-- Weekly Planner -->
+          <div class="glass-card" style="grid-column:1/-1;">
+            <h3 style="margin-bottom:14px;"><i data-lucide="calendar-range" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i>Weekly Planner</h3>
+            <div class="weekly-planner" id="weeklyPlanner"></div>
+          </div>
+        </div>
+      </div>
+
+    </section><!-- end moduleView -->
+
+    <!-- ═══ SETTINGS ═══ -->
+    <section id="settingsView" class="view-section hidden">
+      <div class="view-header-bar"><h2 class="view-title">Settings</h2></div>
+      <div class="glass-card settings-panel">
+        <div class="setting-item">
+          <label for="userNameInput">Display Name</label>
+          <div style="display:flex;gap:10px;margin-top:10px;">
+            <input type="text" id="userNameInput" placeholder="Enter your name...">
+            <button class="btn-neon" onclick="updateUserName()">Save</button>
+          </div>
+        </div>
+        <div class="setting-item" style="margin-top:25px;">
+          <label for="themeColorInput">System Accent Color</label>
+          <div class="color-picker-container">
+            <input type="color" id="themeColorInput" onchange="changeSystemColor(this.value)" value="#00f2ff">
+            <span>Select Color</span>
+          </div>
+        </div>
+        <div class="setting-item" style="margin-top:25px;">
+          <label for="fontSelector">Interface Typography</label>
+          <select id="fontSelector" class="neon-select" onchange="changeFont(this.value)" style="width:100%;margin-top:10px;">
+            <option value="'DM Sans', sans-serif">Modern Sans (DM Sans)</option>
+            <option value="'Space Mono', monospace">Space Mono</option>
+            <option value="'Courier New', monospace">Data Mono</option>
+            <option value="Papyrus, fantasy">Papyrus</option>
+            <option value="Georgia, serif">Georgia Serif</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- end main-content -->
+</div><!-- end app-container -->
+
+<!-- RECENTLY DELETED PANEL -->
+<div class="modal hidden" id="recentlyDeletedModal">
+  <div class="modal-content" style="max-width:500px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3>Recently Deleted</h3>
+      <button class="btn-ghost" onclick="clearAllDeleted()" style="font-size:.8rem;">Clear All</button>
+    </div>
+    <div id="recentlyDeletedList" style="max-height:360px;overflow-y:auto;"></div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="btn-ghost" onclick="closeRecentlyDeleted()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
