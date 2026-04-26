@@ -11,107 +11,9 @@
 </head>
 <body class="dark-mode">
  
-    <!-- ======================= AUTH SCREEN ======================= -->
-    <div class="auth-screen" id="authScreen">
-        <div class="auth-bg-grid"></div>
-        <div class="auth-orb auth-orb-1"></div>
-        <div class="auth-orb auth-orb-2"></div>
+    <div class="app-container" id="appContainer">
  
-        <div class="auth-container">
-            <div class="auth-brand">
-                <div class="auth-logo">
-                    <span class="logo-text">LIFE</span>
-                    <div class="globe-outer"><div class="globe-inner"></div></div>
-                    <span class="logo-text">OS</span>
-                </div>
-                <p class="auth-tagline">Your AI-Powered Life Blueprint</p>
-            </div>
- 
-            <!-- LOGIN PANEL -->
-            <div class="auth-card" id="loginPanel">
-                <h2 class="auth-heading">Welcome Back</h2>
-                <p class="auth-sub">Sign in to your workspace</p>
- 
-                <div class="input-group">
-                    <i data-lucide="user" class="input-icon"></i>
-                    <input type="text" id="loginUsername" placeholder="Username" autocomplete="username">
-                </div>
-                <div class="input-group">
-                    <i data-lucide="lock" class="input-icon"></i>
-                    <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
-                    <button class="eye-toggle" onclick="togglePwd('loginPassword', this)" tabindex="-1">
-                        <i data-lucide="eye"></i>
-                    </button>
-                </div>
- 
-                <div id="loginError" class="auth-error hidden">
-                    <i data-lucide="alert-circle"></i>
-                    <span id="loginErrorMsg">Invalid credentials.</span>
-                </div>
- 
-                <button class="btn-auth" onclick="handleLogin()">
-                    <span>Sign In</span>
-                    <i data-lucide="arrow-right"></i>
-                </button>
- 
-                <div class="auth-divider"><span>OR</span></div>
- 
-                <p class="auth-switch">
-                    New User? <a href="#" onclick="showSignup()">Create Account</a>
-                </p>
-            </div>
- 
-            <!-- SIGNUP PANEL -->
-            <div class="auth-card hidden" id="signupPanel">
-                <h2 class="auth-heading">Create Account</h2>
-                <p class="auth-sub">Set up your Life OS workspace</p>
- 
-                <div class="input-group">
-                    <i data-lucide="user" class="input-icon"></i>
-                    <input type="text" id="signupName" placeholder="Full Name (optional)">
-                </div>
-                <div class="input-group">
-                    <i data-lucide="at-sign" class="input-icon"></i>
-                    <input type="text" id="signupUsername" placeholder="Choose a username">
-                </div>
-                <div class="input-group">
-                    <i data-lucide="lock" class="input-icon"></i>
-                    <input type="password" id="signupPassword" placeholder="Create a password">
-                    <button class="eye-toggle" onclick="togglePwd('signupPassword', this)" tabindex="-1">
-                        <i data-lucide="eye"></i>
-                    </button>
-                </div>
-                <div class="input-group">
-                    <i data-lucide="shield-check" class="input-icon"></i>
-                    <input type="password" id="signupConfirm" placeholder="Confirm password">
-                </div>
- 
-                <div class="password-strength" id="strengthBar">
-                    <div class="strength-track"><div class="strength-fill" id="strengthFill"></div></div>
-                    <span id="strengthLabel">Password strength</span>
-                </div>
- 
-                <div id="signupError" class="auth-error hidden">
-                    <i data-lucide="alert-circle"></i>
-                    <span id="signupErrorMsg">Error message</span>
-                </div>
- 
-                <button class="btn-auth" onclick="handleSignup()">
-                    <span>Create Account</span>
-                    <i data-lucide="arrow-right"></i>
-                </button>
- 
-                <div class="auth-divider"><span>OR</span></div>
- 
-                <p class="auth-switch">
-                    Already have an account? <a href="#" onclick="showLogin()">Sign In</a>
-                </p>
-            </div>
-        </div>
-    </div>
- 
-    <!-- ======================= MAIN APP ======================= -->
-    <div class="app-container hidden" id="appContainer">
+        <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo-wrap">
@@ -146,9 +48,11 @@
             </nav>
         </aside>
  
+        <!-- MAIN CONTENT -->
         <main class="main-content">
             <header class="topbar">
                 <div class="header-left"></div>
+ 
                 <div class="header-center">
                     <h1 id="dynamicGreeting">Good Afternoon, Operator</h1>
                     <div class="chrono-unit">
@@ -156,6 +60,7 @@
                         <div id="dateDisplay">Fri, Apr 24</div>
                     </div>
                 </div>
+ 
                 <div class="header-right">
                     <button id="themeToggleBtn" class="icon-btn" onclick="manualThemeToggle()">
                         <i id="themeIcon" data-lucide="moon"></i>
@@ -165,14 +70,15 @@
                             <i data-lucide="user"></i>
                         </div>
                         <div class="dropdown-menu hidden" id="profileMenu">
-                            <div class="profile-info" id="profileInfo"></div>
-                            <button onclick="switchView('settings')"><i data-lucide="settings"></i> Settings</button>
-                            <button onclick="handleLogout()"><i data-lucide="log-out"></i> Sign Out</button>
+                            <button onclick="switchView('settings')">
+                                <i data-lucide="settings"></i> Settings
+                            </button>
                         </div>
                     </div>
                 </div>
             </header>
  
+            <!-- DASHBOARD -->
             <section id="dashboardView" class="view-section">
                 <div class="glass-card">
                     <h3>AI Personal Assistant</h3>
@@ -182,6 +88,7 @@
                 </div>
             </section>
  
+            <!-- TODO -->
             <section id="todoView" class="view-section hidden">
                 <h2 class="view-title">Objective Management</h2>
                 <div class="grid-layout">
@@ -202,6 +109,7 @@
                 </div>
             </section>
  
+            <!-- CALENDAR -->
             <section id="calendarView" class="view-section hidden">
                 <div class="calendar-header">
                     <h2 id="currentMonthName" class="view-title">Month Name</h2>
@@ -209,6 +117,7 @@
                 <div class="glass-card calendar-grid" id="calendarGrid"></div>
             </section>
  
+            <!-- MODULE -->
             <section id="moduleView" class="view-section hidden">
                 <h2 id="moduleTitle" class="view-title">Module</h2>
                 <div class="glass-card">
@@ -216,16 +125,19 @@
                 </div>
             </section>
  
+            <!-- SETTINGS -->
             <section id="settingsView" class="view-section hidden">
                 <div class="glass-card settings-panel">
                     <h2>System Customization</h2>
+ 
                     <div class="setting-item">
                         <label for="userNameInput">Display Name</label>
                         <div style="display:flex;gap:10px;margin-top:10px;">
-                            <input type="text" id="userNameInput" placeholder="Enter display name...">
+                            <input type="text" id="userNameInput" placeholder="Enter your name...">
                             <button class="btn-neon" onclick="updateUserName()">Save</button>
                         </div>
                     </div>
+ 
                     <div class="setting-item" style="margin-top:25px;">
                         <label for="themeColorInput">System Accent Color</label>
                         <div class="color-picker-container">
@@ -233,6 +145,7 @@
                             <span>Select Neon Hue</span>
                         </div>
                     </div>
+ 
                     <div class="setting-item" style="margin-top:25px;">
                         <label for="fontSelector">Interface Typography</label>
                         <select id="fontSelector" class="neon-select" onchange="changeFont(this.value)" style="width:100%;margin-top:10px;">
@@ -240,10 +153,6 @@
                             <option value="'Space Mono', monospace">Space Mono</option>
                             <option value="'Courier New', monospace">Data Mono</option>
                         </select>
-                    </div>
-                    <div class="setting-item" style="margin-top:25px;">
-                        <label style="color:#ff6b6b;">Danger Zone</label>
-                        <button class="btn-danger" style="margin-top:10px;" onclick="deleteAccount()">Delete My Account</button>
                     </div>
                 </div>
             </section>
