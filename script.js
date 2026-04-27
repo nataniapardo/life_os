@@ -102,6 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key==='Escape') { closeSearch(); closeNoteModal(); }
   });
 
+  // Boot the AI Intelligence module (date-change detection & learning system)
+  if (typeof AIIntelligence !== 'undefined') AIIntelligence.boot();
+
   checkOverdueTasks();
   setInterval(checkOverdueTasks, 60000);
 });
@@ -341,6 +344,14 @@ window.organizeWithAI = () => {
 
 function routeAIInput(text) {
   if (!text) return null;
+
+  // ── AI Intelligence module: intercepts date-change intents,
+  //    overdue auto-move commands, and reschedule phrases FIRST
+  //    before any other handler runs.
+  if (typeof AIIntelligence !== 'undefined') {
+    const aiResult = AIIntelligence.processAIInput(text);
+    if (aiResult) return aiResult;
+  }
   const t = text.toLowerCase();
 
   // ── GROCERY INTENT ──
@@ -725,6 +736,13 @@ function selectCalDay(dateStr){
 // OVERDUE
 // ════════════════════════════════════════════════════════════
 function checkOverdueTasks(){
+  // Delegate entirely to the AI Intelligence module which handles
+  // detection, notification, panel display, and learned suggestions.
+  if (typeof AIIntelligence !== 'undefined') {
+    AIIntelligence.checkOverdue();
+    return;
+  }
+  // Fallback if module not loaded
   const today=new Date().toISOString().split('T')[0];
   const ov=tasks.filter(t=>!t.completed&&t.date&&t.date<today&&!t.overdueHandled);
   if(ov.length>0){
