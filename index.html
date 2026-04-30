@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Life OS | AI Command Center</title>
+  <title>Life OS | AI Productivity</title>
   <link rel="stylesheet" href="styles.css"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -11,6 +11,124 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="dark-mode">
+
+<!-- ═══════════════════════════════════════════════════
+     AUTH SCREEN  (shown first; hidden after login)
+═══════════════════════════════════════════════════ -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-orb auth-orb-1"></div>
+  <div class="auth-orb auth-orb-2"></div>
+  <div class="auth-orb auth-orb-3"></div>
+  <div class="auth-grid"></div>
+
+  <div class="auth-wrapper">
+
+    <!-- Brand -->
+    <div class="auth-brand">
+      <div class="auth-logo">
+        <span class="logo-text">LIFE</span>
+        <div class="globe-outer"><div class="globe-inner"></div></div>
+        <span class="logo-text">OS</span>
+      </div>
+      <p class="auth-tagline">// AI-POWERED LIFE COMMAND CENTER</p>
+    </div>
+
+    <!-- LOGIN PANEL -->
+    <div class="auth-card" id="authLoginPanel">
+      <div class="auth-card-header">
+        <h2>Welcome Back</h2>
+        <p>Sign in to your workspace</p>
+      </div>
+      <div class="auth-error hidden" id="loginError">
+        <i data-lucide="alert-circle"></i>
+        <span id="loginErrorMsg">Invalid username or password.</span>
+      </div>
+      <div class="auth-field">
+        <label for="loginUsername">Username</label>
+        <div class="auth-input-wrap">
+          <i data-lucide="user" class="auth-input-icon"></i>
+          <input type="text" id="loginUsername" placeholder="your_username" autocomplete="username" onkeydown="if(event.key==='Enter') handleLogin()">
+        </div>
+      </div>
+      <div class="auth-field">
+        <label for="loginPassword">Password</label>
+        <div class="auth-input-wrap">
+          <i data-lucide="lock" class="auth-input-icon"></i>
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') handleLogin()">
+          <button class="auth-eye-btn" onclick="toggleAuthPwd('loginPassword', this)" tabindex="-1"><i data-lucide="eye"></i></button>
+        </div>
+      </div>
+      <button class="btn-auth" id="loginBtn" onclick="handleLogin()">
+        <span id="loginBtnLabel">Sign In</span>
+        <i data-lucide="arrow-right" class="btn-auth-icon"></i>
+      </button>
+      <div class="auth-divider"><span>OR</span></div>
+      <p class="auth-switch">New to Life OS? <a href="#" onclick="showAuthPanel('signup'); return false;">Create Account</a></p>
+    </div>
+
+    <!-- SIGN UP PANEL -->
+    <div class="auth-card hidden" id="authSignupPanel">
+      <div class="auth-card-header">
+        <h2>Create Account</h2>
+        <p>Set up your Life OS workspace</p>
+      </div>
+      <div class="auth-error hidden" id="signupError">
+        <i data-lucide="alert-circle"></i>
+        <span id="signupErrorMsg">Please check your details.</span>
+      </div>
+      <div class="auth-success hidden" id="signupSuccess">
+        <i data-lucide="check-circle"></i>
+        <span>Account created! You can now sign in.</span>
+      </div>
+      <div class="auth-row">
+        <div class="auth-field">
+          <label for="signupDisplayName">Display Name <span class="auth-opt">(optional)</span></label>
+          <div class="auth-input-wrap">
+            <i data-lucide="smile" class="auth-input-icon"></i>
+            <input type="text" id="signupDisplayName" placeholder="Your name">
+          </div>
+        </div>
+        <div class="auth-field">
+          <label for="signupUsername">Username *</label>
+          <div class="auth-input-wrap">
+            <i data-lucide="at-sign" class="auth-input-icon"></i>
+            <input type="text" id="signupUsername" placeholder="choose_username" oninput="checkUsernameAvailability(this.value)">
+          </div>
+          <div class="auth-field-hint" id="usernameHint"></div>
+        </div>
+      </div>
+      <div class="auth-row">
+        <div class="auth-field">
+          <label for="signupPassword">Password *</label>
+          <div class="auth-input-wrap">
+            <i data-lucide="lock" class="auth-input-icon"></i>
+            <input type="password" id="signupPassword" placeholder="Min. 6 characters" oninput="updatePasswordStrength(this.value)">
+            <button class="auth-eye-btn" onclick="toggleAuthPwd('signupPassword', this)" tabindex="-1"><i data-lucide="eye"></i></button>
+          </div>
+          <div class="pwd-strength">
+            <div class="pwd-strength-track"><div class="pwd-strength-fill" id="pwdStrengthFill"></div></div>
+            <span class="pwd-strength-label" id="pwdStrengthLabel">Strength</span>
+          </div>
+        </div>
+        <div class="auth-field">
+          <label for="signupConfirm">Confirm Password *</label>
+          <div class="auth-input-wrap">
+            <i data-lucide="shield-check" class="auth-input-icon"></i>
+            <input type="password" id="signupConfirm" placeholder="Re-enter password" onkeydown="if(event.key==='Enter') handleSignup()">
+          </div>
+        </div>
+      </div>
+      <button class="btn-auth" id="signupBtn" onclick="handleSignup()">
+        <span id="signupBtnLabel">Create Account</span>
+        <i data-lucide="user-plus" class="btn-auth-icon"></i>
+      </button>
+      <div class="auth-divider"><span>OR</span></div>
+      <p class="auth-switch">Already have an account? <a href="#" onclick="showAuthPanel('login'); return false;">Sign In</a></p>
+    </div>
+
+  </div>
+</div>
+
 
 <!-- ═══ TOASTS ═══ -->
 <div id="toastContainer" class="toast-container"></div>
@@ -126,7 +244,7 @@
 </div>
 
 <!-- ═══ APP SHELL ═══ -->
-<div class="app-container" id="appContainer">
+<div class="app-container hidden" id="appContainer">
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
@@ -198,9 +316,12 @@
             <i data-lucide="user"></i>
           </div>
           <div class="dropdown-menu hidden" id="profileMenu">
+            <div class="auth-user-info" id="topbarUserInfo" style="padding:10px 12px 6px;font-size:.82rem;color:var(--text-muted);font-family:var(--font-mono);border-bottom:1px solid var(--border);margin-bottom:4px;"></div>
             <button onclick="switchView('settings');closeDropdowns();"><i data-lucide="settings"></i> Settings</button>
             <div class="menu-divider"></div>
             <button onclick="openRecentlyDeleted();"><i data-lucide="trash-2"></i> Recently Deleted</button>
+            <div class="menu-divider"></div>
+            <button onclick="handleSignOut()" style="color:var(--danger);"><i data-lucide="log-out"></i> Sign Out</button>
           </div>
         </div>
       </div>
