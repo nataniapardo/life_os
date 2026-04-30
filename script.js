@@ -1,4 +1,314 @@
 /* ============================================================
+   AUTH SYSTEM — Login, Sign Up, Session, Sign Out
+   Uses localStorage to store hashed accounts securely.
+   ============================================================ */
+
+// ── Simple hash function (browser-safe, not cryptographic)
+// For real apps, use Supabase Auth or bcrypt on a server.
+function _hashPassword(password) {
+  let hash = 5381;
+  for (let i = 0; i < password.length; i++) {
+    hash = ((hash << 5) + hash) + password.charCodeAt(i);
+    hash |= 0; // Convert to 32-bit integer
+  }
+  return hash.toString(36);
+}
+
+// ── Account store helpers
+function _getAccounts() {
+  try { return JSON.parse(localStorage.getItem('lifeos_accounts') || '{}'); } catch { return {}; }
+}
+function _saveAccounts(accounts) {
+  localStorage.setItem('lifeos_accounts', JSON.stringify(accounts));
+}
+function _getSession() {
+  try { return JSON.parse(localStorage.getItem('lifeos_session') || 'null'); } catch { return null; }
+}
+function _saveSession(user) {
+  localStorage.setItem('lifeos_session', JSON.stringify(user));
+}
+function _clearSession() {
+  localStorage.removeItem('lifeos_session');
+}
+
+// ── Panel switcher
+window.showAuthPanel = function(panel) {
+  const loginEl  = document.getElementById('authLoginPanel');
+  const signupEl = document.getElementById('authSignupPanel');
+  // Clear errors
+  ['loginError','signupError','signupSuccess'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
+  if (panel === 'signup') {
+    loginEl.classList.add('hidden');
+    signupEl.classList.remove('hidden');
+  } else {
+    signupEl.classList.add('hidden');
+    loginEl.classList.remove('hidden');
+  }
+};
+
+// ── Password visibility toggle
+window.toggleAuthPwd = function(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const isHidden = input.type === 'password';
+  input.type = isHidden ? 'text' : 'password';
+  const icon = btn.querySelector('i[data-lucide]');
+  if (icon) {
+    icon.setAttribute('data-lucide', isHidden ? 'eye-off' : 'eye');
+    if (window.lucide) lucide.createIcons();
+  }
+};
+
+// ── Password strength meter
+window.updatePasswordStrength = function(password) {
+  const fill  = document.getElementById('pwdStrengthFill');
+  const label = document.getElementById('pwdStrengthLabel');
+  if (!fill || !label) return;
+
+  let score = 0;
+  if (password.length >= 6)  score++;
+  if (password.length >= 10) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+
+  const levels = [
+    { w:'0%',   bg:'#ff4d6d', txt:'Too short'  },
+    { w:'20%',  bg:'#ff4d6d', txt:'Very weak'  },
+    { w:'40%',  bg:'#f97316', txt:'Weak'        },
+    { w:'60%',  bg:'#ffd166', txt:'Fair'        },
+    { w:'80%',  bg:'#8bc34a', txt:'Strong'      },
+    { w:'100%', bg:'#06d6a0', txt:'Very strong' },
+  ];
+  const lv = levels[Math.min(score, 5)];
+  fill.style.width      = lv.w;
+  fill.style.background = lv.bg;
+  label.textContent     = password.length === 0 ? 'Strength' : lv.txt;
+  label.style.color     = password.length === 0 ? '' : lv.bg;
+};
+
+// ── Username availability check
+window.checkUsernameAvailability = function(username) {
+  const hint = document.getElementById('usernameHint');
+  if (!hint) return;
+  const u = username.trim().toLowerCase();
+
+  if (!u) { hint.textContent = ''; hint.className = 'auth-field-hint'; return; }
+
+  if (u.length < 3) {
+    hint.textContent = 'Must be at least 3 characters';
+    hint.className = 'auth-field-hint hint-err'; return;
+  }
+  if (!/^[a-z0-9_]+$/.test(u)) {
+    hint.textContent = 'Only letters, numbers, underscores';
+    hint.className = 'auth-field-hint hint-err'; return;
+  }
+
+  const accounts = _getAccounts();
+  if (accounts[u]) {
+    hint.textContent = 'Username already taken';
+    hint.className = 'auth-field-hint hint-err';
+  } else {
+    hint.textContent = 'Username available';
+    hint.className = 'auth-field-hint hint-ok';
+  }
+};
+
+// ── Show auth error
+function _showAuthError(panelId, msgId, message) {
+  const el  = document.getElementById(panelId);
+  const msg = document.getElementById(msgId);
+  if (msg) msg.textContent = message;
+  if (el) {
+    el.classList.remove('hidden');
+    // Re-trigger animation
+    el.style.animation = 'none';
+    void el.offsetHeight;
+    el.style.animation = '';
+  }
+}
+function _hideAuthError(panelId) {
+  const el = document.getElementById(panelId);
+  if (el) el.classList.add('hidden');
+}
+
+// ── Set button loading state
+function _setAuthBtnLoading(btnId, labelId, loading, labelText) {
+  const btn   = document.getElementById(btnId);
+  const label = document.getElementById(labelId);
+  if (!btn || !label) return;
+  btn.disabled      = loading;
+  label.textContent = loading ? 'Please wait...' : labelText;
+}
+
+// ── LOGIN
+window.handleLogin = function() {
+  const username = (document.getElementById('loginUsername')?.value || '').trim().toLowerCase();
+  const password = document.getElementById('loginPassword')?.value || '';
+
+  _hideAuthError('loginError');
+
+  if (!username || !password) {
+    _showAuthError('loginError', 'loginErrorMsg', 'Please enter your username and password.');
+    return;
+  }
+
+  _setAuthBtnLoading('loginBtn', 'loginBtnLabel', true, 'Sign In');
+
+  // Small delay to simulate check (remove for instant)
+  setTimeout(() => {
+    const accounts = _getAccounts();
+
+    if (!accounts[username]) {
+      _showAuthError('loginError', 'loginErrorMsg', 'No account found with that username.');
+      _setAuthBtnLoading('loginBtn', 'loginBtnLabel', false, 'Sign In');
+      return;
+    }
+
+    if (accounts[username].passwordHash !== _hashPassword(password)) {
+      _showAuthError('loginError', 'loginErrorMsg', 'Incorrect password. Please try again.');
+      _setAuthBtnLoading('loginBtn', 'loginBtnLabel', false, 'Sign In');
+      return;
+    }
+
+    // Success
+    const user = {
+      username,
+      displayName: accounts[username].displayName || username,
+      createdAt:   accounts[username].createdAt,
+    };
+    _saveSession(user);
+    _setAuthBtnLoading('loginBtn', 'loginBtnLabel', false, 'Sign In');
+    _bootApp(user);
+  }, 380);
+};
+
+// ── SIGN UP
+window.handleSignup = function() {
+  const displayName = (document.getElementById('signupDisplayName')?.value || '').trim();
+  const username    = (document.getElementById('signupUsername')?.value || '').trim().toLowerCase();
+  const password    = document.getElementById('signupPassword')?.value || '';
+  const confirm     = document.getElementById('signupConfirm')?.value || '';
+
+  _hideAuthError('signupError');
+  document.getElementById('signupSuccess')?.classList.add('hidden');
+
+  // Validation
+  if (!username) {
+    _showAuthError('signupError', 'signupErrorMsg', 'Please choose a username.'); return;
+  }
+  if (username.length < 3 || !/^[a-z0-9_]+$/.test(username)) {
+    _showAuthError('signupError', 'signupErrorMsg', 'Username must be 3+ characters: letters, numbers, underscores only.'); return;
+  }
+  if (!password || password.length < 6) {
+    _showAuthError('signupError', 'signupErrorMsg', 'Password must be at least 6 characters.'); return;
+  }
+  if (password !== confirm) {
+    _showAuthError('signupError', 'signupErrorMsg', 'Passwords do not match.'); return;
+  }
+
+  const accounts = _getAccounts();
+  if (accounts[username]) {
+    _showAuthError('signupError', 'signupErrorMsg', 'That username is already taken. Please choose another.'); return;
+  }
+
+  _setAuthBtnLoading('signupBtn', 'signupBtnLabel', true, 'Create Account');
+
+  setTimeout(() => {
+    // Save account
+    accounts[username] = {
+      passwordHash: _hashPassword(password),
+      displayName:  displayName || username,
+      createdAt:    new Date().toISOString(),
+    };
+    _saveAccounts(accounts);
+
+    // Show success, then auto-switch to login
+    _setAuthBtnLoading('signupBtn', 'signupBtnLabel', false, 'Create Account');
+    const successEl = document.getElementById('signupSuccess');
+    if (successEl) successEl.classList.remove('hidden');
+
+    // Pre-fill username on login panel
+    const loginInput = document.getElementById('loginUsername');
+    if (loginInput) loginInput.value = username;
+
+    setTimeout(() => showAuthPanel('login'), 1600);
+  }, 380);
+};
+
+// ── SIGN OUT
+window.handleSignOut = function() {
+  if (!confirm('Sign out of Life OS?')) return;
+  _clearSession();
+  // Reset UI
+  const app    = document.getElementById('appContainer');
+  const screen = document.getElementById('authScreen');
+  if (app)    { app.classList.add('hidden'); app.classList.remove('app-enter'); }
+  if (screen) { screen.classList.remove('hidden', 'auth-exit'); }
+
+  // Clear login inputs
+  ['loginUsername','loginPassword'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  showAuthPanel('login');
+  if (window.lucide) lucide.createIcons();
+};
+
+// ── BOOT APP after successful auth
+function _bootApp(user) {
+  // Update greeting name from account
+  userName = user.displayName || user.username;
+
+  // Update topbar user info
+  const userInfoEl = document.getElementById('topbarUserInfo');
+  if (userInfoEl) userInfoEl.textContent = '@' + user.username;
+
+  // Animate auth screen out, app in
+  const screen = document.getElementById('authScreen');
+  const app    = document.getElementById('appContainer');
+
+  screen.classList.add('auth-exit');
+  setTimeout(() => {
+    screen.classList.add('hidden');
+    screen.classList.remove('auth-exit');
+    app.classList.remove('hidden');
+    app.classList.add('app-enter');
+    setTimeout(() => app.classList.remove('app-enter'), 450);
+
+    // Re-init icons and UI now that app is visible
+    if (window.lucide) lucide.createIcons();
+    updateGreeting();
+    renderDashStats();
+    renderTasks();
+    renderCalendar();
+    renderNotifPanel();
+    buildThemeGallery();
+    populateCurrencyDropdowns();
+  }, 420);
+}
+
+// ── CHECK SESSION ON PAGE LOAD (auto-login if session exists)
+function _checkExistingSession() {
+  const session = _getSession();
+  if (session && session.username) {
+    const accounts = _getAccounts();
+    // Verify account still exists
+    if (accounts[session.username]) {
+      _bootApp(session);
+      return true;
+    } else {
+      _clearSession();
+    }
+  }
+  return false;
+}
+
+
+/* ============================================================
    LIFE OS — script.js  (Full Feature Edition)
    AI Router · Scientific Calculator · Currency Converter
    Notes (Rich Text) · Theme Gallery · Auto Dark Mode
@@ -67,7 +377,15 @@ let userName      = S.str('name', 'Operator');
 // BOOT
 // ════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
+  // Init lucide for auth screen (visible before app loads)
   lucide.createIcons();
+
+  // ── Check for existing session — auto-login if valid ──
+  if (_checkExistingSession()) return; // app booted from session, skip rest
+
+  // No session — show auth screen, init lucide for it
+  lucide.createIcons();
+
   const color = S.str('color', '#00f2ff');
   document.documentElement.style.setProperty('--neon-color', color);
   const ci = document.getElementById('themeColorInput');
