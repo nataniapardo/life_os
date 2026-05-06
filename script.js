@@ -1,4 +1,9 @@
-
+// =========================
+// SUPABASE SETUP
+// =========================
+const SUPABASE_URL = 'https://bzwnjtofcduxllafdybw.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_oFhZq2o2Ao5800xY2xzhFw_WOgTUHUl';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* ============================================================
    AUTH SYSTEM — Login, Sign Up, Session, Sign Out
@@ -131,7 +136,12 @@ function _showAuthError(panelId, msgId, message) {
     void el.offsetHeight;
     el.style.animation = '';
   }
-   
+}
+function _hideAuthError(panelId) {
+  const el = document.getElementById(panelId);
+  if (el) el.classList.add('hidden');
+}
+
 // ── Set button loading state
 function _setAuthBtnLoading(btnId, labelId, loading, labelText) {
   const btn   = document.getElementById(btnId);
@@ -145,6 +155,8 @@ function _setAuthBtnLoading(btnId, labelId, loading, labelText) {
 window.handleLogin = function() {
   const username = (document.getElementById('loginUsername')?.value || '').trim().toLowerCase();
   const password = document.getElementById('loginPassword')?.value || '';
+
+  _hideAuthError('loginError');
 
   if (!username || !password) {
     _showAuthError('loginError', 'loginErrorMsg', 'Please enter your username and password.');
@@ -187,6 +199,9 @@ window.handleSignup = function() {
   const username    = (document.getElementById('signupUsername')?.value || '').trim().toLowerCase();
   const password    = document.getElementById('signupPassword')?.value || '';
   const confirm     = document.getElementById('signupConfirm')?.value || '';
+
+  _hideAuthError('signupError');
+  document.getElementById('signupSuccess')?.classList.add('hidden');
 
   // Validation
   if (!username) {
@@ -1584,3 +1599,4 @@ function formatFileSize(bytes){ if(bytes<1024)return bytes+'B';if(bytes<1048576)
 function playBeep(){
   try{const ctx=new(window.AudioContext||window.webkitAudioContext)(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.frequency.value=880;osc.type='sine';gain.gain.setValueAtTime(.3,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.8);osc.start(ctx.currentTime);osc.stop(ctx.currentTime+.8);}catch(e){}
 }
+
