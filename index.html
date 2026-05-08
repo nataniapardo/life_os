@@ -1,126 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life OS | AI Productivity Workspace</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+  <meta charset="UTF-8">
+  <title>Life OS</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="logged-out">
 
-    <section id="login" class="page view-section">
-        <div class="auth-page-container">
-            <div class="auth-logo-large">
-                <div class="logo-area">
-                    <span class="logo-text-massive">LIFE</span>
-                    <div class="globe-container"><div class="globe-core"></div></div>
-                    <span class="logo-text-massive">OS</span>
-                </div>
-            </div>
-            <div class="auth-card glass-card">
-                <h2>Initialize Session</h2>
-                <input type="text" id="loginId" placeholder="Username or Email">
-                <input type="password" id="loginPass" placeholder="Password">
-                <button class="btn-glow" onclick="login()">Enter Workspace</button>
-            </div>
-        </div>
-    </section>
+<body>
 
-    <div id="appContainer" class="app-container hidden">
-        <nav class="sidebar">
-            <div class="logo-area-branding">
-                <span>LIFE</span>
-                <div class="globe-container small"><div class="globe-core"></div></div>
-                <span>OS</span>
-            </div>
-            
-            <div class="sidebar-scroll">
-                <ul class="nav-links">
-                    <li class="active" onclick="switchPage('nexus')"><i data-lucide="layout"></i> Nexus</li>
-                    <li onclick="switchPage('tasks')"><i data-lucide="trello"></i> Kanban Board</li>
-                    <li onclick="switchPage('database')"><i data-lucide="database"></i> Databases</li>
-                    <li onclick="switchPage('tools')"><i data-lucide="calculator"></i> System Tools</li>
-                    <li onclick="switchPage('vault')"><i data-lucide="edit-3"></i> Content Creation</li>
-                </ul>
-                <div class="nested-pages">
-                    <p class="section-label">Hierarchical Pages</p>
-                    <details>
-                        <summary><i data-lucide="chevron-right"></i> Strategy 2026</summary>
-                        <div class="sub-link">Roadmaps</div>
-                        <div class="sub-link">Dependencies</div>
-                    </details>
-                </div>
-            </div>
-        </nav>
+<header>
+  <h1 onclick="goHome()" class="logo">Life OS</h1>
+  <div id="clock"></div>
+</header>
 
-        <main class="main-layout">
-            <header class="top-bar">
-                <div class="header-left">
-                    <div id="aiStatus" class="ai-status">AI: Operational</div>
-                </div>
-                
-                <div class="header-right">
-                    <div class="datetime-block">
-                        <div id="dateDisplay" class="date-text">--</div>
-                        <div id="clockDisplay" class="time-text">00:00:00</div>
-                    </div>
+<aside>
+  <h3>Navigation</h3>
+  <ul>
+    <li onclick="switchPage('home')">Home</li>
+    <li onclick="switchPage('dashboard')">Dashboard</li>
+    <li onclick="switchPage('login')">Login</li>
+    <li onclick="switchPage('signup')">Sign Up</li>
+  </ul>
+</aside>
 
-                    <div class="search-wrapper">
-                        <input type="text" id="globalSearch" placeholder="Search Life OS...">
-                        <i data-lucide="search"></i>
-                    </div>
+<main>
 
-                    <div class="profile-cluster">
-                        <i data-lucide="bell" class="icon-btn"></i>
-                        <div class="profile-icon" onclick="toggleProfile()">JD</div>
-                    </div>
-                </div>
-            </header>
+<!-- HOME -->
+<section id="home" class="page active">
+  <div class="card">
+    <h2>Welcome to Life OS</h2>
+    <p>Your all-in-one life productivity system.</p>
+  </div>
+</section>
 
-            <div id="contentSections">
-                <section id="tasks" class="view-section hidden">
-                    <div class="section-header">
-                        <h1>Project Workflow</h1>
-                        <button class="btn-glow">+ Add Card</button>
-                    </div>
-                    <div class="kanban-container" id="kanbanBoard"></div>
-                </section>
+<!-- DASHBOARD -->
+<section id="dashboard" class="page">
+  <div class="card">
+    <h2>Dashboard</h2>
+    <p>This page is only visible after login.</p>
 
-                <section id="database" class="view-section hidden">
-                    <h1>Linked Databases</h1>
-                    <div class="glass-card">
-                        <table class="db-table">
-                            <thead>
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Status</th>
-                                    <th>Deadline</th>
-                                    <th>Formula (Days Remaining)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="db-body"></tbody>
-                        </table>
-                    </div>
-                </section>
+    <input id="taskInput" placeholder="Add task">
+    <button onclick="addTask()">Add Task</button>
+    <ul id="taskList"></ul>
+  </div>
+</section>
 
-                <section id="vault" class="view-section hidden">
-                    <h1>Editor</h1>
-                    <div class="editor-container glass-card">
-                        <div class="toolbar">
-                            <button onclick="execCmd('bold')"><b>B</b></button>
-                            <button onclick="execCmd('italic')"><i>I</i></button>
-                            <button onclick="execCmd('insertUnorderedList')">List</button>
-                        </div>
-                        <div id="editor" contenteditable="true" placeholder="Start typing..."></div>
-                    </div>
-                </section>
-            </div>
-        </main>
-    </div>
+<!-- LOGIN -->
+<section id="login" class="page">
+  <div class="card">
+    <h2>Login</h2>
 
-    <script src="script.js"></script>
-    <script>lucide.createIcons();</script>
+    <input id="loginUser" placeholder="Username">
+    <input id="loginPass" placeholder="Password" type="password">
+
+    <button onclick="login()">Login</button>
+  </div>
+</section>
+
+<!-- SIGN UP -->
+<section id="signup" class="page">
+  <div class="card">
+    <h2>Sign Up</h2>
+
+    <input id="signUser" placeholder="Username">
+    <input id="signPass" placeholder="Password" type="password">
+
+    <button onclick="signup()">Create Account</button>
+  </div>
+</section>
+
+</main>
+
+<script src="script.js"></script>
 </body>
 </html>
